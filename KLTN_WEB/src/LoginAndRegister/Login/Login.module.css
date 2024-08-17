@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.centeredContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+}
+.box {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+}
+.button {
+    margin-top: 16px;
+}
+.hoverEffect:hover {
+    background-color: #1976d2;
+}
+
+.divider {
+    margin: 16px 0;
+    border-width: 100px;
+    height: 0.5px;
+    background-color: #ccc;
+}
+.dashed{
+    border: 1px dashed #ccc;
+    margin: 16px 0;
+    padding: 30px;
+}
