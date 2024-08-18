@@ -8,10 +8,16 @@ export class CreateUserDto {
     @IsEmail({}, { message: 'email không đúng định dạng' })
     email: string;
 
+    @IsNotEmpty({ message: "userId không được để trống" })
+    userId: string;
+
     @IsNotEmpty({ message: "password không được để trống" })
     password: string;
 
     phone: string;
     address: string;
     image: string;
+
+    @IsNotEmpty({ message: "role không được để trống" })
+    role: string;
 }

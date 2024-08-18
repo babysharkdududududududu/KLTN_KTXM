@@ -29,19 +29,29 @@ export class UsersService {
     return false;
   }
 
+  isUsserIdExist = async (userId: string) => {
+    const user = await this.userModel.exists({ userId });
+    if (user) return true;
+    return false;
+  }
+
   async create(createUserDto: CreateUserDto) {
-    const { name, email, password, phone, address, image } = createUserDto;
+    const { name, email, userId, password, phone, address, image, role } = createUserDto;
 
     //check email
     const isExist = await this.isEmailExist(email);
     if (isExist === true) {
       throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`)
     }
+    const isUserIdExist = await this.isUsserIdExist(userId);
+    if (isUserIdExist === true) {
+      throw new BadRequestException(`Mã số sinh viên đã tồn tại: ${userId}. Vui lòng sử dụng mã số khác.`)
+    }
 
     //hash password
     const hashPassword = await hashPasswordHelper(password);
     const user = await this.userModel.create({
-      name, email, password: hashPassword, phone, address, image
+      name, email, userId, password: hashPassword, phone, address, image, role
     })
     return {
       _id: user._id
@@ -104,36 +114,19 @@ export class UsersService {
   }
 
   async handleRegister(registerDto: CreateAuthDto) {
-    const { name, email, password } = registerDto;
+    const { name, password, userId } = registerDto;
 
-    //check email
-    const isExist = await this.isEmailExist(email);
-    if (isExist === true) {
-      throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`)
+    const isUserIdExist = await this.isUsserIdExist(userId);
+    if (isUserIdExist === true) {
+      throw new BadRequestException(`Mã số sinh viên đã tồn tại: ${userId}. Vui lòng sử dụng mã số khác.`)
     }
 
     //hash password
     const hashPassword = await hashPasswordHelper(password);
-    const codeId = uuidv4();
     const user = await this.userModel.create({
-      name, email, password: hashPassword,
+      name, password: hashPassword, userId,
       isActive: false,
-      codeId: codeId,
-      codeExpired: dayjs().add(5, 'minutes')
-      // codeExpired: dayjs().add(30, 'seconds')
     })
-
-    //send email
-    this.mailerService.sendMail({
-      to: user.email, // list of receivers
-      subject: 'Activate tài khoản của bạn ở KTXM', // Subject line
-      template: "register",
-      context: {
-        name: user?.name ?? user.email,
-        activationCode: codeId
-      }
-    })
-    //trả ra phản hồi
     return {
       _id: user._id
     }
@@ -161,8 +154,6 @@ export class UsersService {
     } else {
       throw new BadRequestException("Mã code không hợp lệ hoặc đã hết hạn")
     }
-
-
   }
 
   async retryActive(email: string) {
