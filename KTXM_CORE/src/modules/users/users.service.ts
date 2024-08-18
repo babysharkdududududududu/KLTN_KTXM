@@ -97,6 +97,10 @@ export class UsersService {
     return await this.userModel.findOne({ email })
   }
 
+  async findByUserId(userId: string) {
+    return await this.userModel.findOne({ userId })
+  }
+
   async update(updateUserDto: UpdateUserDto) {
     return await this.userModel.updateOne(
       { _id: updateUserDto._id }, { ...updateUserDto });
@@ -153,7 +157,7 @@ export class UsersService {
       return { isBeforeCheck };
     } else {
       throw new BadRequestException("Mã code không hợp lệ hoặc đã hết hạn")
-    }
+    } 
   }
 
   async retryActive(email: string) {

@@ -17,7 +17,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ResponseMessage("Fetch login")
   handleLogin(@Request() req) {
-    return this.authService.login(req.usahaer);
+    return this.authService.login(req.user);
   } 
 
   @Post('register')
