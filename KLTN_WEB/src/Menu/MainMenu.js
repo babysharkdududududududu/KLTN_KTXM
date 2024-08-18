@@ -2,6 +2,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import HouseIcon from '@mui/icons-material/House';
 import SettingsIcon from '@mui/icons-material/Settings';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -86,6 +87,11 @@ const MainMenu = ({ onLogout }) => {
             <Tooltip title="Thống kê">
               <IconButton onClick={() => navigate('/statistical')}>
                 <BarChartIcon className="menu-icon" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Thông báo">
+              <IconButton onClick={() => navigate('/notification')}>
+                <NotificationsIcon className="menu-icon" />
               </IconButton>
             </Tooltip>
             <Tooltip title="Cài đặt">

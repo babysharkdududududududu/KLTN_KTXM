@@ -4,6 +4,7 @@ import { UpdateNotificationDto } from './dto/update-notification.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Notification } from './entities/notification.entity';
+import aqp from 'api-query-params';
 
 @Injectable()
 export class NotificationService {
@@ -24,8 +25,34 @@ export class NotificationService {
     };
   }
 
-  findAll() {
-    return `This action returns all notification`;
+  async findAll(query: string, current: number, pageSize: number) {
+    const { filter, sort } = aqp(query); // Parse the query string into filter and sort options
+    if (filter.current) delete filter.current;
+    if (filter.pageSize) delete filter.pageSize;
+
+    if (!current) current = 1;
+    if (!pageSize) pageSize = 10;
+
+    const totalItems = (await this.notificationModel.find(filter)).length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    const skip = (current - 1) * (pageSize);
+
+    const results = await this.notificationModel
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .sort(sort as any);
+
+    return {
+      meta: {
+        current: current, //trang hiện tại
+        pageSize: pageSize, //số lượng bản ghi đã lấy
+        pages: totalPages,  //tổng số trang với điều kiện query
+        total: totalItems // tổng số phần tử (số bản ghi)
+      },
+      results //kết quả query
+    }
   }
 
   findOne(id: number) {

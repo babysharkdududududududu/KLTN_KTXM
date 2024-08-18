@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import TrailingCursor from './AnimCursor/TrailingCursor';
 import './App.css';
 import Home from './Home/Home';
 import Layout from './Layout/Layout';
-
+import Auth from './LoginAndRegister/Auth/Auth';
+import Login from './LoginAndRegister/Login/Login';
+import Notification from './Notification/Notification';
+import Profile from './Profile/Profile';
 import Setting from './Setting/Setting';
 import Statistical from './Statistical/Statistical';
-import AnimCursor from './AnimCursor/AnimCursor';
-import GlowingCursor from './AnimCursor/GlowingCursor';
-import TrailingCursor from './AnimCursor/TrailingCursor';
-import Login from './LoginAndRegister/Login/Login';
-import Profile from './Profile/Profile';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -25,6 +24,7 @@ const App = () => {
 
   return (
     <div>
+      {/* Uncomment the cursor components as needed */}
       {/* <AnimCursor /> */}
       {/* <GlowingCursor /> */}
       <TrailingCursor />
@@ -35,10 +35,11 @@ const App = () => {
           <Route path="/home" element={isLoggedIn ? <Layout onLogout={handleLogout}><Home /></Layout> : <Navigate to="/" />} />
           <Route path="/statistical" element={isLoggedIn ? <Layout onLogout={handleLogout}><Statistical /></Layout> : <Navigate to="/" />} />
           <Route path="/profile" element={isLoggedIn ? <Layout onLogout={handleLogout}><Profile /></Layout> : <Navigate to="/" />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/notification" element={isLoggedIn ? <Layout onLogout={handleLogout}><Notification /></Layout> : <Navigate to="/" />} />
         </Routes>
       </Router>
     </div>
-
   );
 };
 

@@ -27,14 +27,14 @@ const ParticlesComponent = (props) => {
             fpsLimit: 120,
             interactivity: {
                 events: {
-                    onClick: {
-                        enable: true,
-                        mode: "push",
-                    },
-                    onHover: {
-                        enable: true,
-                        mode: 'grab',
-                    },
+                    // onClick: {
+                    //     enable: true,
+                    //     mode: "push",
+                    // },
+                    // onHover: {
+                    //     enable: true,
+                    //     mode: 'grab',
+                    // },
                 },
                 modes: {
                     push: {

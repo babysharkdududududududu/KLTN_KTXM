@@ -18,7 +18,7 @@ export class AuthController {
   @ResponseMessage("Fetch login")
   handleLogin(@Request() req) {
     return this.authService.login(req.user);
-  }
+  } 
 
   @Post('register')
   @Public()
@@ -43,8 +43,6 @@ export class AuthController {
   retryPassword(@Body("email") email: string) {
     return this.authService.retryPassword(email);
   }
-
-
 
   @Post('change-password')
   @Public()
