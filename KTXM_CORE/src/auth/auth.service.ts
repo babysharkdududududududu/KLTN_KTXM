@@ -13,7 +13,7 @@ export class AuthService {
 
 
   async validateUser(username: string, pass: string): Promise<any> {
-    const user = await this.usersService.findByEmail(username);
+    const user = await this.usersService.findByUserId(username);
     if (!user) return null;
 
     const isValidPassword = await comparePasswordHelper(pass, user.password);
@@ -22,10 +22,10 @@ export class AuthService {
   }
 
   async login(user: any) {
-    const payload = { username: user.email, sub: user._id };
+    const payload = { username: user.userId, sub: user._id };
     return {
       user: {
-        email: user.email,
+        userId: user.userId,
         _id: user._id,
         name: user.name
       },
