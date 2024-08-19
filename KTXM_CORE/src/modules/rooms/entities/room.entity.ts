@@ -11,6 +11,11 @@ export class Equipment {
     quantity: number;
 }
 
+export enum Block {
+    G = 'G',
+    I = 'I',
+}
+
 @Schema({ timestamps: true })
 export class Room {
     @Prop({ index: true })
@@ -22,34 +27,31 @@ export class Room {
     @Prop()
     floor: number;
 
-    @Prop()
-    capacity: number;
-
-    @Prop()
-    availableSpot: number;
-
-    @Prop()
-    occupied: boolean;
-
-    @Prop()
-    price: number;
-
     @Prop({ type: [Equipment] })
     equipment: Equipment[];
 
     @Prop()
-    type: string;
+    type: string; 
 
-    @Prop()
-    gender: string;
+    @Prop({index: true})
+    block: Block;
+    
+    @Prop({ default: 0 })
+    capacity: number;
 
-    @Prop({ index: true })
-    block: string;
+    @Prop({ default: 0 })
+    availableSpot: number;
 
-    @Prop()
+    @Prop({ default: false })
+    occupied: boolean;
+
+    @Prop({ default: 0 })
+    price: number;
+
+    @Prop( {default: 0})
     waterNumber: number;
 
-    @Prop()
+    @Prop({default: 0})
     electricityNumber: number;
 }
 
