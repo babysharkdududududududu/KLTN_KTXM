@@ -23,18 +23,21 @@ export class RoomsController {
     return this.roomsService.findAll(query, current, pageSize);
   }
 
-  @Get(':roomNumber') // Sửa ':id' thành ':roomNumber'
+  @Get(':roomNumber')
+  @Public()
   async findOne(@Param('roomNumber') roomNumber: string) {
-    return this.roomsService.findOne(roomNumber); // Gọi đúng phương thức findOne
+    return this.roomsService.findOne(roomNumber);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRoomDto: UpdateRoomDto) {
-    return this.roomsService.update(+id, updateRoomDto);
+  @Patch()
+  @Public()
+  update(@Body() updateRoomDto: UpdateRoomDto) {
+    return this.roomsService.update(updateRoomDto);
   }
 
   @Delete(':id')
+  @Public()
   remove(@Param('id') id: string) {
-    return this.roomsService.remove(+id);
+    return this.roomsService.remove(id);
   }
 }

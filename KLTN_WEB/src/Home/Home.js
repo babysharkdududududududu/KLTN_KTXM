@@ -12,7 +12,7 @@ const Home = () => {
         <div className={style['home-container']}>
             <h1>Chào mừng đến với trang chủ!</h1>
             <Button variant="contained" onClick={handleGoToRoom}>
-                Contained
+                GoRoom
             </Button>
         </div>
     );

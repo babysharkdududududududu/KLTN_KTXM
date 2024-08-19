@@ -114,7 +114,6 @@ export class UsersService {
     } else {
       throw new BadRequestException("Id không đúng định dạng mongodb")
     }
-
   }
 
   async handleRegister(registerDto: CreateAuthDto) {
