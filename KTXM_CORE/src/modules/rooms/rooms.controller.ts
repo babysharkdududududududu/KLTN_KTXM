@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -8,19 +8,24 @@ export class RoomsController {
   constructor(private readonly roomsService: RoomsService) {}
 
   @Post()
+  @Public()
   create(@Body() createRoomDto: CreateRoomDto) {
     return this.roomsService.create(createRoomDto);
   }
 
   @Get()
   @Public()
-  findAll() {
-    return this.roomsService.findAll();
+  async findAll(
+    @Query('query') query: string, 
+    @Query('current') current: number,
+    @Query('pageSize') pageSize: number
+  ) {
+    return this.roomsService.findAll(query, current, pageSize);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roomsService.findOne(+id);
+  @Get(':roomNumber') // Sửa ':id' thành ':roomNumber'
+  async findOne(@Param('roomNumber') roomNumber: string) {
+    return this.roomsService.findOne(roomNumber); // Gọi đúng phương thức findOne
   }
 
   @Patch(':id')

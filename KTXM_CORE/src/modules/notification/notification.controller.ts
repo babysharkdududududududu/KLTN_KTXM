@@ -34,8 +34,16 @@ export class NotificationController {
     return this.notificationService.update(+id, updateNotificationDto);
   }
 
-  @Delete(':id')
+  // @Delete('delete/:id')
+  // @Public()
+
+  // remove(@Param('id') id: string) {
+  //   return this.notificationService.remove(+id);
+  // }
+  @Delete('delete/:id')
+  @Public()
   remove(@Param('id') id: string) {
-    return this.notificationService.remove(+id);
+    return this.notificationService.remove(id);
   }
+
 }

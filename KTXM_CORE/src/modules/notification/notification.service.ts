@@ -63,7 +63,20 @@ export class NotificationService {
     return `This action updates a #${id} notification`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} notification`;
+  async remove(id: string) {
+    const result = await this.notificationModel.findByIdAndDelete(id);
+    if (!result) {
+      return {
+        statusCode: 404,
+        message: "Notification not found",
+      };
+    }
+    return {
+      statusCode: 200,
+      message: "Notification successfully deleted",
+      data: result,
+    };
   }
+
+
 }

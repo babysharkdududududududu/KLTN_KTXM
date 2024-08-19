@@ -1,8 +1,10 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import HouseIcon from '@mui/icons-material/House';
+import InsertChartOutlinedRoundedIcon from '@mui/icons-material/InsertChartOutlinedRounded';
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -21,10 +23,7 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import "./MainMenu.css";
 import avt from "./asset/avt.jpg";
-import BarChartIcon from '@mui/icons-material/BarChart';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-
+import logo from "./asset/iuh.png";
 const MainMenu = ({ onLogout }) => {
   const [menuItem1, setMenuItem1] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -67,43 +66,50 @@ const MainMenu = ({ onLogout }) => {
   return (
     <div>
       <div className={`main-menu-container ${menuOpen ? 'open' : 'closed'}`}>
-        <div className="menu-bulge" onClick={toggleMenu}>
+        {/* <div className="menu-bulge" onClick={toggleMenu}>
           <IconButton>
             {menuOpen ? <ChevronLeftIcon className="menu-toggle-icon" /> : <ChevronRightIcon className="menu-toggle-icon" />}
           </IconButton>
-        </div>
+        </div> */}
         {menuOpen && (
           <div className="menu-content">
-            <Tooltip title="User">
-              <IconButton onClick={handleOpenMenu1}>
-                <AccountCircleIcon className="menu-icon" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Home">
+            <img src={logo} alt="User Avatar" className="logo-iuh" />
+            <div className='action-management'>
+            <Tooltip title="Trang chủ">
               <IconButton onClick={() => navigate('/')}>
-                <HouseIcon className="menu-icon" />
+                <HomeOutlinedIcon className="menu-icon" />
               </IconButton>
             </Tooltip>
+            <div className='border-line' />
             <Tooltip title="Thống kê">
               <IconButton onClick={() => navigate('/statistical')}>
-                <BarChartIcon className="menu-icon" />
+                <InsertChartOutlinedRoundedIcon className="menu-icon" />
               </IconButton>
             </Tooltip>
+            <div className='border-line' />
             <Tooltip title="Thông báo">
               <IconButton onClick={() => navigate('/notification')}>
-                <NotificationsIcon className="menu-icon" />
+                <NotificationsOutlinedIcon className="menu-icon" />
               </IconButton>
             </Tooltip>
-            <Tooltip title="Cài đặt">
-              <IconButton onClick={handleGoToSetting}>
-                <SettingsIcon className="menu-icon" />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Đăng xuất" onClick={handleLogout}>
+            </div>
+            <div className='action-of-user'>
+              <Tooltip title="Cài đặt">
+                <IconButton onClick={handleGoToSetting}>
+                  <SettingsOutlinedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
+              {/* <Tooltip title="Đăng xuất" onClick={handleLogout}>
               <IconButton>
                 <ExitToAppIcon className="menu-icon" />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
+              <Tooltip title="User">
+                <IconButton onClick={handleOpenMenu1}>
+                  <AccountCircleIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
+            </div>
           </div>
         )}
 
