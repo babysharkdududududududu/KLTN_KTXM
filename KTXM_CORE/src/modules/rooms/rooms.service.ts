@@ -3,7 +3,7 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import aqp from 'api-query-params';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { Room } from './entities/room.entity';
 @Injectable()
 export class RoomsService {
@@ -18,6 +18,7 @@ export class RoomsService {
     if (room) return true;
     return false;
   }
+
 
   async create(createRoomDto: CreateRoomDto) {
     const { roomNumber, description, floor, type, block } = createRoomDto;
@@ -68,11 +69,48 @@ export class RoomsService {
     return this.roomModel.findOne({ roomNumber });
   }
 
-  update(id: number, updateRoomDto: UpdateRoomDto) {
-    return `This action updates a #${id} room`;
-  }
+  async update(updateRoomDto: UpdateRoomDto) {
+    const room = await this.roomModel.findById(updateRoomDto._id);
 
-  remove(id: number) {
-    return `This action removes a #${id} room`;
+    if (!room) {
+        throw new Error("Phòng không tồn tại");
+    }
+    if (updateRoomDto.description) {
+        room.description = updateRoomDto.description;
+    }
+    if (updateRoomDto.type) {
+        room.type = updateRoomDto.type;
+    }
+    if (updateRoomDto.price) {
+        room.price = updateRoomDto.price;
+    }
+    if (updateRoomDto.waterNumber) {
+        room.waterNumber = updateRoomDto.waterNumber;
+    }
+    if (updateRoomDto.electricityNumber) {
+        room.electricityNumber = updateRoomDto.electricityNumber;
+    }
+    if (updateRoomDto.equipment) {
+        room.equipment = updateRoomDto.equipment;
+        const beds = room.equipment.find(e => e.name === 'bed');
+        room.capacity = beds ? beds.quantity * 2 : 0;
+        room.availableSpot = beds ? beds.quantity * 2 : 0;
+    }
+
+    if (room.capacity - room.availableSpot === room.capacity) {
+        room.occupied = true;
+    } else {
+        room.occupied = false;
+    }
+    return await room.save();
+}
+
+
+async remove(_id: string) {
+  if (mongoose.isValidObjectId(_id)) {
+    return this.roomModel.deleteOne({ _id })
+  } else {
+    throw new BadRequestException("Id không đúng định dạng mongodb")
   }
+}
 }
