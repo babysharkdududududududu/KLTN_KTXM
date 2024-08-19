@@ -9,5 +9,6 @@ export const registerRoute = `${host}/auth/register`;
 //Notification
 export const getNotificationRoute = `${host}/notification/get-all`;
 export const createNotificationRoute = `${host}/notification/create`;
+export const deleteNotificationRoute = `${host}/notification/delete`;
 
 
