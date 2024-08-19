@@ -1,82 +1,118 @@
 .main-menu-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    position: fixed;
-    left: 0;
-    top: 0;
-    height: 100vh;
-    width: 80px;
-    background-color: #1976d2;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
-    transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 97vh;
+  width: 80px;
+  background-color: #fff;
+  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+  transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  margin: 8px;
+  border-radius: 20px;
 }
 
 .main-menu-container.open {
-    width: 80px; 
-    opacity: 1;  /* Hiển thị menu khi mở */
+  width: 80px;
+  opacity: 1;
+  /* Hiển thị menu khi mở */
 }
 
 .menu-bulge {
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    width: 20px;
-    height: 80px;
-    background-color: #1976d2;
-    border-radius: 0 30px 30px 0;
-    transform: translateY(-50%);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1; /* Đảm bảo nút này luôn nằm trên cùng */
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 20px;
+  height: 80px;
+  background-color: #fff;
+  border-radius: 0 30px 30px 0;
+  transform: translateY(-50%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  /* Đảm bảo nút này luôn nằm trên cùng */
 }
 
 .menu-toggle-icon {
-  color: white;
-  font-size: 34px !important; /* Tăng kích thước của icon */
+  color: #090c1e;
+  font-size: 34px !important;
+  /* Tăng kích thước của icon */
 }
 
-
 .menu-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    gap: 30px;
-    margin-top: 20px; /* Khoảng cách phía trên cùng */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  gap: 20px;
+  margin-top: 20px;
+  /* Khoảng cách phía trên cùng */
 }
 
 .menu-icon {
-    font-size: 50px !important;
-    color: white;
-    transition: transform 0.2s;
+  font-size: 30px !important;
+  color: #090c1e;
+  transition: transform 0.2s;
 }
 
 .menu-icon:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 .main-menu-container.closed {
-    width: 0px; /* Thu nhỏ kích thước menu khi đóng */
+  width: 0px;
+  /* Thu nhỏ kích thước menu khi đóng */
 }
 
 .basic-menu {
-    margin-left: 50px;
-    margin-top: -20px;
+  margin-left: 50px;
+  margin-top: -20px;
 }
 
 .home {
-    width: calc(100% - 10px); /* Chiếm toàn bộ chiều rộng còn lại */
-    background-color: aquamarine;
-    margin-left: 80px; /* Để tránh bị che khuất bởi menu */
-    padding: 20px; /* Thêm padding để nội dung không chạm vào viền */
-    height: 100vh;
+  width: calc(100% - 10px);
+  /* Chiếm toàn bộ chiều rộng còn lại */
+  background-color: aquamarine;
+  margin-left: 80px;
+  /* Để tránh bị che khuất bởi menu */
+  padding: 20px;
+  /* Thêm padding để nội dung không chạm vào viền */
+  height: 100vh;
 }
 
+.logo-iuh {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.border-line {
+  border-bottom: 1px solid #000;
+  width: 30%;
+  height: 0;
+}
+
+.action-of-user {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.action-management {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
 
 /* .main-menu-container {
     display: flex;
@@ -85,8 +121,8 @@
     justify-content: space-between;
     padding: 20px 0;
   } */
-  
-  /* .menu-section-top,
+
+/* .menu-section-top,
   .menu-section-middle,
   .menu-section-bottom {
     display: flex;
@@ -108,9 +144,8 @@
     align-items: center;
     gap: 30px; 
   } */
-  
+
 /*   
   .menu-section-bottom {
     margin-top: auto;
   } */
-  

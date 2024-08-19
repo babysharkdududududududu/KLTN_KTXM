@@ -10,7 +10,7 @@ import Notification from './Notification/Notification';
 import Profile from './Profile/Profile';
 import Setting from './Setting/Setting';
 import Statistical from './Statistical/Statistical';
-
+import Room from './Rooms/Room';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -37,6 +37,7 @@ const App = () => {
           <Route path="/profile" element={isLoggedIn ? <Layout onLogout={handleLogout}><Profile /></Layout> : <Navigate to="/" />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/notification" element={isLoggedIn ? <Layout onLogout={handleLogout}><Notification /></Layout> : <Navigate to="/" />} />
+          <Route path="/room" element={isLoggedIn ? <Layout onLogout={handleLogout}><Room /></Layout> : <Navigate to="/" />} />
         </Routes>
       </Router>
     </div>
