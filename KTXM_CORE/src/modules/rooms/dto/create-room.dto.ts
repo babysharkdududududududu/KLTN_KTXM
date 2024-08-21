@@ -15,4 +15,10 @@ export class CreateRoomDto {
 
     @IsNotEmpty({ message: 'block không được để trống' })
     block: string;
+
+    @IsOptional()
+    equipment: {
+        name: string;
+        quantity: number;
+    }[];
 }

@@ -3,7 +3,7 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import InsertChartOutlinedRoundedIcon from '@mui/icons-material/InsertChartOutlinedRounded';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import SettingsIcon from '@mui/icons-material/Settings';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -30,6 +30,10 @@ const MainMenu = ({ onLogout }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const navigate = useNavigate();
+
+  const handleGoToRoom = () => {
+    navigate('/room');
+};
 
   const handleGoToSetting = () => {
     navigate('/settings');
@@ -90,6 +94,12 @@ const MainMenu = ({ onLogout }) => {
             <Tooltip title="Thông báo">
               <IconButton onClick={() => navigate('/notification')}>
                 <NotificationsOutlinedIcon className="menu-icon" />
+              </IconButton>
+            </Tooltip>
+            <div className='border-line' />
+            <Tooltip title="Phòng">
+              <IconButton onClick={handleGoToRoom}>
+                <BusinessOutlinedIcon className="menu-icon" />
               </IconButton>
             </Tooltip>
             </div>
