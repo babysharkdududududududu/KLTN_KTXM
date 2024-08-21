@@ -18,11 +18,20 @@ export class UpdateRoomDto {
     }[];
 
     @IsOptional()
-    price : number;
+    price: number;
 
     @IsOptional()
     waterNumber: number;
 
     @IsOptional()
     electricityNumber: number;
+
+    @IsOptional()
+    status: number;
+
+    @IsOptional()
+    availableSpot: number;
+
+    @IsOptional()
+    capacity: number;
 }

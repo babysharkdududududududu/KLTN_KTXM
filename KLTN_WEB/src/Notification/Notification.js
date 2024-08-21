@@ -120,15 +120,6 @@ const Notification = () => {
                                         </div>
                                     </Box>
 
-
-
-
-
-
-
-
-
-
                                     <Box sx={{ flexGrow: 1 }}>
                                         <Typography variant="h6" component="h3" gutterBottom>{notification.title}</Typography>
                                         <Typography variant="body2" color="text.secondary" gutterBottom>{notification.message.slice(0, 50)}...</Typography>

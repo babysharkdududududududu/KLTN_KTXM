@@ -31,11 +31,11 @@ export class Room {
     equipment: Equipment[];
 
     @Prop()
-    type: string; 
+    type: string;
 
-    @Prop({index: true})
+    @Prop({ index: true })
     block: Block;
-    
+
     @Prop({ default: 0 })
     capacity: number;
 
@@ -48,11 +48,14 @@ export class Room {
     @Prop({ default: 0 })
     price: number;
 
-    @Prop( {default: 0})
+    @Prop({ default: 0 })
     waterNumber: number;
 
-    @Prop({default: 0})
+    @Prop({ default: 0 })
     electricityNumber: number;
+
+    @Prop({ default: 0 })
+    status: number;
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);
