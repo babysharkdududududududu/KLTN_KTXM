@@ -95,7 +95,7 @@ export class RoomsService {
     }
     if (updateRoomDto.equipment) {
       room.equipment = updateRoomDto.equipment;
-      const beds = room.equipment.find(e => e.name === 'bed');
+      const beds = room.equipment.find(e => e.name === 'Giường');
       room.capacity = beds ? beds.quantity * 2 : 0;
       room.availableSpot = beds ? beds.quantity * 2 : 0;
     }
