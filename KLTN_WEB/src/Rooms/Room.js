@@ -29,6 +29,9 @@ const Room = () => {
                     <TableData filterBlock={filterBlock} />
                 </div>
                 <div style={{ display: 'flex', flexDirection: "column", justifyContent: 'space-around', alignItems: 'center', height: "100%" }}>
+                    <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('')}>
+                        <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
+                    </DemoPaper>
                     <DemoPaper square={false} sx={{ backgroundColor: "#eae9e3" }} onClick={() => handleBlockClick('G')}>
                         <img src={BLOCKG} alt="BLOCKG" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
