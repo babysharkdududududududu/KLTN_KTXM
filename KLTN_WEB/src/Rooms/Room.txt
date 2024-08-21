@@ -1,0 +1,127 @@
+import AddIcon from '@mui/icons-material/Add';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
+import BLOCKG from "./assets/BLOCK_G.png";
+import BLOCKI from "./assets/BLOCK_I.png";
+import style from './Room.module.css';
+import TableData from './TableData';
+
+const DemoPaper = styled(Paper)(({ theme }) => ({
+    width: 150,
+    height: 150,
+    padding: theme.spacing(2),
+    ...theme.typography.body2,
+    textAlign: 'center',
+}));
+
+const Room = () => {
+    const [visibleModal, setVisibleModal] = useState(false);
+    const [block, setBlock] = useState('');
+    const [floors, setFloors] = useState([]);
+    const [type, setType] = useState('');
+    const [selectedFloor, setSelectedFloor] = useState('');
+    const [rooms, setRooms] = useState([]);
+
+    const handleOpenModal = () => setVisibleModal(true);
+
+    const handleCloseModal = () => {
+        setVisibleModal(false);
+        setBlock('');
+        setFloors([]);
+        setSelectedFloor('');
+        setRooms([]);
+    };
+
+    const handleBlockChange = (e) => {
+        const selectedBlock = e.target.value;
+        setBlock(selectedBlock);
+
+        const floorCount = selectedBlock === 'G' ? 13 : 9;
+        const availableFloors = Array.from({ length: floorCount }, (_, i) => i + 1);
+        setFloors(availableFloors);
+        setSelectedFloor('');
+        setRooms([]);
+    };
+
+    const handleFloorChange = (e) => {
+        const floor = e.target.value;
+        setSelectedFloor(floor);
+
+        const roomNumbers = Array.from({ length: 10 }, (_, i) => `${block}${floor}.${i + 1}`);
+        setRooms(roomNumbers);
+    };
+
+    return (
+        <div className={style['room-container']}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", height: "100%" }}>
+                <div style={{ width: '70%', height: '98vh', paddingTop: '10px' }}>
+                    <TableData />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: "column", justifyContent: 'flex-end', alignItems: 'center', height: "100%" }}>
+                    <DemoPaper square={false} sx={{ backgroundColor: "#eae9e3" }}>
+                        <img src={BLOCKG} alt="BLOCKG" style={{ width: '140px', height: '140px' }} />
+                    </DemoPaper>
+                    <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }}>
+                        <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
+                    </DemoPaper>
+                </div>
+                <div>
+                    <IconButton onClick={handleOpenModal} color="primary" sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', borderRadius: '50%', backgroundColor: '#1976d2', }}>
+                        <AddIcon sx={{ color: "white", fontSize: 30, fontWeight: 'bold' }} />
+                    </IconButton>
+                </div>
+
+                <Dialog open={visibleModal} onClose={handleCloseModal} sx={{ '& .MuiDialog-paper': { borderRadius: '16px' } }}>
+                    <DialogTitle>Thêm Thông Báo Mới</DialogTitle>
+                    <DialogContent>
+                        <FormControl fullWidth margin="dense">
+                            <InputLabel>Block</InputLabel>
+                            <Select name="block" value={block} onChange={handleBlockChange} variant="outlined">
+                                <MenuItem value="G">G</MenuItem>
+                                <MenuItem value="I">I</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth margin="dense" disabled={!block}>
+                            <InputLabel>Floor</InputLabel>
+                            <Select name="floor" value={selectedFloor} onChange={handleFloorChange} variant="outlined">
+                                {floors.map((floor) => (
+                                    <MenuItem key={floor} value={floor}>
+                                        {floor}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth margin="dense" disabled={!selectedFloor}>
+                            <InputLabel>Số phòng</InputLabel>
+                            <Select name="room" variant="outlined">
+                                {rooms.map((room) => (
+                                    <MenuItem key={room} value={room}>
+                                        {room}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth margin="dense">
+                            <InputLabel>Type</InputLabel>
+                            <Select name="type" value={type} variant="outlined" onChange={e => setType(e.target.value)}>
+                                <MenuItem value="Normal">Normal</MenuItem>
+                                <MenuItem value="Customer">Customer</MenuItem>
+                                <MenuItem value="VIP">VIP</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <TextField margin="dense" name="title" label="Tiêu đề" type="text" fullWidth variant="outlined" />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseModal}>Hủy</Button>
+                        <Button>Lưu</Button>
+                    </DialogActions>
+                </Dialog>
+            </div>
+        </div>
+    );
+};
+
+export default Room;

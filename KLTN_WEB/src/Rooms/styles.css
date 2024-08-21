@@ -1,0 +1,14 @@
+.maintenance-row {
+    background-color: red;
+    text-decoration: line-through;
+}
+
+.MuiDataGrid-columnHeader {
+    color: black; /* Màu chữ cho header */
+    font-weight: bold; /* Đậm chữ */
+}
+
+.MuiDataGrid-columnHeaderTitle {
+    font-size: 18px; /* Tăng kích thước chữ lên 18px */
+    font-weight: bold; /* Đậm chữ */
+}

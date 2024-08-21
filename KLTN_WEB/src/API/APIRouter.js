@@ -11,4 +11,10 @@ export const getNotificationRoute = `${host}/notification/get-all`;
 export const createNotificationRoute = `${host}/notification/create`;
 export const deleteNotificationRoute = `${host}/notification/delete`;
 
+//Room
+export const getRoomRoute = `${host}/rooms`;
+export const createRoomRoute = `${host}/rooms/`;
+export const getRoomByIdRoute = `${host}/rooms/`;
+export const updateRoomRoute = `${host}/rooms/`;
+
 

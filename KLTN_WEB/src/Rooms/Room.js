@@ -20,7 +20,7 @@ const Room = () => {
     return (
         <div className={style['room-container']}>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", height: "100%" }}>
-                <div style={{width: '60%', height: '98vh', paddingTop: '10px'}}>
+                <div style={{ width: '80%', height: '98vh', paddingTop: '10px' }}>
                     <TableData />
                 </div>
                 <div style={{ display: 'flex', flexDirection: "column", justifyContent: 'flex-end', alignItems: 'center', height: "100%" }}>
