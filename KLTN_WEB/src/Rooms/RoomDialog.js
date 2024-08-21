@@ -87,6 +87,7 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
                                             <MenuItem value="Quạt">Quạt</MenuItem>
                                             <MenuItem value="Đèn">Đèn</MenuItem>
                                             <MenuItem value="Bàn">Bàn</MenuItem>
+                                            <MenuItem value="Giường">Giường</MenuItem>
                                         </Select>
                                     </FormControl>
                                 </Grid>

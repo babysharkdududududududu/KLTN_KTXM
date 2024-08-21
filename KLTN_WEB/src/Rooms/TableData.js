@@ -3,7 +3,9 @@ import { DataGrid } from '@mui/x-data-grid';
 import { getRoomRoute, getRoomByIdRoute, updateRoomRoute } from '../API/APIRouter';
 import axios from 'axios';
 import RoomDialog from './RoomDialog';
-import './styles.css'; // Đảm bảo bạn đã import CSS ở đây
+import { CheckCircle, Warning } from '@mui/icons-material'; // Import biểu tượng
+
+import './styles.css';
 
 const columns = [
   { field: 'roomNumber', headerName: 'Tên phòng', width: 120 },
@@ -13,10 +15,25 @@ const columns = [
   { field: 'availableSpot', headerName: 'Số chỗ trống', type: 'number', width: 130 },
   { field: 'description', headerName: 'Mô tả', width: 250 },
   { field: 'type', headerName: 'Loại phòng', width: 120 },
-  { field: 'status', headerName: 'Trạng thái', width: 120 },
+  {
+    field: 'status', headerName: 'Trạng thái', width: 120,
+    renderCell: (params) => (
+      params.value === 'Bảo trì' ? (
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          <Warning style={{ color: 'red', marginRight: 4 }} />
+          Bảo trì
+        </span>
+      ) : (
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          <CheckCircle style={{ color: 'green', marginRight: 4 }} />
+          Hoạt động
+        </span>
+      )
+    ),
+  },
 ];
 
-const TableData = () => {
+const TableData = ({ filterBlock }) => {
   const [listRooms, setListRooms] = React.useState([]);
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedRoom, setSelectedRoom] = React.useState(null);
@@ -25,7 +42,8 @@ const TableData = () => {
   const fetchRooms = async () => {
     try {
       const { data } = await axios.get(getRoomRoute);
-      setListRooms(data.data.results);
+      const filteredRooms = filterBlock ? data.data.results.filter(room => room.block === filterBlock) : data.data.results;
+      setListRooms(filteredRooms);
     } catch (err) {
       console.error("Error fetching rooms:", err);
     }
@@ -33,7 +51,7 @@ const TableData = () => {
 
   React.useEffect(() => {
     fetchRooms();
-  }, []);
+  }, [filterBlock]);
 
   const getRoomById = async (id) => {
     try {
@@ -128,9 +146,6 @@ const TableData = () => {
         columns={columns}
         pageSizeOptions={[5, 10]}
         onCellClick={handleCellClick}
-        getRowClassName={(params) =>
-          params.row.status === 'Bảo trì' ? 'maintenance-row' : '' // Kiểm tra trạng thái và áp dụng lớp
-        }
       />
 
       <RoomDialog
