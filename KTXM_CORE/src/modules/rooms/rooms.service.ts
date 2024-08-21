@@ -11,7 +11,7 @@ export class RoomsService {
   constructor(
     @InjectModel(Room.name)
     private roomModel: Model<Room>
-  ){}
+  ) { }
 
   checkRoomExist = async (roomNumber: string) => {
     const room = await this.roomModel.exists({ roomNumber });
@@ -73,44 +73,46 @@ export class RoomsService {
     const room = await this.roomModel.findById(updateRoomDto._id);
 
     if (!room) {
-        throw new Error("Phòng không tồn tại");
+      throw new Error("Phòng không tồn tại");
     }
     if (updateRoomDto.description) {
-        room.description = updateRoomDto.description;
+      room.description = updateRoomDto.description;
     }
     if (updateRoomDto.type) {
-        room.type = updateRoomDto.type;
+      room.type = updateRoomDto.type;
     }
     if (updateRoomDto.price) {
-        room.price = updateRoomDto.price;
+      room.price = updateRoomDto.price;
     }
     if (updateRoomDto.waterNumber) {
-        room.waterNumber = updateRoomDto.waterNumber;
+      room.waterNumber = updateRoomDto.waterNumber;
     }
     if (updateRoomDto.electricityNumber) {
-        room.electricityNumber = updateRoomDto.electricityNumber;
+      room.electricityNumber = updateRoomDto.electricityNumber;
+    }
+    if (updateRoomDto.status !== null && updateRoomDto.status !== undefined) {
+      room.status = updateRoomDto.status;
     }
     if (updateRoomDto.equipment) {
-        room.equipment = updateRoomDto.equipment;
-        const beds = room.equipment.find(e => e.name === 'bed');
-        room.capacity = beds ? beds.quantity * 2 : 0;
-        room.availableSpot = beds ? beds.quantity * 2 : 0;
+      room.equipment = updateRoomDto.equipment;
+      const beds = room.equipment.find(e => e.name === 'bed');
+      room.capacity = beds ? beds.quantity * 2 : 0;
+      room.availableSpot = beds ? beds.quantity * 2 : 0;
     }
-
     if (room.capacity - room.availableSpot === room.capacity) {
-        room.occupied = true;
+      room.occupied = true;
     } else {
-        room.occupied = false;
+      room.occupied = false;
     }
     return await room.save();
-}
-
-
-async remove(_id: string) {
-  if (mongoose.isValidObjectId(_id)) {
-    return this.roomModel.deleteOne({ _id })
-  } else {
-    throw new BadRequestException("Id không đúng định dạng mongodb")
   }
-}
+
+
+  async remove(_id: string) {
+    if (mongoose.isValidObjectId(_id)) {
+      return this.roomModel.deleteOne({ _id })
+    } else {
+      throw new BadRequestException("Id không đúng định dạng mongodb")
+    }
+  }
 }
