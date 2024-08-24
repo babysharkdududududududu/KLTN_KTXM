@@ -39,7 +39,8 @@ const TableData = ({ filterBlock }) => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 0 });
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(10); // Fixed page size of 10
+
   const fetchRooms = async () => {
     try {
       const { data } = await axios.get(getRoomRoute, { params: { all: true } });
@@ -94,6 +95,7 @@ const TableData = ({ filterBlock }) => {
     status: room.status,
     availableSpot: room.availableSpot,
     equipment: room.equipment,
+    status: room.status === 0 ? '0' : '1'
   });
 
   const handleSave = async () => {
@@ -149,7 +151,7 @@ const TableData = ({ filterBlock }) => {
     availableSpot: room.availableSpot,
     description: room.description || 'N/A',
     type: room.type || 'N/A',
-    status: room.status === 0 ? 'Hoạt động' : 'Bảo trì',
+    status: room.status === 1 ? 'Bảo trì' : 'Hoạt động',
   }));
 
   // Tính tổng số trang
@@ -159,25 +161,26 @@ const TableData = ({ filterBlock }) => {
 
 
   return (
-    <div style={{ height: '98%', width: '100%', backgroundColor: "#fff" }}>
+    <div style={{ height: '81%', width: '100%', backgroundColor: "#fff" }}>
       <DataGrid
-        rows={paginatedRooms}
+        rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
         columns={columns}
-        pageSizeOptions={[5, 10]}
+        pageSize={pageSize}
         pagination
         paginationMode="server"
         onPageChange={handlePageChange}
         rowCount={listRooms.length}
         page={currentPage - 1}
-        getRowId={(row) => row._id}
+        onCellClick={handleCellClick}
+        hideFooter
       />
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Trước</Button>
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', position: 'absolute', bottom: 10, left: '35%' }}>
+        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Trước</Button>
         <Typography variant="body2" style={{ margin: '0 16px' }}>
           Trang {currentPage} / {totalPages}
         </Typography>
-        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}> Sau</Button>
+        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
       </div>
 
       <RoomDialog

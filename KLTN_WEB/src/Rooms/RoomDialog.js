@@ -40,10 +40,10 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
                         </Grid>
 
                         <Grid item xs={6}>
-                            <TextField label="Sức chứa" name="capacity" type="number" value={selectedRoom.capacity} onChange={onChange} fullWidth margin="normal" />
+                            <TextField inputProps={{ readOnly: true }} label="Sức chứa" name="capacity" type="number" value={selectedRoom.capacity} onChange={onChange} fullWidth margin="normal" />
                         </Grid>
                         <Grid item xs={6}>
-                            <TextField label="Số chỗ trống" name="availableSpot" type="number" value={selectedRoom.availableSpot} onChange={onChange} fullWidth margin="normal" />
+                            <TextField inputProps={{ readOnly: true }} label="Số chỗ trống" name="availableSpot" type="number" value={selectedRoom.availableSpot} onChange={onChange} fullWidth margin="normal" />
                         </Grid>
 
                         <Grid item xs={12}>

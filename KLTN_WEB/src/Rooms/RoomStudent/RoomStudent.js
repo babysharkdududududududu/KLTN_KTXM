@@ -13,7 +13,7 @@ const TableData = ({ filterBlock }) => {
     const [selectedRoom, setSelectedRoom] = React.useState(null);
     const [newEquipment, setNewEquipment] = React.useState({ name: '', quantity: 0 });
     const [currentPage, setCurrentPage] = React.useState(1);
-    const roomsPerPage = 10;
+    const roomsPerPage = 12;
 
     const fetchRooms = async () => {
         try {
@@ -67,33 +67,34 @@ const TableData = ({ filterBlock }) => {
         status: room.status === 0 ? 'Hoạt động' : 'Bảo trì',
     }));
 
-    // Calculate the total number of pages
     const totalPages = Math.ceil(rows.length / roomsPerPage);
-
-    // Get current rooms for the current page
     const currentRooms = rows.slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage);
 
     return (
-        <div>
-            <Typography variant="h6" style={{ marginBottom: '16px' }}>
-                Tổng số phòng: {rows.length}
-            </Typography>
+        <div style={{ height: '81%', width: '100%', backgroundColor: "#fff" }}>
             <Grid container spacing={2} style={{ padding: '16px' }}>
                 {currentRooms.length > 0 ? (
                     currentRooms.map((room) => (
                         <Grid item xs={12} sm={6} md={3} key={room.id}>
                             <Card
                                 onClick={() => handleCardClick(room)}
-                                style={{ cursor: 'pointer', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', transition: 'transform 0.2s', marginBottom: '16px' }}
-                                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                                style={{
+                                    cursor: 'pointer',
+                                    borderRadius: '8px',
+                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                                    transition: 'transform 0.2s',
+                                    marginBottom: '10px',
+                                    height: '280px',
+                                    overflow: 'hidden',
+                                }}
                             >
                                 <CardHeader
                                     title={`Phòng ${room.roomNumber}`}
                                     subheader={`Tầng: ${room.floor}, Khối: ${room.block}`}
-                                    style={{ backgroundColor: '#e3f2fd', borderBottom: '1px solid #bbdefb' }}
+                                    style={{ backgroundColor: '#e3f2fd', borderBottom: '1px solid #bbdefb', height: '50px' }}
+
                                 />
-                                <CardContent>
+                                <CardContent style={{ overflow: 'auto', maxHeight: '200px' }}> {/* Giới hạn chiều cao cho nội dung */}
                                     <Grid container spacing={2}>
                                         <Grid item xs={6}>
                                             <Typography variant="body2"><strong>Sức chứa:</strong> {room.capacity}</Typography>
@@ -126,25 +127,12 @@ const TableData = ({ filterBlock }) => {
                     <Typography variant="body2" style={{ padding: '16px', textAlign: 'center', width: '100%' }}>Không có phòng nào trong khối này.</Typography>
                 )}
             </Grid>
-            {/* Pagination Controls */}
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-                <Button
-                    variant="contained"
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                >
-                    Trước
-                </Button>
+                <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Trước</Button>
                 <Typography variant="body2" style={{ margin: '0 16px' }}>
                     Trang {currentPage} / {totalPages}
                 </Typography>
-                <Button
-                    variant="contained"
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                >
-                    Sau
-                </Button>
+                <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
             </div>
             <RoomDialog
                 open={openDialog}

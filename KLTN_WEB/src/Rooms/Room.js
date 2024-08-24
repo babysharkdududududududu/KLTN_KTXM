@@ -28,7 +28,7 @@ const Room = () => {
 
     return (
         <div className={style['room-container']}>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", height: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", height: "100%", alignContent: 'center' }}>
                 {
                     userId === 'USERS' ?
                         <RoomStudent filterBlock={filterBlock} />
@@ -36,7 +36,7 @@ const Room = () => {
                             <TableData filterBlock={filterBlock} />
                         </div>
                 }
-                <div style={{ display: 'flex', flexDirection: "column", justifyContent: 'space-around', alignItems: 'center', height: "100%" }}>
+                <div style={{ display: 'flex', flexDirection: "column", justifyContent: 'space-around', alignItems: 'center', height: "100%", marginLeft: 100 }}>
                     <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('')}>
                         <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
