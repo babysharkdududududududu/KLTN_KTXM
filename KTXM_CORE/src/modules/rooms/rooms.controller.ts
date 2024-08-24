@@ -5,7 +5,7 @@ import { UpdateRoomDto } from './dto/update-room.dto';
 import { Public, ResponseMessage } from '@/decorator/customize';
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly roomsService: RoomsService) {}
+  constructor(private readonly roomsService: RoomsService) { }
 
   @Post()
   @Public()
@@ -15,13 +15,10 @@ export class RoomsController {
 
   @Get()
   @Public()
-  async findAll(
-    @Query('query') query: string, 
-    @Query('current') current: number,
-    @Query('pageSize') pageSize: number
-  ) {
-    return this.roomsService.findAll(query, current, pageSize);
+  async findAll() {
+    return this.roomsService.findAll();
   }
+
 
   @Get(':roomNumber')
   @Public()

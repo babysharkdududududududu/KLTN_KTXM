@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { getRoomRoute, getRoomByIdRoute, updateRoomRoute } from '../API/APIRouter';
 import axios from 'axios';
 import RoomDialog from './RoomDialog';
-import './styles.css'; // Đảm bảo bạn đã import CSS ở đây
+import { CheckCircle, Warning } from '@mui/icons-material'; // Import biểu tượng
+import './TableData.css';
+import { Button, Typography } from '@mui/material';
 
 const columns = [
   { field: 'roomNumber', headerName: 'Tên phòng', width: 120 },
@@ -13,27 +15,57 @@ const columns = [
   { field: 'availableSpot', headerName: 'Số chỗ trống', type: 'number', width: 130 },
   { field: 'description', headerName: 'Mô tả', width: 250 },
   { field: 'type', headerName: 'Loại phòng', width: 120 },
-  { field: 'status', headerName: 'Trạng thái', width: 120 },
+  {
+    field: 'status', headerName: 'Trạng thái', width: 120,
+    renderCell: (params) => (
+      params.value === 'Bảo trì' ? (
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          <Warning style={{ color: 'red', marginRight: 4 }} />
+          Bảo trì
+        </span>
+      ) : (
+        <span style={{ display: 'flex', alignItems: 'center' }}>
+          <CheckCircle style={{ color: 'green', marginRight: 4 }} />
+          Hoạt động
+        </span>
+      )
+    ),
+  },
 ];
 
-const TableData = () => {
-  const [listRooms, setListRooms] = React.useState([]);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedRoom, setSelectedRoom] = React.useState(null);
-  const [newEquipment, setNewEquipment] = React.useState({ name: '', quantity: 0 });
+const TableData = ({ filterBlock }) => {
+  const [listRooms, setListRooms] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 0 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10); // Fixed page size of 10
 
   const fetchRooms = async () => {
     try {
-      const { data } = await axios.get(getRoomRoute);
-      setListRooms(data.data.results);
+      const { data } = await axios.get(getRoomRoute, { params: { all: true } });
+      const filteredRooms = filterBlock ? data.data.results.filter(room => room.block === filterBlock) : data.data.results;
+      console.log("Filtered rooms:", filteredRooms);
+      setListRooms(filteredRooms);
     } catch (err) {
       console.error("Error fetching rooms:", err);
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchRooms();
   }, []);
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedRooms = listRooms.slice(startIndex, startIndex + pageSize);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  useEffect(() => {
+    fetchRooms();
+  }, [filterBlock]);
 
   const getRoomById = async (id) => {
     try {
@@ -63,6 +95,7 @@ const TableData = () => {
     status: room.status,
     availableSpot: room.availableSpot,
     equipment: room.equipment,
+    status: room.status === 0 ? '0' : '1'
   });
 
   const handleSave = async () => {
@@ -118,20 +151,41 @@ const TableData = () => {
     availableSpot: room.availableSpot,
     description: room.description || 'N/A',
     type: room.type || 'N/A',
-    status: room.status === 0 ? 'Hoạt động' : 'Bảo trì',
+    status: room.status === 1 ? 'Bảo trì' : 'Hoạt động',
   }));
 
+  // Tính tổng số trang
+  const roomsPerPage = 10;
+  const totalPages = Math.ceil(listRooms.length / pageSize);
+  const currentRooms = rows.slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage);
+
+
   return (
+<<<<<<< HEAD
     <div style={{ height: '60%', width: '100%', backgroundColor: "#fff" }}>
+=======
+    <div style={{ height: '81%', width: '100%', backgroundColor: "#fff" }}>
+>>>>>>> e11a223910a9c1a2b5879d8b2f6b8952c55b9e53
       <DataGrid
-        rows={rows}
+        rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
         columns={columns}
-        pageSizeOptions={[5, 10]}
+        pageSize={pageSize}
+        pagination
+        paginationMode="server"
+        onPageChange={handlePageChange}
+        rowCount={listRooms.length}
+        page={currentPage - 1}
         onCellClick={handleCellClick}
-        getRowClassName={(params) =>
-          params.row.status === 'Bảo trì' ? 'maintenance-row' : '' // Kiểm tra trạng thái và áp dụng lớp
-        }
+        hideFooter
       />
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', position: 'absolute', bottom: 10, left: '35%' }}>
+        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Trước</Button>
+        <Typography variant="body2" style={{ margin: '0 16px' }}>
+          Trang {currentPage} / {totalPages}
+        </Typography>
+        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
+      </div>
 
       <RoomDialog
         open={openDialog}

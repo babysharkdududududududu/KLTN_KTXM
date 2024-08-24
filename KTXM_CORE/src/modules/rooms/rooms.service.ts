@@ -34,36 +34,13 @@ export class RoomsService {
     }
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
-    const { filter, sort } = aqp(query);
-    if (filter.current) delete filter.current;
-    if (filter.pageSize) delete filter.pageSize;
-
-    if (!current) current = 1;
-    if (!pageSize) pageSize = 10;
-
-    const totalItems = await this.roomModel.countDocuments(filter);
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    const skip = (current - 1) * pageSize;
-
-    const results = await this.roomModel
-      .find(filter)
-      .limit(pageSize)
-      .skip(skip)
-      .select("-occupied -price -waterNumber -electricityNumber")
-      .sort(sort as any);
-
+  async findAll() {
+    const results = await this.roomModel.find().select("-occupied -price -waterNumber -electricityNumber");
     return {
-      meta: {
-        current: current, // Trang hiện tại
-        pageSize: pageSize, // Số lượng bản ghi đã lấy
-        pages: totalPages,  // Tổng số trang với điều kiện query
-        total: totalItems // Tổng số phần tử (số bản ghi)
-      },
-      results // Kết quả query
+      results
     };
   }
+
 
   findOne(roomNumber: string) {
     return this.roomModel.findOne({ roomNumber });
@@ -93,9 +70,13 @@ export class RoomsService {
     if (updateRoomDto.status !== null && updateRoomDto.status !== undefined) {
       room.status = updateRoomDto.status;
     }
+    if (updateRoomDto.availableSpot !== null && updateRoomDto.availableSpot !== undefined) {
+      room.availableSpot = updateRoomDto.availableSpot;
+    }
+
     if (updateRoomDto.equipment) {
       room.equipment = updateRoomDto.equipment;
-      const beds = room.equipment.find(e => e.name === 'bed');
+      const beds = room.equipment.find(e => e.name === 'Giường');
       room.capacity = beds ? beds.quantity * 2 : 0;
       room.availableSpot = beds ? beds.quantity * 2 : 0;
     }

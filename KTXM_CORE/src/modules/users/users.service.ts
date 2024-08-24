@@ -156,7 +156,7 @@ export class UsersService {
       return { isBeforeCheck };
     } else {
       throw new BadRequestException("Mã code không hợp lệ hoặc đã hết hạn")
-    } 
+    }
   }
 
   async retryActive(email: string) {
