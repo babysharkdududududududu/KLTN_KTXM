@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { getRoomRoute, getRoomByIdRoute, updateRoomRoute } from '../API/APIRouter';
 import axios from 'axios';
 import RoomDialog from './RoomDialog';
 import { CheckCircle, Warning } from '@mui/icons-material'; // Import biểu tượng
-
-import './styles.css';
+import './TableData.css';
+import { Button, Typography } from '@mui/material';
 
 const columns = [
   { field: 'roomNumber', headerName: 'Tên phòng', width: 120 },
@@ -34,22 +34,35 @@ const columns = [
 ];
 
 const TableData = ({ filterBlock }) => {
-  const [listRooms, setListRooms] = React.useState([]);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [selectedRoom, setSelectedRoom] = React.useState(null);
-  const [newEquipment, setNewEquipment] = React.useState({ name: '', quantity: 0 });
-
+  const [listRooms, setListRooms] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 0 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
   const fetchRooms = async () => {
     try {
-      const { data } = await axios.get(getRoomRoute);
+      const { data } = await axios.get(getRoomRoute, { params: { all: true } });
       const filteredRooms = filterBlock ? data.data.results.filter(room => room.block === filterBlock) : data.data.results;
+      console.log("Filtered rooms:", filteredRooms);
       setListRooms(filteredRooms);
     } catch (err) {
       console.error("Error fetching rooms:", err);
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    fetchRooms();
+  }, []);
+
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedRooms = listRooms.slice(startIndex, startIndex + pageSize);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  useEffect(() => {
     fetchRooms();
   }, [filterBlock]);
 
@@ -139,14 +152,33 @@ const TableData = ({ filterBlock }) => {
     status: room.status === 0 ? 'Hoạt động' : 'Bảo trì',
   }));
 
+  // Tính tổng số trang
+  const roomsPerPage = 10;
+  const totalPages = Math.ceil(listRooms.length / pageSize);
+  const currentRooms = rows.slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage);
+
+
   return (
     <div style={{ height: '98%', width: '100%', backgroundColor: "#fff" }}>
       <DataGrid
-        rows={rows}
+        rows={paginatedRooms}
         columns={columns}
         pageSizeOptions={[5, 10]}
-        onCellClick={handleCellClick}
+        pagination
+        paginationMode="server"
+        onPageChange={handlePageChange}
+        rowCount={listRooms.length}
+        page={currentPage - 1}
+        getRowId={(row) => row._id}
       />
+
+      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Trước</Button>
+        <Typography variant="body2" style={{ margin: '0 16px' }}>
+          Trang {currentPage} / {totalPages}
+        </Typography>
+        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}> Sau</Button>
+      </div>
 
       <RoomDialog
         open={openDialog}

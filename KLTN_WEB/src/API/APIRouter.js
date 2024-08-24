@@ -17,4 +17,7 @@ export const createRoomRoute = `${host}/rooms/`;
 export const getRoomByIdRoute = `${host}/rooms/`;
 export const updateRoomRoute = `${host}/rooms/`;
 
+//user
+export const getAllUserRoute = `${host}/users`;
+
 

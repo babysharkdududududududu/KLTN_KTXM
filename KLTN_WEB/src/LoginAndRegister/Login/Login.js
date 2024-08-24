@@ -9,6 +9,7 @@ import Register from '../Register/Register';
 import styles from './Login.module.css';
 import { loginRoute } from '../../API/APIRouter';
 import axios from 'axios';
+import { useUser } from '../../Context/Context'
 
 const Login = ({ onLoginSuccess }) => {
     const [error, setError] = useState('');
@@ -16,13 +17,13 @@ const Login = ({ onLoginSuccess }) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [visibleForgotPassword, setVisibleForgotPassword] = useState(false);
     const [visibleRegister, setVisibleRegister] = useState(false);
+    const { setUserId } = useUser();
 
     //API login 
     const handleLogin = async (event) => {
         event.preventDefault();
         const email = event.target.email.value;
         const password = event.target.password.value;
-
         setLoading(true);
         setError('');
 
@@ -33,6 +34,10 @@ const Login = ({ onLoginSuccess }) => {
             });
 
             console.log("Đăng nhập thành công", response.data);
+            const id = response.data.data.user.role;
+            console.log("Đăng nhập thành công", id);
+            setUserId(id);
+
             onLoginSuccess(); // Gọi hàm callback khi đăng nhập thành công
             setError('');
         } catch (error) {
@@ -42,6 +47,7 @@ const Login = ({ onLoginSuccess }) => {
             setLoading(false);
         }
     };
+
 
     //visible forgot password
     const handleForgotPassword = () => {
