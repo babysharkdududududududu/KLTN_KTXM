@@ -70,6 +70,10 @@ export class RoomsService {
     if (updateRoomDto.status !== null && updateRoomDto.status !== undefined) {
       room.status = updateRoomDto.status;
     }
+    if (updateRoomDto.availableSpot !== null && updateRoomDto.availableSpot !== undefined) {
+      room.availableSpot = updateRoomDto.availableSpot;
+    }
+
     if (updateRoomDto.equipment) {
       room.equipment = updateRoomDto.equipment;
       const beds = room.equipment.find(e => e.name === 'Giường');
