@@ -21,13 +21,13 @@ export class RoomsService {
 
 
   async create(createRoomDto: CreateRoomDto) {
-    const { roomNumber, description, floor, type, block } = createRoomDto;
+    const { roomNumber, description, floor, type, block, equipment } = createRoomDto;
     const isExist = await this.checkRoomExist(roomNumber);
     if (isExist) {
       throw new BadRequestException(`Phòng đã tồn tại: ${roomNumber}. Vui lòng sử dụng mã phòng khác.`);
     }
     const room = await this.roomModel.create({
-      roomNumber, description, floor, type, block
+      roomNumber, description, floor, type, block, equipment,
     });
     return {
       _id: room._id

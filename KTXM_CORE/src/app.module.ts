@@ -12,6 +12,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { TransformInterceptor } from '@/core/transform.interceptor';
 import { NotificationModule } from './modules/notification/notification.module';
+import { ContractsModule } from '@/modules/contracts/contracts.module';
+import { Contract } from './modules/contracts/entities/contract.entity';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     AuthModule,
     NotificationModule,
     RoomsModule,
+    ContractsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -56,6 +59,7 @@ import { NotificationModule } from './modules/notification/notification.module';
       inject: [ConfigService],
 
     }),
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [
