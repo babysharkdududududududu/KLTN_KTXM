@@ -12,6 +12,7 @@ import Setting from './Setting/Setting';
 import Statistical from './Statistical/Statistical';
 import Room from './Rooms/Room';
 import { UserProvider } from './Context/Context';
+import RoomInfo from './RoomInfo/RoomInfo';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -40,6 +41,7 @@ const App = () => {
             <Route path="/auth" element={<Auth />} />
             <Route path="/notification" element={isLoggedIn ? <Layout onLogout={handleLogout}><Notification /></Layout> : <Navigate to="/" />} />
             <Route path="/room" element={isLoggedIn ? <Layout onLogout={handleLogout}><Room /></Layout> : <Navigate to="/" />} />
+            <Route path="/room-info" element={isLoggedIn ? <Layout onLogout={handleLogout}><RoomInfo /></Layout> : <Navigate to="/" />} />
           </Routes>
         </Router>
       </UserProvider>

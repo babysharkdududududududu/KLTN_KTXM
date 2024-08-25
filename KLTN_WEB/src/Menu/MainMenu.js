@@ -24,12 +24,17 @@ import { useNavigate } from 'react-router-dom';
 import "./MainMenu.css";
 import avt from "./asset/avt.jpg";
 import logo from "./asset/iuh.png";
+import { useUser } from '../Context/Context';
+import axios from 'axios';
+import { getUserByIdRoute } from '../API/APIRouter';
 const MainMenu = ({ onLogout }) => {
   const [menuItem1, setMenuItem1] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
   const navigate = useNavigate();
+
+  const { userId } = useUser();
 
   const handleGoToSetting = () => {
     navigate('/settings');
@@ -63,6 +68,21 @@ const MainMenu = ({ onLogout }) => {
     setMenuOpen(!menuOpen);
   };
 
+  // API get user info
+  const [userName, setUserName] = useState('');
+  const getUserInfo = async () => {
+    try {
+      const rs = await axios.get(`${getUserByIdRoute}${userId}`);
+      setUserName(rs.data.data.name);
+      console.log(name);
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+
+  getUserInfo();
+
   return (
     <div>
       <div className={`main-menu-container ${menuOpen ? 'open' : 'closed'}`}>
@@ -75,23 +95,23 @@ const MainMenu = ({ onLogout }) => {
           <div className="menu-content">
             <img src={logo} alt="User Avatar" className="logo-iuh" />
             <div className='action-management'>
-            <Tooltip title="Trang chủ">
-              <IconButton onClick={() => navigate('/')}>
-                <HomeOutlinedIcon className="menu-icon" />
-              </IconButton>
-            </Tooltip>
-            <div className='border-line' />
-            <Tooltip title="Thống kê">
-              <IconButton onClick={() => navigate('/statistical')}>
-                <InsertChartOutlinedRoundedIcon className="menu-icon" />
-              </IconButton>
-            </Tooltip>
-            <div className='border-line' />
-            <Tooltip title="Thông báo">
-              <IconButton onClick={() => navigate('/notification')}>
-                <NotificationsOutlinedIcon className="menu-icon" />
-              </IconButton>
-            </Tooltip>
+              <Tooltip title="Trang chủ">
+                <IconButton onClick={() => navigate('/')}>
+                  <HomeOutlinedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
+              <div className='border-line' />
+              <Tooltip title="Thống kê">
+                <IconButton onClick={() => navigate('/statistical')}>
+                  <InsertChartOutlinedRoundedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
+              <div className='border-line' />
+              <Tooltip title="Thông báo">
+                <IconButton onClick={() => navigate('/notification')}>
+                  <NotificationsOutlinedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
             </div>
             <div className='action-of-user'>
               <Tooltip title="Cài đặt">
@@ -117,11 +137,13 @@ const MainMenu = ({ onLogout }) => {
           <List>
             <ListItem>
               <Avatar alt="User Avatar" src={avt} sx={{ width: 56, height: 56 }} />
-              <span style={{ marginLeft: '10px' }}>User Name</span>
+              <span style={{ marginLeft: '10px' }}>{userName}</span>
             </ListItem>
             <Divider />
-            <MenuItem onClick={() => navigate('/profile')}>Profile</MenuItem>
-            <MenuItem onClick={handleCloseMenu}>My account</MenuItem>
+            <MenuItem onClick={() => navigate('/profile')}>Thông tin tài khoản</MenuItem>
+            <MenuItem onClick={() => navigate('/room-info')}>Thông tin phòng</MenuItem>
+            <MenuItem onClick={handleCloseMenu}>Hóa đơn</MenuItem>
+
             <Divider />
             <MenuItem onClick={handleLogout}>
               <ExitToAppIcon style={{ marginRight: '10px' }} />
