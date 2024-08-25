@@ -11,8 +11,8 @@ const columns = [
   { field: 'roomNumber', headerName: 'Tên phòng', width: 120 },
   { field: 'floor', headerName: 'Tầng', width: 70 },
   { field: 'block', headerName: 'Khối', width: 70 },
-  { field: 'capacity', headerName: 'Sức chứa', type: 'number', width: 120 },
-  { field: 'availableSpot', headerName: 'Số chỗ trống', type: 'number', width: 130 },
+  { field: 'capacity', headerName: 'Sức chứa', type: 'number', width: 100 },
+  { field: 'availableSpot', headerName: 'Chỗ trống', type: 'number', width: 100 },
   { field: 'description', headerName: 'Mô tả', width: 250 },
   { field: 'type', headerName: 'Loại phòng', width: 120 },
   {
@@ -161,11 +161,7 @@ const TableData = ({ filterBlock }) => {
 
 
   return (
-<<<<<<< HEAD
-    <div style={{ height: '60%', width: '100%', backgroundColor: "#fff" }}>
-=======
-    <div style={{ height: '81%', width: '100%', backgroundColor: "#fff" }}>
->>>>>>> e11a223910a9c1a2b5879d8b2f6b8952c55b9e53
+    <div style={{ height: '81%', backgroundColor: "#fff" }}>
       <DataGrid
         rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
         columns={columns}
