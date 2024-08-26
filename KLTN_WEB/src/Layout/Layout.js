@@ -3,7 +3,7 @@ import MainMenu from '../Menu/MainMenu';
 
 const Layout = ({ children, onLogout }) => {
     return (
-        <div style={{ display: 'flex', backgroundColor: "#f2f3f5" }}>
+        <div style={{ display: 'flex' }}>
             <MainMenu onLogout={onLogout} />
             <div style={{ marginLeft: 80, flexGrow: 1 }}>
                 {children}

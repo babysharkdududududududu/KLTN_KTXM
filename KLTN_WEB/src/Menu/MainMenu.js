@@ -3,13 +3,16 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import InsertChartOutlinedRoundedIcon from '@mui/icons-material/InsertChartOutlinedRounded';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import SettingsIcon from '@mui/icons-material/Settings';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import SettingsIcon from '@mui/icons-material/Settings';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -35,6 +38,9 @@ const MainMenu = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const { userId } = useUser();
+  const handleGoToRoom = () => {
+    navigate('/room');
+  };
 
   const handleGoToSetting = () => {
     navigate('/settings');
@@ -112,7 +118,20 @@ const MainMenu = ({ onLogout }) => {
                   <NotificationsOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
+              <div className='border-line' />
+              <Tooltip title="Phòng">
+                <IconButton onClick={handleGoToRoom}>
+                  <BusinessOutlinedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
+              <div className='border-line' />
+              <Tooltip title="Hợp đồng">
+                <IconButton onClick={() => navigate('/contract')}>
+                  <AssignmentOutlinedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
             </div>
+
             <div className='action-of-user'>
               <Tooltip title="Cài đặt">
                 <IconButton onClick={handleGoToSetting}>

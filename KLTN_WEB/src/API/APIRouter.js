@@ -21,4 +21,16 @@ export const updateRoomRoute = `${host}/rooms/`;
 export const getAllUserRoute = `${host}/users`;
 export const getUserByIdRoute = `${host}/users/id/`;
 
+//register room
+export const registerRoomRoute = `${host}/contracts`;
+
+//contract
+export const getContractRoute = `${host}/contracts`;
+export const deleteContractRoute = `${host}/contracts/`;
+// export const getUserAndRoomContractRoute = `${host}/contracts/:userId/room`;
+export const getUserAndRoomContractRoute = `${host}/contracts/`;
+
+
+
+
 
