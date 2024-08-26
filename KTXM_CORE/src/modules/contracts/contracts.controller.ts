@@ -4,6 +4,8 @@ import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { Contract } from './entities/contract.entity';
 import { Public, ResponseMessage } from '@/decorator/customize';
+import { DeleteContractDto } from './dto/delete-contract.dto';
+
 @Controller('contracts')
 export class ContractsController {
   constructor(private readonly contractsService: ContractsService) { }
@@ -56,7 +58,7 @@ export class ContractsController {
 
   @Delete(':id')
   @Public()
-  remove(@Param('id') id: string): Promise<void> {
-    return this.contractsService.remove(id);
+  async remove(@Param('id') id: string, @Body() deleteContractDto: DeleteContractDto): Promise<void> {
+    await this.contractsService.remove(id, deleteContractDto);
   }
 }

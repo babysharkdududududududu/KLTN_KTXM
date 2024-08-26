@@ -8,6 +8,7 @@ import { Room } from '../rooms/entities/room.entity';
 import { RoomsService } from '../rooms/rooms.service';
 import { User } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
+import { DeleteContractDto } from './dto/delete-contract.dto';
 
 @Injectable()
 export class ContractsService {
@@ -42,6 +43,33 @@ export class ContractsService {
     return true;
   }
 
+  async remove(id: string, deleteContractDto: DeleteContractDto) {
+    const contract = await this.contractModel.findById(id).exec();
+    if (!contract) {
+      throw new NotFoundException(`Contract with ID ${id} not found`);
+    }
+
+    const room = await this.roomModel.findOne({ roomNumber: contract.roomNumber });
+    if (!room) {
+      throw new NotFoundException(`Room with roomNumber ${contract.roomNumber} not found`);
+    }
+
+    // Xóa sinh viên khỏi phòng
+    const userIndex = room.users.findIndex(user => user.userId === deleteContractDto.userId);
+    if (userIndex === -1) {
+      throw new NotFoundException(`User with userId ${deleteContractDto.userId} not found in room ${contract.roomNumber}`);
+    }
+
+    room.users.splice(userIndex, 1); // Xóa sinh viên khỏi danh sách
+    room.availableSpot += 1; // Cập nhật số chỗ trống
+
+    // Lưu thay đổi
+    await Promise.all([room.save(), this.contractModel.deleteOne({ _id: id }).exec()]);
+
+    return { message: 'Delete contract and user successfully' };
+  }
+
+
   async create(createContractDto: CreateContractDto): Promise<Contract> {
     const { contractNumber, userId, roomNumber } = createContractDto;
 
@@ -51,20 +79,22 @@ export class ContractsService {
       throw new NotFoundException('Người dùng đã có hợp đồng còn hiệu lực');
     }
 
-    // Tìm phòng
     const room = await this.roomModel.findOne({ roomNumber });
 
     if (!room) {
       throw new NotFoundException('Phòng không tồn tại');
     }
 
-    // Kiểm tra phòng còn chỗ trống
     if (room.availableSpot <= 0) {
       throw new BadRequestException('Phòng đã hết chỗ trống');
     }
 
-    // Giảm availableSpot và cập nhật lại phòng
     room.availableSpot -= 1;
+    const user = await this.findUserByUserId(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    room.users.push(user);
     await room.save();
 
     // Tạo hợp đồng
@@ -118,12 +148,6 @@ export class ContractsService {
     return updatedContract;
   }
 
-  async remove(id: string) {
-    const result = await this.contractModel.findByIdAndDelete(id).exec();
-    if (!result) {
-      throw new NotFoundException(`Contract with ID ${id} not found`);
-    }
-  }
 
   async findOne(id: string) {
     const contract = await this.contractModel.findById(id).exec();
