@@ -161,7 +161,7 @@ const TableData = ({ filterBlock }) => {
 
 
   return (
-    <div style={{ height: '81%', backgroundColor: "#fff" }}>
+    <div style={{ height: '81%', width: '100%' ,backgroundColor: "#fff" }}>
       <DataGrid
         rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
         columns={columns}
