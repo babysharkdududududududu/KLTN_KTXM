@@ -1,0 +1,21 @@
+@keyframes expand {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.expandAnimation {
+    animation: expand 1s forwards;
+}
+
+.expandAnimationDelay1 {
+    animation: expand 1s forwards 0.5s;
+}
+
+.expandAnimationDelay2 {
+    animation: expand 1s forwards 1s;
+}
+
