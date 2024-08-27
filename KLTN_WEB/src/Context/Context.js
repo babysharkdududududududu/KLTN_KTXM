@@ -1,20 +1,18 @@
 import React, { createContext, useState, useContext } from 'react';
 
-// Create a UserContext
 const UserContext = createContext();
 
-// Create a provider component
 export const UserProvider = ({ children }) => {
-    const [userId, setUserId] = useState(null);
+    const [roleId, setRoleId] = useState(null);
+    const [userId, setUserId] = useState(null);  // New state
 
     return (
-        <UserContext.Provider value={{ userId, setUserId }}>
+        <UserContext.Provider value={{ roleId, setRoleId, userId, setUserId }}>
             {children}
         </UserContext.Provider>
     );
 };
 
-// Custom hook to use the UserContext
 export const useUser = () => {
     return useContext(UserContext);
 };

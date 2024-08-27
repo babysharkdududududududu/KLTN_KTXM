@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, Typography, Grid, Button } from '@mui/material';
+import { Card, CardContent, CardHeader, Typography, Grid, Button, Box } from '@mui/material';
 import { CheckCircle, Warning } from '@mui/icons-material';
 import { getRoomRoute, getRoomByIdRoute } from '../../API/APIRouter';
 import axios from 'axios';
 import RoomDialog from './RoomDialog';
+import Floor from "../Filter/Floor";
 
 import '../TableData.css';
 
@@ -11,16 +12,22 @@ const TableData = ({ filterBlock }) => {
     const [listRooms, setListRooms] = React.useState([]);
     const [openDialog, setOpenDialog] = React.useState(false);
     const [selectedRoom, setSelectedRoom] = React.useState(null);
-    const [newEquipment, setNewEquipment] = React.useState({ name: '', quantity: 0 });
     const [currentPage, setCurrentPage] = React.useState(1);
     const roomsPerPage = 12;
+
+    const getAllFloors = () => {
+        const floors = [];
+        listRooms.forEach(room => { if (!floors.includes(room.floor)) floors.push(room.floor); });
+        console.log(floors);
+        return floors;
+    };
+
 
     const fetchRooms = async () => {
         try {
             const { data } = await axios.get(getRoomRoute, { params: { all: true } });
             const filteredRooms = filterBlock ? data.data.results.filter(room => room.block === filterBlock) : data.data.results;
             setListRooms(filteredRooms);
-            // Reset to the first page whenever the filter changes
             setCurrentPage(1);
         } catch (err) {
             console.error("Error fetching rooms:", err);
@@ -30,6 +37,7 @@ const TableData = ({ filterBlock }) => {
     React.useEffect(() => {
         fetchRooms();
     }, [filterBlock]);
+
 
     const getRoomById = async (id) => {
         try {
@@ -52,7 +60,6 @@ const TableData = ({ filterBlock }) => {
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setSelectedRoom(null);
-        setNewEquipment({ name: '', quantity: 0 });
     };
 
     const rows = listRooms.filter(room => room.status === 0 && room.availableSpot !== 0).map((room) => ({
@@ -72,29 +79,27 @@ const TableData = ({ filterBlock }) => {
 
     return (
         <div style={{ height: '81%', width: '100%', backgroundColor: "#fff" }}>
+            {/* 
+
+
+            <Box>
+                <Floor label="Tầng" items={getAllFloors()} />
+            </Box> */}
             <Grid container spacing={2} style={{ padding: '16px' }}>
+
                 {currentRooms.length > 0 ? (
                     currentRooms.map((room) => (
                         <Grid item xs={12} sm={6} md={3} key={room.id}>
                             <Card
                                 onClick={() => handleCardClick(room)}
-                                style={{
-                                    cursor: 'pointer',
-                                    borderRadius: '8px',
-                                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                                    transition: 'transform 0.2s',
-                                    marginBottom: '10px',
-                                    height: '280px',
-                                    overflow: 'hidden',
-                                }}
+                                style={{ cursor: 'pointer', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', transition: 'transform 0.2s', marginBottom: '10px', height: '280px', overflow: 'hidden', }}
                             >
                                 <CardHeader
                                     title={`Phòng ${room.roomNumber}`}
                                     subheader={`Tầng: ${room.floor}, Khối: ${room.block}`}
                                     style={{ backgroundColor: '#e3f2fd', borderBottom: '1px solid #bbdefb', height: '50px' }}
-
                                 />
-                                <CardContent style={{ overflow: 'auto', maxHeight: '200px' }}> {/* Giới hạn chiều cao cho nội dung */}
+                                <CardContent style={{ overflow: 'auto', maxHeight: '200px' }}>
                                     <Grid container spacing={2}>
                                         <Grid item xs={6}>
                                             <Typography variant="body2"><strong>Sức chứa:</strong> {room.capacity}</Typography>
@@ -133,12 +138,13 @@ const TableData = ({ filterBlock }) => {
                     Trang {currentPage} / {totalPages}
                 </Typography>
                 <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
+
             </div>
             <RoomDialog
                 open={openDialog}
                 onClose={handleCloseDialog}
                 selectedRoom={selectedRoom}
-                newEquipment={newEquipment}
+                fetchRooms={fetchRooms}
             />
         </div>
     );

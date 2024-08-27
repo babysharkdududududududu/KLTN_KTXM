@@ -21,30 +21,33 @@ const Room = () => {
 
     const handleBlockClick = (block) => {
         console.log("Block clicked:", block);
+        console.log(roleId);
+        console.log(userId);
         setFilterBlock(block);
     };
 
+    const { roleId } = useUser();
     const { userId } = useUser();
 
     return (
         <div className={style['room-container']}>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", height: "100%", alignContent: 'center' }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", height: "100%", alignContent: 'center' }}>
                 {
-                    userId === 'USERS' ?
+                    roleId === 'USERS' ?
                         <RoomStudent filterBlock={filterBlock} />
-                        : <div style={{ width: '87%', height: '98vh', paddingTop: '10px' }}>
+                        : <div style={{ width: '80%', height: '98vh', paddingTop: '10px' }}>
                             <TableData filterBlock={filterBlock} />
                         </div>
                 }
-                <div style={{ display: 'flex', flexDirection: "column", justifyContent: 'space-around', alignItems: 'center', height: "100%" }}>
-                    <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px', width: '120px', height: '120px' }} onClick={() => handleBlockClick('')}>
-                        <img src={BLOCKI} alt="BLOCKI" style={{ width: '120px', height: '120px' }} />
+                <div style={{ display: 'flex', flexDirection: "column", alignItems: 'center', height: "100%", marginLeft: 20 }}>
+                    <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('')}>
+                        <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
-                    <DemoPaper square={false} sx={{ backgroundColor: "#eae9e3", width: '120px', height: '120px' }} onClick={() => handleBlockClick('G')}>
-                        <img src={BLOCKG} alt="BLOCKG" style={{ width: '120px', height: '120px' }} />
+                    <DemoPaper square={false} sx={{ backgroundColor: "#eae9e3" }} onClick={() => handleBlockClick('G')}>
+                        <img src={BLOCKG} alt="BLOCKG" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
-                    <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px', width: '120px', height: '120px' }} onClick={() => handleBlockClick('I')}>
-                        <img src={BLOCKI} alt="BLOCKI" style={{ width: '120px', height: '120px' }} />
+                    <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('I')}>
+                        <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
                 </div>
             </div>

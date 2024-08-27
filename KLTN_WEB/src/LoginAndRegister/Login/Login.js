@@ -17,6 +17,7 @@ const Login = ({ onLoginSuccess }) => {
     const [rememberMe, setRememberMe] = useState(false);
     const [visibleForgotPassword, setVisibleForgotPassword] = useState(false);
     const [visibleRegister, setVisibleRegister] = useState(false);
+    const { setRoleId } = useUser();
     const { setUserId } = useUser();
 
     //API login 
@@ -34,11 +35,13 @@ const Login = ({ onLoginSuccess }) => {
             });
 
             console.log("Đăng nhập thành công", response.data);
-            const id = response.data.data.user.role;
-            console.log("Đăng nhập thành công", id);
-            setUserId(id);
-
-            onLoginSuccess(); // Gọi hàm callback khi đăng nhập thành công
+            const role = response.data.data.user.role;
+            const mssv = response.data.data.user.userId;
+            console.log("Đăng nhập thành công", role);
+            console.log("Đăng nhập thành công", mssv);
+            setRoleId(role);
+            setUserId(mssv);
+            onLoginSuccess();
             setError('');
         } catch (error) {
             console.error("Đăng nhập thất bại", error);
