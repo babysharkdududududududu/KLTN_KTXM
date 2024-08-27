@@ -93,6 +93,19 @@ export class ContractsService {
     return updatedContract;
   }
 
+  async contractExtension(contractNumber: string) {
+    const contract = await this.contractModel.findOne({ contractNumber }).exec();
+    if (!contract) {
+      throw new NotFoundException(`Contract with contractNumber ${contractNumber} not found`);
+    }
+    const endDate = new Date(contract.endDate);
+    endDate.setMonth(endDate.getMonth() + 10);
+    contract.endDate = endDate;
+    await contract.save();
+    return contract;
+  }
+  
+
   async remove(id: string) {
     const result = await this.contractModel.findByIdAndDelete(id).exec();
     if (!result) {

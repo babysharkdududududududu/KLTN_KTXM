@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { ContractsService } from './contracts.service';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
@@ -6,7 +6,7 @@ import { Contract } from './entities/contract.entity';
 import { Public, ResponseMessage } from '@/decorator/customize';
 @Controller('contracts')
 export class ContractsController {
-  constructor(private readonly contractsService: ContractsService) {}
+  constructor(private readonly contractsService: ContractsService) { }
 
   @Post()
   @Public()
@@ -41,4 +41,16 @@ export class ContractsController {
   remove(@Param('id') id: string): Promise<void> {
     return this.contractsService.remove(id);
   }
+
+  @Post('extend/:contractNumber')
+  @Public()
+  async extendContract(@Param('contractNumber') contractNumber: string) {
+    try {
+      const extendedContract = await this.contractsService.contractExtension(contractNumber);
+      return extendedContract;
+    } catch (error) {
+      throw new NotFoundException(`Could not find contract with contractNumber: ${contractNumber}`);
+    }
+  }
+
 }
