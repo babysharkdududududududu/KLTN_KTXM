@@ -14,12 +14,14 @@ import { TransformInterceptor } from '@/core/transform.interceptor';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ContractsModule } from '@/modules/contracts/contracts.module';
 import { Contract } from './modules/contracts/entities/contract.entity';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 
 @Module({
   imports: [
     UsersModule,
     AuthModule,
     NotificationModule,
+    MaintenanceModule,
     RoomsModule,
     ContractsModule,
     ConfigModule.forRoot({ isGlobal: true }),
@@ -60,6 +62,7 @@ import { Contract } from './modules/contracts/entities/contract.entity';
 
     }),
     ContractsModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [

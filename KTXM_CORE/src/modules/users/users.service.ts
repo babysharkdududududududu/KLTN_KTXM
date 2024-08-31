@@ -58,6 +58,29 @@ export class UsersService {
     }
   }
 
+  async importUsers(usersData: any[]) {
+    const users = usersData.map(user => ({
+      name: user.name,
+      email: user.email,
+      userId: user.userId,
+      password: user.password,
+      phone: user.phone,
+      address: user.address,
+      image: user.image,
+      role: user.role || 'USERS',
+      accountType: user.accountType || 'LOCAL',
+      isActive: user.isActive || false,
+      codeId: user.codeId,
+      codeExpired: user.codeExpired ? new Date(user.codeExpired) : null,
+    }));
+
+    return this.userModel.insertMany(users);
+  }
+  async checkExistingUsers(userIds: string[]) {
+    const users = await this.userModel.find({ userId: { $in: userIds } });
+    return users.map(user => user.userId); // Trả về danh sách userId đã tồn tại
+  }
+
   async findAll(query: string, current: number, pageSize: number) {
     const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;

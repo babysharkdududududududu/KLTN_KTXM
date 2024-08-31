@@ -10,6 +10,9 @@ export class Equipment {
 
     @Prop()
     quantity: number;
+
+    @Prop()
+    status: number;
 }
 
 export enum Block {

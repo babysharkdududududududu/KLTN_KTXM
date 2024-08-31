@@ -54,16 +54,14 @@ export class ContractsService {
       throw new NotFoundException(`Room with roomNumber ${contract.roomNumber} not found`);
     }
 
-    // Xóa sinh viên khỏi phòng
     const userIndex = room.users.findIndex(user => user.userId === deleteContractDto.userId);
     if (userIndex === -1) {
       throw new NotFoundException(`User with userId ${deleteContractDto.userId} not found in room ${contract.roomNumber}`);
     }
 
-    room.users.splice(userIndex, 1); // Xóa sinh viên khỏi danh sách
-    room.availableSpot += 1; // Cập nhật số chỗ trống
+    room.users.splice(userIndex, 1);
+    room.availableSpot += 1;
 
-    // Lưu thay đổi
     await Promise.all([room.save(), this.contractModel.deleteOne({ _id: id }).exec()]);
 
     return { message: 'Delete contract and user successfully' };
@@ -73,7 +71,6 @@ export class ContractsService {
   async create(createContractDto: CreateContractDto): Promise<Contract> {
     const { contractNumber, userId, roomNumber } = createContractDto;
 
-    // Kiểm tra nếu người dùng đã có hợp đồng còn hiệu lực
     const isExist = await this.checkUserRoomExist(userId, roomNumber);
     if (!isExist) {
       throw new NotFoundException('Người dùng đã có hợp đồng còn hiệu lực');
