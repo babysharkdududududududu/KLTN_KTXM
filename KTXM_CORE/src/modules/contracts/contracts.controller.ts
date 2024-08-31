@@ -61,4 +61,16 @@ export class ContractsController {
   async remove(@Param('id') id: string, @Body() deleteContractDto: DeleteContractDto): Promise<void> {
     await this.contractsService.remove(id, deleteContractDto);
   }
+
+  @Post('extend/:contractNumber')
+  @Public()
+  async extendContract(@Param('contractNumber') contractNumber: string) {
+    try {
+      const extendedContract = await this.contractsService.contractExtension(contractNumber);
+      return extendedContract;
+    } catch (error) {
+      throw new NotFoundException(`Could not find contract with contractNumber: ${contractNumber}`);
+    }
+  }
+
 }

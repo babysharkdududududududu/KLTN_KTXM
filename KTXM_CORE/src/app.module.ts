@@ -13,7 +13,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { TransformInterceptor } from '@/core/transform.interceptor';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ContractsModule } from '@/modules/contracts/contracts.module';
-import { Contract } from './modules/contracts/entities/contract.entity';
+import {SettingModule} from '@/modules/setting/setting.module';
 
 @Module({
   imports: [
@@ -22,6 +22,7 @@ import { Contract } from './modules/contracts/entities/contract.entity';
     NotificationModule,
     RoomsModule,
     ContractsModule,
+    SettingModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

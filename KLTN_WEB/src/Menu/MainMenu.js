@@ -80,7 +80,6 @@ const MainMenu = ({ onLogout }) => {
     try {
       const rs = await axios.get(`${getUserByIdRoute}${userId}`);
       setUserName(rs.data.data.name);
-      console.log(name);
     }
     catch (err) {
       console.log(err);
