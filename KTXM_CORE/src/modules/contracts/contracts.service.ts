@@ -161,13 +161,6 @@ export class ContractsService {
   }
   
 
-  async remove(id: string) {
-    const result = await this.contractModel.findByIdAndDelete(id).exec();
-    if (!result) {
-      throw new NotFoundException(`Contract with ID ${id} not found`);
-    }
-  }
-
   async findOne(id: string) {
     const contract = await this.contractModel.findById(id).exec();
     if (!contract) {

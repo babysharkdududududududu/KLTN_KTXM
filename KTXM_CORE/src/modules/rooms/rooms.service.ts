@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import aqp from 'api-query-params';
 import mongoose, { Model } from 'mongoose';
 import { Room } from './entities/room.entity';
 @Injectable()
@@ -96,4 +95,21 @@ export class RoomsService {
       throw new BadRequestException("Id không đúng định dạng mongodb")
     }
   }
+
+  async calculateAvailableRooms() {
+    const rooms = await this.roomModel.find().exec();
+    let totalAvailableRooms = 0;
+  
+    console.log('Rooms:', rooms);
+    rooms.forEach(room => {
+      totalAvailableRooms += room.availableSpot;
+    });
+  
+    console.log('Total Available Rooms:', totalAvailableRooms);
+    return {
+      totalAvailableRooms,
+      rooms
+    }
+  }
+  
 }
