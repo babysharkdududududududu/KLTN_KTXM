@@ -15,6 +15,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { ContractsModule } from '@/modules/contracts/contracts.module';
 import { Contract } from './modules/contracts/entities/contract.entity';
 import { MaintenanceModule } from './modules/maintenance/maintenance.module';
+import { SettingModule } from '@/modules/setting/setting.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MaintenanceModule } from './modules/maintenance/maintenance.module';
     NotificationModule,
     MaintenanceModule,
     RoomsModule,
+    SettingModule,
     ContractsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
