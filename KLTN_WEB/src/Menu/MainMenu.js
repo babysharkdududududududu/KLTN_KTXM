@@ -1,18 +1,18 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import InsertChartOutlinedRoundedIcon from '@mui/icons-material/InsertChartOutlinedRounded';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import SettingsIcon from '@mui/icons-material/Settings';
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 
+import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined'; // Thêm icon cho thông tin bảo trì
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -22,14 +22,14 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Snackbar from "@mui/material/Snackbar";
 import Tooltip from "@mui/material/Tooltip";
+import axios from 'axios';
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { getUserByIdRoute } from '../API/APIRouter';
+import { useUser } from '../Context/Context';
 import "./MainMenu.css";
 import avt from "./asset/avt.jpg";
 import logo from "./asset/iuh.png";
-import { useUser } from '../Context/Context';
-import axios from 'axios';
-import { getUserByIdRoute } from '../API/APIRouter';
 const MainMenu = ({ onLogout }) => {
   const [menuItem1, setMenuItem1] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -37,7 +37,7 @@ const MainMenu = ({ onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(true);
   const navigate = useNavigate();
 
-  const { userId } = useUser();
+  const { userId, roleId } = useUser();
   const handleGoToRoom = () => {
     navigate('/room');
   };
@@ -106,12 +106,18 @@ const MainMenu = ({ onLogout }) => {
                   <HomeOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
-              <div className='border-line' />
-              <Tooltip title="Thống kê">
-                <IconButton onClick={() => navigate('/statistical')}>
-                  <InsertChartOutlinedRoundedIcon className="menu-icon" />
-                </IconButton>
-              </Tooltip>
+              {
+                roleId === 'MANAGER' && (
+                  <>
+                    <div className='border-line' />
+                    <Tooltip title="Thống kê">
+                      <IconButton onClick={() => navigate('/statistical')}>
+                        <InsertChartOutlinedRoundedIcon className="menu-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )
+              }
               <div className='border-line' />
               <Tooltip title="Thông báo">
                 <IconButton onClick={() => navigate('/notification')}>
@@ -124,12 +130,31 @@ const MainMenu = ({ onLogout }) => {
                   <BusinessOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
-              <div className='border-line' />
-              <Tooltip title="Hợp đồng">
-                <IconButton onClick={() => navigate('/contract')}>
-                  <AssignmentOutlinedIcon className="menu-icon" />
-                </IconButton>
-              </Tooltip>
+              {
+                roleId === 'MANAGER' && (
+                  <>
+                    <div className='border-line' />
+                    <Tooltip title="Thông tin bảo trì">
+                      <IconButton onClick={() => navigate('/maintenance')}>
+                        <BuildOutlinedIcon className="menu-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )
+              }
+              {
+                roleId === 'USERS' && (
+                  <>
+                    <div className='border-line' />
+                    <Tooltip title="Hợp đồng">
+                      <IconButton onClick={() => navigate('/contract')}>
+                        <AssignmentOutlinedIcon className="menu-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )
+              }
+
             </div>
 
             <div className='action-of-user'>

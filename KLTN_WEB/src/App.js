@@ -14,6 +14,7 @@ import Room from './Rooms/Room';
 import { UserProvider } from './Context/Context';
 import RoomInfo from './RoomInfo/RoomInfo';
 import Contract from './Contract/Contract';
+import Maintenance from './Maintance/Maintenance';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -43,6 +44,7 @@ const App = () => {
             <Route path="/notification" element={isLoggedIn ? <Layout onLogout={handleLogout}><Notification /></Layout> : <Navigate to="/" />} />
             <Route path="/room" element={isLoggedIn ? <Layout onLogout={handleLogout}><Room /></Layout> : <Navigate to="/" />} />
             <Route path="/room-info" element={isLoggedIn ? <Layout onLogout={handleLogout}><RoomInfo /></Layout> : <Navigate to="/" />} />
+            <Route path="/maintenance" element={isLoggedIn ? <Layout onLogout={handleLogout}><Maintenance /></Layout> : <Navigate to="/" />} />
             <Route path="/contract" element={isLoggedIn ? <Layout onLogout={handleLogout}><Contract /></Layout> : <Navigate to="/" />} />
           </Routes>
         </Router>

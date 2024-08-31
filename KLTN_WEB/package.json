@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.13.0",
+    "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@fontsource/roboto": "^5.0.13",
     "@formkit/auto-animate": "^0.8.2",
-    "@mui/icons-material": "^5.16.6",
-    "@mui/material": "^5.16.6",
+    "@mui/icons-material": "^6.0.1",
+    "@mui/lab": "^6.0.0-beta.8",
+    "@mui/material": "^6.0.1",
+    "@mui/material-next": "^6.0.0-alpha.126",
     "@mui/x-data-grid": "^7.13.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -17,7 +19,7 @@
     "@tsparticles/react": "^3.0.0",
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
-    "axios": "^1.7.4",
+    "axios": "^1.7.6",
     "dotenv-webpack": "^8.1.0",
     "particles.js": "^2.0.0",
     "react": "^18.3.1",
@@ -27,7 +29,8 @@
     "react-scripts": "5.0.1",
     "react-tsparticles": "^2.12.2",
     "recharts": "^2.12.7",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",

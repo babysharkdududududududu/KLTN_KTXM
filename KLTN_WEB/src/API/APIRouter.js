@@ -30,6 +30,15 @@ export const deleteContractRoute = `${host}/contracts/`;
 // export const getUserAndRoomContractRoute = `${host}/contracts/:userId/room`;
 export const getUserAndRoomContractRoute = `${host}/contracts/`;
 
+//maintenance
+export const getMaintenanceRoute = `${host}/maintenance`;
+export const createMaintenanceRoute = `${host}/maintenance`;
+export const updateMaintenanceStatusRoute = `${host}/maintenance`;
+
+//import 
+export const importUserRoute = `${host}/users/import`;
+export const checkUserRoute = `${host}/users/check-users`;
+
 
 
 
