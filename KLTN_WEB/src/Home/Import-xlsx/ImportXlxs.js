@@ -32,27 +32,37 @@ const UploadXLSX = () => {
         const duplicates = [];
 
         results.forEach(user => {
-            if (userIds[user.userId]) {
+            const userIdStr = String(user.userId || '').toLowerCase();
+            if (userIds[userIdStr]) {
                 duplicates.push(user.userId);
             } else {
-                userIds[user.userId] = true;
+                userIds[userIdStr] = true;
             }
         });
 
         return [...new Set(duplicates)];
     };
 
+
+
     const checkForExistingUserIds = (jsonData) => {
-        const existingUserIds = userData.map(user => user.userId);
-        const duplicates = jsonData.filter(user => existingUserIds.includes(user.userId));
+        const existingUserIds = userData.map(user => String(user.userId || '').toLowerCase());
+        const duplicates = jsonData.filter(user => existingUserIds.includes(String(user.userId || '').toLowerCase()));
         return duplicates.map(user => user.userId);
     };
+
+
 
     const filterValidUsers = (jsonData, duplicateIdsInFile) => {
         return jsonData.filter(user => !duplicateIdsInFile.includes(user.userId));
     };
 
     const handleUpload = async () => {
+        if (!file) {
+            alert('Please select a file first.');
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = async (event) => {
             const data = new Uint8Array(event.target.result);
@@ -66,14 +76,14 @@ const UploadXLSX = () => {
                 user.email &&
                 user.userId &&
                 user.password &&
-                user.phone &&
-                user.address &&
-                user.image &&
-                user.role &&
-                user.accountType &&
-                (user.isActive === true || user.isActive === false) &&
-                user.codeId &&
-                user.codeExpired
+                // user.phone &&
+                // user.address &&
+                // user.image &&
+                // user.role &&
+                // user.accountType &&
+                (user.isActive === true || user.isActive === false)
+                // user.codeId &&
+                // user.codeExpired
             );
 
             if (!isValid) {
@@ -81,12 +91,21 @@ const UploadXLSX = () => {
                 return;
             }
 
-            const existingUserIds = checkForExistingUserIds(jsonData);
+            // Normalize userIds to lowercase to avoid case sensitivity issues
+            const normalizedUserData = jsonData.map(user => ({
+                ...user,
+                userId: String(user.userId || '').toLowerCase(),
+            }));
+
+            const existingUserIds = checkForExistingUserIds(normalizedUserData);
             console.log('Mã số người dùng đã tồn tại:', existingUserIds);
 
-            const validUsers = jsonData.filter(user =>
+            const duplicateUserIdsInFile = findDuplicateUserIds(normalizedUserData);
+            console.log('User ID trùng trong file:', duplicateUserIdsInFile);
+
+            const validUsers = normalizedUserData.filter(user =>
                 !existingUserIds.includes(user.userId) &&
-                !findDuplicateUserIds(jsonData).includes(user.userId)
+                !duplicateUserIdsInFile.includes(user.userId)
             );
 
             console.log('Người dùng hợp lệ:', validUsers);
@@ -101,11 +120,13 @@ const UploadXLSX = () => {
                 console.log('Phản hồi từ server:', response.data);
                 alert('Import thành công!');
             } catch (error) {
-                console.error('Lỗi khi import:', error.response.data);
+                console.error('Lỗi khi import:', error.response?.data || error.message);
             }
         };
         reader.readAsArrayBuffer(file);
     };
+
+
 
 
     return (

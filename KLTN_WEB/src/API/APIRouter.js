@@ -38,6 +38,7 @@ export const updateMaintenanceStatusRoute = `${host}/maintenance`;
 //import 
 export const importUserRoute = `${host}/users/import`;
 export const checkUserRoute = `${host}/users/check-users`;
+export const importRoomRoute = `${host}/rooms/import`;
 
 
 
