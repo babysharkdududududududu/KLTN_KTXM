@@ -59,23 +59,37 @@ export class UsersService {
   }
 
   async importUsers(usersData: any[]) {
-    const users = usersData.map(user => ({
-      name: user.name,
-      email: user.email,
-      userId: user.userId,
-      password: user.password,
-      phone: user.phone,
-      address: user.address,
-      image: user.image,
-      role: user.role || 'USERS',
-      accountType: user.accountType || 'LOCAL',
-      isActive: user.isActive || false,
-      codeId: user.codeId,
-      codeExpired: user.codeExpired ? new Date(user.codeExpired) : null,
-    }));
+    const users = usersData.map(async (user) => {
+      // Kiểm tra các trường bắt buộc
+      if (!user.name || !user.email || !user.userId || !user.password) {
+        throw new Error(`Missing required fields for user: ${JSON.stringify(user)}`);
+      }
 
-    return this.userModel.insertMany(users);
+      return {
+        name: user.name,
+        email: user.email,
+        userId: user.userId,
+        password: await hashPasswordHelper(user.password),
+        phone: user.phone || '',
+        address: user.address || '',
+        image: user.image || '',
+        role: user.role || 'USERS',
+        accountType: user.accountType || 'LOCAL',
+        isActive: user.isActive || false,
+        codeId: user.codeId || '',
+        codeExpired: user.codeExpired ? new Date(user.codeExpired) : null,
+      };
+    });
+
+    try {
+      const resolvedUsers = await Promise.all(users);
+      return this.userModel.insertMany(resolvedUsers);
+    } catch (error) {
+      console.error('Error importing users:', error);
+      throw error; // Ném lỗi lên trên để xử lý
+    }
   }
+
   async checkExistingUsers(userIds: string[]) {
     const users = await this.userModel.find({ userId: { $in: userIds } });
     return users.map(user => user.userId); // Trả về danh sách userId đã tồn tại

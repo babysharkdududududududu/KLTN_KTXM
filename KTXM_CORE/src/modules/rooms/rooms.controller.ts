@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException } from '@nestjs/common';
 import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -47,5 +47,14 @@ export class RoomsController {
       message: 'Hello from rooms module',
       data: null // Hoặc có thể là dữ liệu bạn muốn trả về
     };
+  }
+  @Post('import')
+  @Public()
+  async importUsers(@Body() usersData: any[]) {
+    // Kiểm tra dữ liệu trước khi nhập
+    if (!Array.isArray(usersData) || usersData.length === 0) {
+      throw new BadRequestException('Invalid data');
+    }
+    return this.roomsService.importRooms(usersData);
   }
 }

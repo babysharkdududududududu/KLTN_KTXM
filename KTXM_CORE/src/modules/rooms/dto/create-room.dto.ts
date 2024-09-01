@@ -1,4 +1,13 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class Equipment {
+    @IsNotEmpty({ message: 'name không được để trống' })
+    name: string;
+
+    @IsNotEmpty({ message: 'quantity không được để trống' })
+    quantity: number;
+}
 
 export class CreateRoomDto {
     @IsNotEmpty({ message: 'roomNumber không được để trống' })
@@ -16,9 +25,10 @@ export class CreateRoomDto {
     @IsNotEmpty({ message: 'block không được để trống' })
     block: string;
 
-    @IsOptional()
-    equipment: {
-        name: string;
-        quantity: number;
-    }[];
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => Equipment)
+    equipment: Equipment[];
+
+    availableSpot?: number;
 }

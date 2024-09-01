@@ -20,18 +20,38 @@ export class RoomsService {
 
 
   async create(createRoomDto: CreateRoomDto) {
+    console.log('CreateRoomDto:', createRoomDto); // Log to check
+
     const { roomNumber, description, floor, type, block, equipment } = createRoomDto;
+
+    // Check if the room already exists
     const isExist = await this.checkRoomExist(roomNumber);
     if (isExist) {
       throw new BadRequestException(`Phòng đã tồn tại: ${roomNumber}. Vui lòng sử dụng mã phòng khác.`);
     }
+
+    // Calculate availableSpot based on equipment
+    const bedEquipment = equipment.find(equip => equip.name === 'Giường');
+    const availableSpot = bedEquipment ? bedEquipment.quantity * 2 : 0;
+    console.log('Available Spot before saving:', availableSpot); // Log to check
+
+    // Create new room
     const room = await this.roomModel.create({
-      roomNumber, description, floor, type, block, equipment,
+      roomNumber,
+      description,
+      floor,
+      type,
+      block,
+      equipment,
+      availableSpot
     });
+
     return {
       _id: room._id
-    }
+    };
   }
+
+
 
   async findAll() {
     const results = await this.roomModel.find().select("-occupied -price -waterNumber -electricityNumber");
@@ -87,6 +107,39 @@ export class RoomsService {
     return await room.save();
   }
 
+  async importRooms(roomsData: any[]) {
+    const roomData = roomsData.map(room => {
+      // Calculate availableSpot based on equipment
+      const bedEquipment = room.equipment?.find(equip => equip.name === 'Giường');
+      const availableSpot = bedEquipment ? bedEquipment.quantity * 2 : 0;
+
+      return {
+        roomNumber: room.roomNumber,
+        description: room.description || '',
+        floor: room.floor,
+        equipment: room.equipment || [],
+        type: room.type || '',
+        block: room.block,
+        capacity: availableSpot, // Use the calculated availableSpot
+        availableSpot: availableSpot, // Use the calculated availableSpot
+        occupied: room.occupied || false,
+        price: room.price || '',
+        waterNumber: room.waterNumber || '',
+        electricityNumber: room.electricityNumber || '',
+        status: 0
+      };
+    });
+
+    try {
+      const resolvedRooms = await Promise.all(roomData);
+      return this.roomModel.insertMany(resolvedRooms);
+    } catch (error) {
+      console.error('Error importing rooms:', error);
+      throw error;
+    }
+  }
+
+
 
   async remove(_id: string) {
     if (mongoose.isValidObjectId(_id)) {
@@ -99,17 +152,17 @@ export class RoomsService {
   async calculateAvailableRooms() {
     const rooms = await this.roomModel.find().exec();
     let totalAvailableRooms = 0;
-  
+
     console.log('Rooms:', rooms);
     rooms.forEach(room => {
       totalAvailableRooms += room.availableSpot;
     });
-  
+
     console.log('Total Available Rooms:', totalAvailableRooms);
     return {
       totalAvailableRooms,
       rooms
     }
   }
-  
+
 }
