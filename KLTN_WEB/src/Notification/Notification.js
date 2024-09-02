@@ -4,7 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useWebSocket } from '../Context/WebSocketContext';
 import { getNotificationRoute, createNotificationRoute, deleteNotificationRoute } from '../API/APIRouter';
 import axios from 'axios';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,6 +12,8 @@ import { Box, Button, Dialog, DialogActions, DialogContent, IconButton, DialogTi
 import { useUser } from '../Context/Context';
 
 const Notification = () => {
+    const { sendMessage, messages } = useWebSocket();
+
     const [notifications, setNotifications] = useState([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState(null);
@@ -48,6 +50,7 @@ const Notification = () => {
             console.log('Create Notification Response:', response);
             fetchNotifications();
             handleCloseModal();
+            sendMessage(newNotification);
         } catch (error) {
             console.error('Failed to create notification:', error);
         }

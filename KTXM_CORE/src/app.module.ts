@@ -16,9 +16,11 @@ import { ContractsModule } from '@/modules/contracts/contracts.module';
 import { Contract } from './modules/contracts/entities/contract.entity';
 import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 import { SettingModule } from '@/modules/setting/setting.module';
+import { SocketModule } from './socketgateway/socket.module';
 
 @Module({
   imports: [
+    SocketModule,
     UsersModule,
     AuthModule,
     NotificationModule,
@@ -76,7 +78,7 @@ import { SettingModule } from '@/modules/setting/setting.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
-    }
+    },
   ],
 })
 export class AppModule { }

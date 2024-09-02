@@ -11,23 +11,23 @@ export class SettingService {
   constructor(
     @InjectModel(Setting.name) private settingModel: Model<Setting>,
     @InjectModel(Room.name) private roomModel: Model<Room>,
-  ) {}
+  ) { }
 
   async create(createSettingDto: CreateSettingDto) {
+    // Lấy số giường trống
+    const totalAvailableSpots = await this.calculateAvailableSpots();
     const setting = new this.settingModel(createSettingDto);
-  
-    setting.firstYearSpots = setting.totalAvailableSpots * setting.firstYearRatio;
-    setting.upperYearSpots = setting.totalAvailableSpots * setting.upperYearRatio;
-    setting.prioritySpots = setting.totalAvailableSpots * setting.priorityRatio;
-  
-    setting.totalAvailableSpots = 
-      setting.firstYearSpots + 
-      setting.upperYearSpots + 
-      setting.prioritySpots;
-  
+
+    setting.totalAvailableSpots = totalAvailableSpots;
+
+    setting.firstYearSpots = (totalAvailableSpots * createSettingDto.firstYearRatio)/100;
+    setting.upperYearSpots = (totalAvailableSpots * createSettingDto.upperYearRatio)/100;
+    setting.prioritySpots = (totalAvailableSpots * createSettingDto.priorityRatio)/100;
+
     return setting.save();
   }
-  
+
+
 
   async findAll() {
     const settings = await this.settingModel.find().exec();

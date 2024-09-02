@@ -6,6 +6,8 @@ import { Model } from 'mongoose';
 import { Notification } from './entities/notification.entity';
 import aqp from 'api-query-params';
 
+import { SocketGateway } from '@/socketgateway/socket.gateway';
+
 @Injectable()
 export class NotificationService {
 
@@ -13,6 +15,7 @@ export class NotificationService {
     @InjectModel(Notification.name)
     private notificationModel: Model<Notification>,
 
+    private socketGateway: SocketGateway,
   ) { }
 
   async create(createNotificationDto: CreateNotificationDto) {
@@ -20,6 +23,7 @@ export class NotificationService {
     const notification = await this.notificationModel.create({
       title, message, type
     });
+    this.socketGateway.sendNotification(notification);
     return {
       _id: notification._id
     };
