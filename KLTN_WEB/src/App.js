@@ -28,7 +28,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div style={{ background: "#e7ecf0", height: '100vh', width: '100%' }}>
       {/* Uncomment the cursor components as needed */}
       {/* <AnimCursor /> */}
       {/* <GlowingCursor /> */}

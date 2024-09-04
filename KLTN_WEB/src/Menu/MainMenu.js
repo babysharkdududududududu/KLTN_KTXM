@@ -12,7 +12,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 
-import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined'; // Thêm icon cho thông tin bảo trì
+import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
@@ -38,13 +38,6 @@ const MainMenu = ({ onLogout }) => {
   const navigate = useNavigate();
 
   const { userId, roleId } = useUser();
-  const handleGoToRoom = () => {
-    navigate('/room');
-  };
-
-  const handleGoToSetting = () => {
-    navigate('/settings');
-  };
 
   const handleOpenMenu1 = event => {
     setMenuItem1(event.currentTarget);
@@ -125,7 +118,7 @@ const MainMenu = ({ onLogout }) => {
               </Tooltip>
               <div className='border-line' />
               <Tooltip title="Phòng">
-                <IconButton onClick={handleGoToRoom}>
+                <IconButton onClick={() => navigate('/room')}>
                   <BusinessOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
@@ -158,7 +151,7 @@ const MainMenu = ({ onLogout }) => {
 
             <div className='action-of-user'>
               <Tooltip title="Cài đặt">
-                <IconButton onClick={handleGoToSetting}>
+                <IconButton onClick={() => navigate('/settings')}>
                   <SettingsOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
@@ -205,7 +198,7 @@ const MainMenu = ({ onLogout }) => {
           </DialogActions>
         </Dialog>
       </div>
-    </div>
+    </div >
   );
 };
 

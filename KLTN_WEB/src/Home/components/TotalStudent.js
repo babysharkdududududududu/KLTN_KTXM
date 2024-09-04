@@ -5,8 +5,9 @@ import { styled } from '@mui/material/styles';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Brightness1OutlinedIcon from '@mui/icons-material/Brightness1Outlined';
 const DemoPaper = styled(Paper)(({ theme }) => ({
-    width: 350,
-    height: 150,
+    // width: 350,
+    minHeight: 185,
+    maxHeight: 200,
     alignItems: "center",
     padding: theme.spacing(2),
     ...theme.typography.body2,
@@ -17,7 +18,7 @@ export default function TotalStudent() {
     const widths = ['70%', '20%', '10%'];
     return (
         <div>
-            <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#fcfcfc", marginBottom: '20px' }}>
+            <DemoPaper square={false} >
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
                     <GroupOutlinedIcon style={{ fontSize: 25, color: '#53556a' }} />
                     <p style={{ fontSize: 15, marginLeft: '10px', color: '#53556a' }}>Tất cả sinh viên</p>
@@ -33,13 +34,13 @@ export default function TotalStudent() {
                         <div style={{ width: '15px', height: '15px', backgroundColor: '#4d84f0', borderRadius: '5px' }} />
                         <p style={{ fontSize: 15, color: '#53556a', margin: 0, marginLeft: '5px' }}>Có 4390 sinh viên</p>
                     </div>
-                    <Brightness1OutlinedIcon style={{ fontSize: 10, color: '#53556a', marginRight: '5px', marginLeft: '5px'}} />
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center"  }}>
+                    <Brightness1OutlinedIcon style={{ fontSize: 10, color: '#53556a', marginRight: '5px', marginLeft: '5px' }} />
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
                         <div style={{ width: '15px', height: '15px', backgroundColor: '#41cb91', borderRadius: '5px' }} />
                         <p style={{ fontSize: 15, color: '#53556a', margin: 0, marginLeft: '5px' }}>50 trống</p>
                     </div>
-                    <Brightness1OutlinedIcon style={{ fontSize: 10, color: '#53556a', marginRight: '5px', marginLeft: '5px'}} />
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center"  }}>
+                    <Brightness1OutlinedIcon style={{ fontSize: 10, color: '#53556a', marginRight: '5px', marginLeft: '5px' }} />
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
                         <div style={{ width: '15px', height: '15px', backgroundColor: '#ebb426', borderRadius: '5px' }} />
                         <p style={{ fontSize: 15, color: '#53556a', margin: 0, marginLeft: '5px' }}>30 dự bị</p>
                     </div>

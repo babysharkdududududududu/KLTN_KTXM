@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Typography, Box, Paper, Tabs, Tab, Button, Grid } from '@mui/material';
-import { People, MonetizationOn, Water, Bed } from '@mui/icons-material';
-import styles from './RoomInfo.module.css';
-import { useUser } from "../Context/Context";
+import { MonetizationOn } from '@mui/icons-material';
+import { Box, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { getContractRoute, getRoomByIdRoute } from '../API/APIRouter';
-import RoomMembers from './RoomMember';
-import RoomEquipment from './RoomEquipment';
+import { useUser } from '../Context/Context';
 import RoomDetails from './RoomDetail';
+import RoomEquipment from './RoomEquipment';
+import styles from './RoomInfo.module.css';
+import RoomMembers from './RoomMember';
 
 const RoomInfo = () => {
     const { userId } = useUser();
@@ -73,7 +73,6 @@ const RoomInfo = () => {
             <Typography variant="h4" align="center" sx={{ marginBottom: 3, fontWeight: 'bold', color: '#1976d2' }}>
                 Thông Tin Phòng
             </Typography>
-            <Button variant="contained" color="primary" onClick={getRoomById}>Lấy thông tin hợp đồng</Button>
 
             <Tabs value={tabIndex} onChange={(event, newValue) => setTabIndex(newValue)} centered>
                 <Tab label="Thông Tin Phòng" />
