@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsDate, IsString } from 'class-validator';
 
 export class UpdateSettingDto {
     @IsNumber()
@@ -12,4 +12,13 @@ export class UpdateSettingDto {
     @IsNumber()
     @IsNotEmpty()
     priorityRatio: number;
+
+
+    @IsString()
+    @IsNotEmpty()
+    registrationStartDate: string;
+    
+    @IsString()
+    @IsNotEmpty()
+    registrationEndDate: string;
 }

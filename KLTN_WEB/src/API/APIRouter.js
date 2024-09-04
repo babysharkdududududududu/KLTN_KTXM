@@ -42,6 +42,8 @@ export const checkUserRoute = `${host}/users/check-users`;
 export const importRoomRoute = `${host}/rooms/import`;
 
 
-
+//seting
+export const getSettingRoute = `${host}/setting`;
+export const updateSettingRoute = `${host}/setting`;
 
 
