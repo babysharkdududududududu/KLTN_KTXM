@@ -25,7 +25,12 @@ export class Setting {
 
     @Prop({ default: 0.05 })
     priorityRatio: number;
-    
+
+    @Prop({ type: Date, required: true })
+    registrationStartDate: Date;
+
+    @Prop({ type: Date, required: true })
+    registrationEndDate: Date;
 }
 
 export const SettingSchema = SchemaFactory.createForClass(Setting);

@@ -27,8 +27,6 @@ export class SettingService {
     return setting.save();
   }
 
-
-
   async findAll() {
     const settings = await this.settingModel.find().exec();
     return settings;
