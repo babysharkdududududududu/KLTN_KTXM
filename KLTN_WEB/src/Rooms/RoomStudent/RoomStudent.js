@@ -1,11 +1,9 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, Typography, Grid, Button, Box } from '@mui/material';
+import { Card, CardContent, CardHeader, Typography, Grid, Button } from '@mui/material';
 import { CheckCircle, Warning } from '@mui/icons-material';
 import { getRoomRoute, getRoomByIdRoute } from '../../API/APIRouter';
 import axios from 'axios';
 import RoomDialog from './RoomDialog';
-import Floor from "../Filter/Floor";
-
 import '../TableData.css';
 
 const TableData = ({ filterBlock }) => {
@@ -13,15 +11,7 @@ const TableData = ({ filterBlock }) => {
     const [openDialog, setOpenDialog] = React.useState(false);
     const [selectedRoom, setSelectedRoom] = React.useState(null);
     const [currentPage, setCurrentPage] = React.useState(1);
-    const roomsPerPage = 12;
-
-    const getAllFloors = () => {
-        const floors = [];
-        listRooms.forEach(room => { if (!floors.includes(room.floor)) floors.push(room.floor); });
-        console.log(floors);
-        return floors;
-    };
-
+    const roomsPerPage = 15;
 
     const fetchRooms = async () => {
         try {
@@ -37,7 +27,6 @@ const TableData = ({ filterBlock }) => {
     React.useEffect(() => {
         fetchRooms();
     }, [filterBlock]);
-
 
     const getRoomById = async (id) => {
         try {
@@ -78,33 +67,29 @@ const TableData = ({ filterBlock }) => {
     const currentRooms = rows.slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage);
 
     return (
-        <div style={{ height: '81%', width: '100%', backgroundColor: "#fff" }}>
-            {/* 
-            <Box>
-                <Floor label="Tầng" items={getAllFloors()} />
-            </Box> */}
-            <Grid container spacing={2} style={{ padding: '16px' }}>
+        <div style={{ height: '100%', width: '100%' }}>
+            <Grid container columnSpacing={-20.9} style={{ padding: '16px', marginBottom: '10px' }} rowSpacing={1}>
                 {currentRooms.length > 0 ? (
                     currentRooms.map((room) => (
-                        <Grid item xs={12} sm={6} md={3} key={room.id}>
-                            <Card onClick={() => handleCardClick(room)} style={{ cursor: 'pointer', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)', transition: 'transform 0.2s', marginBottom: '10px', height: '280px', overflow: 'hidden', }}>
-                                <CardHeader title={`Phòng ${room.roomNumber}`} subheader={`Tầng: ${room.floor}, Khối: ${room.block}`} style={{ backgroundColor: '#e3f2fd', borderBottom: '1px solid #bbdefb', height: '50px' }} />
-                                <CardContent style={{ overflow: 'auto', maxHeight: '200px' }}>
-                                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6} md={4} lg={2.4} key={room.id}>
+                            <Card onClick={() => handleCardClick(room)} style={{ marginLeft: -60, cursor: 'pointer', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', transition: 'transform 0.2s', height: '220px', overflow: 'hidden', width: '200px' }}>
+                                <CardHeader title={`Phòng ${room.roomNumber}`} subheader={`Tầng: ${room.floor}, Khối: ${room.block}`} style={{ backgroundColor: '#e3f2fd', borderBottom: '1px solid #bbdefb', padding: '8px 16px' }} />
+                                <CardContent style={{ padding: '8px 16px', height: "100px" }}>
+                                    <Grid container spacing={1}>
                                         <Grid item xs={6}>
-                                            <Typography variant="body2"><strong>Sức chứa:</strong> {room.capacity}</Typography>
+                                            <Typography variant="body2" style={{ fontSize: '0.65rem' }}><strong>Sức chứa:</strong> {room.capacity}</Typography>
                                         </Grid>
                                         <Grid item xs={6}>
-                                            <Typography variant="body2"><strong>Số chỗ trống:</strong> {room.availableSpot}</Typography>
+                                            <Typography variant="body2" style={{ fontSize: '0.65rem' }}><strong>Số chỗ trống:</strong> {room.availableSpot}</Typography>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Typography variant="body2"><strong>Mô tả:</strong> {room.description}</Typography>
+                                            <Typography variant="body2" style={{ fontSize: '0.65rem' }}><strong>Mô tả:</strong> {room.description}</Typography>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Typography variant="body2"><strong>Loại phòng:</strong> {room.type}</Typography>
+                                            <Typography variant="body2" style={{ fontSize: '0.65rem' }}><strong>Loại phòng:</strong> {room.type}</Typography>
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <Typography variant="body2" style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Typography variant="body2" style={{ fontSize: '0.65rem', display: 'flex', alignItems: 'center' }}>
                                                 <strong>Trạng thái:</strong>
                                                 {room.status === 'Bảo trì' ? (
                                                     <Warning style={{ color: 'red', marginLeft: 4 }} />
@@ -122,13 +107,12 @@ const TableData = ({ filterBlock }) => {
                     <Typography variant="body2" style={{ padding: '16px', textAlign: 'center', width: '100%' }}>Không có phòng nào trong khối này.</Typography>
                 )}
             </Grid>
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-                <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Trước</Button>
-                <Typography variant="body2" style={{ margin: '0 16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', position: 'fixed', bottom: 0, left: '40%', marginTop: '10px', marginBottom: '5px' }}>
+                <Button style={{ margin: '0 16px', fontSize: '0.45rem', fontWeight: 'bold', width: 50, height: 20 }} variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}>Trước</Button>
+                <Typography style={{ margin: '0 16px', fontSize: '0.65rem' }}>
                     Trang {currentPage} / {totalPages}
                 </Typography>
-                <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
-
+                <Button style={{ margin: '0 16px', fontSize: '0.45rem', fontWeight: 'bold', width: 50, height: 20 }} variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
             </div>
             <RoomDialog
                 open={openDialog}

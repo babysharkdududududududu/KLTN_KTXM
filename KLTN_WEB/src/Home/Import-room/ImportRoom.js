@@ -1,11 +1,17 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { getRoomRoute, importRoomRoute, importUserRoute } from '../../API/APIRouter';
+import { getRoomRoute, importRoomRoute } from '../../API/APIRouter';
+import { Button, Card, CardContent, Typography, Snackbar, Alert, Box, LinearProgress, TextField } from '@mui/material';
 
 const UploadRoom = () => {
     const [file, setFile] = useState(null);
     const [listRooms, setListRooms] = useState([]);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
     const fetchRooms = async () => {
         try {
@@ -25,7 +31,6 @@ const UploadRoom = () => {
         setFile(e.target.files[0]);
     };
 
-    // Function to find duplicate roomNumber in the uploaded file
     const findDuplicateRoomNumber = (results) => {
         const roomNumbers = {};
         const duplicates = [];
@@ -50,7 +55,7 @@ const UploadRoom = () => {
 
     const handleUpload = async () => {
         if (!file) {
-            alert('Please select a file first.');
+            showSnackbar('Vui lòng chọn một file trước.', 'error');
             return;
         }
 
@@ -60,29 +65,22 @@ const UploadRoom = () => {
             const workbook = XLSX.read(data, { type: 'array' });
             const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
-            console.log('Dữ liệu từ file:', jsonData); // Kiểm tra dữ liệu từ file
+            console.log('Dữ liệu từ file:', jsonData);
 
-            const isValid = jsonData.every(room =>
-                room.roomNumber &&
-                room.floor &&
-                room.block &&
-                room.equipment_name && // Kiểm tra tên thiết bị
-                room.equipment_quantity // Kiểm tra số lượng thiết bị
-            );
+            const isValid = jsonData.every(room => room.roomNumber && room.floor && room.block && room.equipment_name && room.equipment_quantity);
 
             if (!isValid) {
-                alert('Dữ liệu không hợp lệ!');
+                showSnackbar('Dữ liệu không hợp lệ!', 'error');
                 return;
             }
 
-            // Normalize roomNumbers to lowercase to avoid case sensitivity issues
             const normalizedUserData = jsonData.map(room => ({
                 roomNumber: String(room.roomNumber || '').toLowerCase(),
-                floor: Number(room.floor), // Chuyển đổi floor thành số
+                floor: Number(room.floor),
                 block: room.block,
                 equipment: [{
                     name: room.equipment_name,
-                    quantity: Number(room.equipment_quantity), // Chuyển đổi quantity thành số
+                    quantity: Number(room.equipment_quantity),
                 }]
             }));
 
@@ -100,27 +98,69 @@ const UploadRoom = () => {
             console.log('Phòng hợp lệ:', validRooms);
 
             if (validRooms.length === 0) {
-                alert('Không có phòng hợp lệ để nhập!');
+                showSnackbar('Không có phòng hợp lệ để nhập!', 'warning');
                 return;
             }
 
+            setIsUploading(true);
             try {
-                const response = await axios.post(importRoomRoute, validRooms);
+                const response = await axios.post(importRoomRoute, validRooms, {
+                    onUploadProgress: progressEvent => {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        setUploadProgress(percentCompleted);
+                    }
+                });
                 console.log('Phản hồi từ server:', response.data);
-                alert('Import thành công!');
+                showSnackbar('Import thành công!', 'success');
+                fetchRooms();
             } catch (error) {
                 console.error('Lỗi khi import:', error.response?.data || error.message);
+                showSnackbar('Có lỗi xảy ra khi import dữ liệu.', 'error');
+            } finally {
+                setIsUploading(false);
+                setUploadProgress(0);
             }
         };
         reader.readAsArrayBuffer(file);
     };
 
+    const showSnackbar = (message, severity) => {
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
 
     return (
-        <div>
-            <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
-        </div>
+        <Box display="flex" justifyContent="center" alignItems="center" >
+            <Card sx={{ maxWidth: 400, padding: 2 }}>
+                <CardContent>
+                    <Typography variant="h5" gutterBottom align="center">Nhập dữ liệu phòng</Typography>
+
+                    <TextField type="file" inputProps={{ accept: '.xlsx, .xls, .csv' }} onChange={handleFileChange} margin="normal" variant="outlined" />
+
+                    <Button variant="contained" color="primary" fullWidth onClick={handleUpload} disabled={isUploading}>
+                        {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
+                    </Button>
+                    <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 2 }}>
+                        Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu sinh viên.
+                    </Typography>
+
+                    {isUploading && (
+                        <LinearProgress variant="determinate" value={uploadProgress} sx={{ marginTop: 2 }} />
+                    )}
+                </CardContent>
+            </Card>
+
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </Box>
     );
 };
 

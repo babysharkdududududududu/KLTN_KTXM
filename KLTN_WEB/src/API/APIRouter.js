@@ -1,6 +1,7 @@
-export const host = "http://localhost:8081/api/v1";
-// export const host = process.env.REACT_APP_API_HOST;
+// export const host = "http://localhost:8081/api/v1";
+export const host = process.env.REACT_APP_API_HOST;
 
+console.log('API Host:', host);
 
 // Auth
 export const loginRoute = `${host}/auth/login`;

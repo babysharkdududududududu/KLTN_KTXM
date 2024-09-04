@@ -78,6 +78,10 @@ export class UsersService {
         isActive: user.isActive || false,
         codeId: user.codeId || '',
         codeExpired: user.codeExpired ? new Date(user.codeExpired) : null,
+        dateOfBirth: user.dateOfBirth
+          ? new Date(user.dateOfBirth)
+          : null,
+        gender: user.gender || '',
       };
     });
 
