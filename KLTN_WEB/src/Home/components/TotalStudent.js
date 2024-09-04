@@ -5,8 +5,9 @@ import { styled } from '@mui/material/styles';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Brightness1OutlinedIcon from '@mui/icons-material/Brightness1Outlined';
 const DemoPaper = styled(Paper)(({ theme }) => ({
-    width: 350,
-    height: 150,
+    // width: 350,
+    minHeight: 185,
+    maxHeight: 200,
     alignItems: "center",
     padding: theme.spacing(2),
     ...theme.typography.body2,

@@ -26,13 +26,13 @@ const Layout = ({ children, onLogout }) => {
     };
 
     return (
-        <div style={{ display: 'flex', background: "#e7ecf0", height: '10%' }}>
+        <div style={{ display: 'flex', background: "#e7ecf0", }}>
             <IconButton
                 onClick={toggleMenu}
                 style={{
                     position: menuOpen ? 'absolute' : 'fixed',
                     top: menuOpen ? 10 : 10,
-                    left: menuOpen ? 100 : 10, // Dời sang phải khi mở
+                    left: menuOpen ? 80 : 10,
                     zIndex: 1001,
                     transition: 'left 0.3s',
                 }}

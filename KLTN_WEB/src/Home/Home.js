@@ -14,6 +14,8 @@ import ImportXLSX from './Import-xlsx/ImportXlxs';
 import UserInfo from './UserInfo/UserInfo';
 import TotalStudent from './components/TotalStudent';
 import RoomInfo from './RoomInfo/RoomInfo';
+import AvailableSlot from './AvailableSlot/AvailableSlot';
+import Payment from './Pay/Payment';
 
 
 
@@ -49,9 +51,6 @@ const Home = () => {
                 </Grid>
             </Grid>
 
-
-
-
             <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ marginTop: 3 }}>
                 <Grid item xs={2}>
                     <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={() => navigate('/room')}  >
@@ -85,7 +84,6 @@ const Home = () => {
                         <Typography variant="caption">Hợp đồng</Typography>
                     </Box>
                 </Grid>
-
                 <Grid item xs={2}>
                     <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={() => navigate('/profile')} >
                         <IconButton sx={{ color: '#4da1e8' }}>
@@ -104,11 +102,25 @@ const Home = () => {
                 </Grid>
             </Grid>
 
+            <Grid container spacing={3}   >
+                <Grid item xs={12} sm={6} md={4}  >
+                    <Box sx={{ marginTop: 2 }}>
+                        <TotalStudent />
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                    <Box sx={{ marginTop: 2 }}>
+                        <AvailableSlot />
+                    </Box>
+                </Grid>
 
-            <Grid item xs={12} sm={6} md={4}>
-                <Box sx={{ marginTop: 2 }}>
-                    <TotalStudent />
-                </Box>
+                <Grid item xs={12} sm={6} md={4}>
+                    <Box sx={{ marginTop: 2 }}>
+                        <Payment />
+                    </Box>
+                </Grid>
+
+
             </Grid>
         </div >
     );

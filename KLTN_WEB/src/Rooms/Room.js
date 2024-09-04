@@ -35,8 +35,8 @@ const Room = () => {
     };
 
     return (
-        <div >
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignContent: 'center', background: '#e7ecf0', width: '100%' }}>
+        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignContent: 'center', background: '#e7ecf0', width: '100%', }}>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignContent: 'center', background: '#e7ecf0', width: '100%', height: '100%' }}>
                 {
                     roleId === 'USERS' ?
                         <RoomStudent filterBlock={filterBlock} />
