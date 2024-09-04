@@ -1,5 +1,6 @@
+import { User } from '@/modules/users/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 
 export type RoomDocument = HydratedDocument<Room>;
 
@@ -9,6 +10,9 @@ export class Equipment {
 
     @Prop()
     quantity: number;
+
+    @Prop()
+    status: number;
 }
 
 export enum Block {
@@ -56,6 +60,10 @@ export class Room {
 
     @Prop({ default: 0 })
     status: number;
+
+    @Prop({ type: [{ type: User, ref: 'User' }] })
+    users: User[];
+
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);

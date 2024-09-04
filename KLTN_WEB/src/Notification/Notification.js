@@ -4,13 +4,16 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useWebSocket } from '../Context/WebSocketContext';
 import { getNotificationRoute, createNotificationRoute, deleteNotificationRoute } from '../API/APIRouter';
 import axios from 'axios';
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Button, Dialog, DialogActions, DialogContent, IconButton, DialogTitle, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import { useUser } from '../Context/Context';
 
 const Notification = () => {
+    const { sendMessage, messages } = useWebSocket();
+
     const [notifications, setNotifications] = useState([]);
     const [visibleModal, setVisibleModal] = useState(false);
     const [selectedNotification, setSelectedNotification] = useState(null);
@@ -21,9 +24,12 @@ const Notification = () => {
         message: '',
         type: ''
     });
+    const { roleId } = useUser();
 
     const handleOpenModal = () => {
         setVisibleModal(true);
+        console.log('Role ID:', roleId);
+
     }
 
     const handleCloseModal = () => {
@@ -44,6 +50,7 @@ const Notification = () => {
             console.log('Create Notification Response:', response);
             fetchNotifications();
             handleCloseModal();
+            sendMessage(newNotification);
         } catch (error) {
             console.error('Failed to create notification:', error);
         }
@@ -85,7 +92,7 @@ const Notification = () => {
     }
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '90vh', padding: 4, backgroundColor: '#f5f5f5' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '90vh', padding: 4 }}>
             <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 4 }}>
                 <Button variant={!selectedFilter ? 'contained' : 'outlined'} color="primary" onClick={() => setSelectedFilter('')}>
                     Tất cả
@@ -138,9 +145,16 @@ const Notification = () => {
                 </List>
             </Box>
 
-            <IconButton onClick={handleOpenModal} color="primary" sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', borderRadius: '50%', backgroundColor: '#1976d2', }}>
+            {
+                roleId === 'USERS' ? null : (
+                    <IconButton onClick={handleOpenModal} color="primary" sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', borderRadius: '50%', backgroundColor: '#1976d2', }}>
+                        <AddIcon sx={{ color: "white", fontSize: 30, fontWeight: 'bold' }} />
+                    </IconButton>
+                )
+            }
+            {/* <IconButton onClick={handleOpenModal} color="primary" sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', borderRadius: '50%', backgroundColor: '#1976d2', }}>
                 <AddIcon sx={{ color: "white", fontSize: 30, fontWeight: 'bold' }} />
-            </IconButton>
+            </IconButton> */}
 
             <Dialog open={visibleModal} onClose={handleCloseModal} sx={{ '& .MuiDialog-paper': { borderRadius: '16px' } }}>
                 <DialogTitle>Thêm Thông Báo Mới</DialogTitle>

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateContractDto } from './dto/create-contract.dto';
@@ -8,14 +8,18 @@ import { Room } from '../rooms/entities/room.entity';
 import { RoomsService } from '../rooms/rooms.service';
 import { User } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
+import { DeleteContractDto } from './dto/delete-contract.dto';
 
 @Injectable()
 export class ContractsService {
-  constructor(@InjectModel(Contract.name) 
-    private contractModel: Model<Contract>,
+  constructor(@InjectModel(Contract.name)
+  private contractModel: Model<Contract>,
     private readonly roomsService: RoomsService,
-    private readonly usersService: UsersService
-
+    private readonly usersService: UsersService,
+    @InjectModel(Room.name)
+    private roomModel: Model<Room>,
+    @InjectModel(User.name)
+    private userModal: Model<User>
   ) { }
 
   checkUserRoomExist = async (userId: string, roomNumber: string): Promise<boolean> => {
@@ -39,25 +43,73 @@ export class ContractsService {
     return true;
   }
 
-  async create(createContractDto: CreateContractDto) {
+  async remove(id: string, deleteContractDto: DeleteContractDto) {
+    const contract = await this.contractModel.findById(id).exec();
+    if (!contract) {
+      throw new NotFoundException(`Contract with ID ${id} not found`);
+    }
+
+    const room = await this.roomModel.findOne({ roomNumber: contract.roomNumber });
+    if (!room) {
+      throw new NotFoundException(`Room with roomNumber ${contract.roomNumber} not found`);
+    }
+
+    const userIndex = room.users.findIndex(user => user.userId === deleteContractDto.userId);
+    if (userIndex === -1) {
+      throw new NotFoundException(`User with userId ${deleteContractDto.userId} not found in room ${contract.roomNumber}`);
+    }
+
+    room.users.splice(userIndex, 1);
+    room.availableSpot += 1;
+
+    await Promise.all([room.save(), this.contractModel.deleteOne({ _id: id }).exec()]);
+
+    return { message: 'Delete contract and user successfully' };
+  }
+
+
+  async create(createContractDto: CreateContractDto): Promise<Contract> {
     const { contractNumber, userId, roomNumber } = createContractDto;
+
     const isExist = await this.checkUserRoomExist(userId, roomNumber);
     if (!isExist) {
-      throw new NotFoundException(`Người dùng đã có hợp đồng còn hiệu lực`);
+      throw new NotFoundException('Người dùng đã có hợp đồng còn hiệu lực');
     }
-    const currentDate = new Date(); 
-    const endDate = new Date(currentDate); 
+
+    const room = await this.roomModel.findOne({ roomNumber });
+
+    if (!room) {
+      throw new NotFoundException('Phòng không tồn tại');
+    }
+
+    if (room.availableSpot <= 0) {
+      throw new BadRequestException('Phòng đã hết chỗ trống');
+    }
+
+    room.availableSpot -= 1;
+    const user = await this.findUserByUserId(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+    room.users.push(user);
+    await room.save();
+
+    // Tạo hợp đồng
+    const currentDate = new Date();
+    const endDate = new Date(currentDate);
     endDate.setMonth(currentDate.getMonth() + 10);
+
     const contract = await this.contractModel.create({
       contractNumber,
       userId,
       roomNumber,
       startDate: currentDate,
-      endDate, 
+      endDate,
     });
+
     return contract;
   }
-  
+
 
   async findAll(): Promise<Contract[]> {
     return this.contractModel.find().exec();
@@ -93,12 +145,18 @@ export class ContractsService {
     return updatedContract;
   }
 
-  async remove(id: string) {
-    const result = await this.contractModel.findByIdAndDelete(id).exec();
-    if (!result) {
-      throw new NotFoundException(`Contract with ID ${id} not found`);
+  async contractExtension(contractNumber: string) {
+    const contract = await this.contractModel.findOne({ contractNumber }).exec();
+    if (!contract) {
+      throw new NotFoundException(`Contract with contractNumber ${contractNumber} not found`);
     }
+    const endDate = new Date(contract.endDate);
+    endDate.setMonth(endDate.getMonth() + 10);
+    contract.endDate = endDate;
+    await contract.save();
+    return contract;
   }
+  
 
   async findOne(id: string) {
     const contract = await this.contractModel.findById(id).exec();
@@ -107,5 +165,50 @@ export class ContractsService {
     }
     return contract;
   }
+  async findContractByUserId(userId: string) {
+    return this.contractModel.findOne({ userId });
+  }
+  async findUserByUserId(userId: string) {
+    return this.userModal.findOne({ userId });
+  }
+  async findRoomByRoomNumber(roomNumber: string) {
+    return this.roomModel.findOne({ roomNumber });
+  }
+
+
+  async findUserWithContract(userId: string) {
+    const user = await this.findUserByUserId(userId);
+    const contract = await this.findContractByUserId(userId);
+
+    if (!user || !contract) {
+      throw new Error('User or contract not found');
+    }
+    return {
+      user,
+      contract,
+    };
+  }
+  async findUserAndRoomWithContract(userId: string, roomNumber: string) {
+    const user = await this.findUserByUserId(userId);
+    const contract = await this.findContractByUserId(userId);
+
+    if (!user || !contract) {
+      throw new Error('User or contract not found');
+    }
+
+    const room = await this.findRoomByRoomNumber(roomNumber);
+
+    if (!room) {
+      throw new Error('Room not found');
+    }
+
+    return {
+      user,
+      contract,
+      room,
+    };
+  }
+
+
 
 }

@@ -15,6 +15,7 @@ export class UpdateRoomDto {
     equipment: {
         name: string;
         quantity: number;
+        status: number;
     }[];
 
     @IsOptional()

@@ -17,7 +17,12 @@ async function bootstrap() {
   //config cors
   app.enableCors(
     {
+<<<<<<< HEAD
       origin: "http://14.225.211.35:3001",
+=======
+      //origin: "http://14.225.211.35:3001/",
+      "origin": true,
+>>>>>>> 3c744aab7e15f0f5f20d0ad3231c01ac831ffac0
       "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
       "preflightContinue": false,
       credentials: true

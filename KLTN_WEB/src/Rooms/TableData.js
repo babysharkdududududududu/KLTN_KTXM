@@ -3,9 +3,10 @@ import { DataGrid } from '@mui/x-data-grid';
 import { getRoomRoute, getRoomByIdRoute, updateRoomRoute } from '../API/APIRouter';
 import axios from 'axios';
 import RoomDialog from './RoomDialog';
-import { CheckCircle, Warning } from '@mui/icons-material'; // Import biểu tượng
+import { CheckCircle, Warning } from '@mui/icons-material';
 import './TableData.css';
-import { Button, Typography } from '@mui/material';
+import { Button, CircularProgress, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import Pagination from './Pagination/Pagination';
 
 const columns = [
   { field: 'roomNumber', headerName: 'Tên phòng', width: 120 },
@@ -39,9 +40,11 @@ const TableData = ({ filterBlock }) => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 0 });
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10); // Fixed page size of 10
+  const [pageSize] = useState(10);
+  const [loading, setLoading] = useState(true); // Thêm biến trạng thái loading
 
   const fetchRooms = async () => {
+    setLoading(true); // Bắt đầu tải dữ liệu
     try {
       const { data } = await axios.get(getRoomRoute, { params: { all: true } });
       const filteredRooms = filterBlock ? data.data.results.filter(room => room.block === filterBlock) : data.data.results;
@@ -49,6 +52,8 @@ const TableData = ({ filterBlock }) => {
       setListRooms(filteredRooms);
     } catch (err) {
       console.error("Error fetching rooms:", err);
+    } finally {
+      setLoading(false); // Kết thúc tải dữ liệu
     }
   };
 
@@ -60,8 +65,9 @@ const TableData = ({ filterBlock }) => {
   const paginatedRooms = listRooms.slice(startIndex, startIndex + pageSize);
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
+    setCurrentPage(Number(newPage)); // Chuyển đổi giá trị sang số
   };
+
 
   useEffect(() => {
     fetchRooms();
@@ -154,45 +160,48 @@ const TableData = ({ filterBlock }) => {
     status: room.status === 1 ? 'Bảo trì' : 'Hoạt động',
   }));
 
-  // Tính tổng số trang
-  const roomsPerPage = 10;
   const totalPages = Math.ceil(listRooms.length / pageSize);
-  const currentRooms = rows.slice((currentPage - 1) * roomsPerPage, currentPage * roomsPerPage);
-
 
   return (
-    <div style={{ height: '81%', width: '100%' ,backgroundColor: "#fff" }}>
-      <DataGrid
-        rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-        columns={columns}
-        pageSize={pageSize}
-        pagination
-        paginationMode="server"
-        onPageChange={handlePageChange}
-        rowCount={listRooms.length}
-        page={currentPage - 1}
-        onCellClick={handleCellClick}
-        hideFooter
-      />
+    <div style={{ height: '81%', width: '95%', marginLeft: 20 }}>
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          <CircularProgress size={50} thickness={5} color="primary" />
+        </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px', position: 'absolute', bottom: 10, left: '35%' }}>
-        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1}> Trước</Button>
-        <Typography variant="body2" style={{ margin: '0 16px' }}>
-          Trang {currentPage} / {totalPages}
-        </Typography>
-        <Button variant="contained" onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages}>Sau</Button>
-      </div>
+      ) : (
+        <>
+          <DataGrid
+            rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
+            columns={columns}
+            pageSize={pageSize}
+            pagination
+            paginationMode="server"
+            onPageChange={handlePageChange}
+            rowCount={listRooms.length}
+            page={currentPage - 1}
+            hideFooter
+            onCellClick={handleCellClick}
+          />
 
-      <RoomDialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        selectedRoom={selectedRoom}
-        onChange={handleChange}
-        onSave={handleSave}
-        newEquipment={newEquipment}
-        onNewEquipmentChange={handleNewEquipmentChange}
-        onAddEquipment={handleAddEquipment}
-      />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+
+          <RoomDialog
+            open={openDialog}
+            onClose={handleCloseDialog}
+            selectedRoom={selectedRoom}
+            onChange={handleChange}
+            onSave={handleSave}
+            newEquipment={newEquipment}
+            onNewEquipmentChange={handleNewEquipmentChange}
+            onAddEquipment={handleAddEquipment}
+          />
+        </>
+      )}
     </div>
   );
 };

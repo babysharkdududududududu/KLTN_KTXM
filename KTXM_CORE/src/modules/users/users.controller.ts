@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -40,4 +40,21 @@ export class UsersController {
   async findByUserId(@Param('userId') userId: string) {
     return this.usersService.findByUserId(userId);
   }
+  @Post('check-users')
+  @Public()
+  async checkUsers(@Body() body: { userIds: string[] }) {
+    const existingUsers = await this.usersService.checkExistingUsers(body.userIds);
+    return existingUsers; // Trả về danh sách các userId đã tồn tại
+  }
+
+  @Post('import')
+  @Public()
+  async importUsers(@Body() usersData: any[]) {
+    // Kiểm tra dữ liệu trước khi nhập
+    if (!Array.isArray(usersData) || usersData.length === 0) {
+      throw new BadRequestException('Invalid data');
+    }
+    return this.usersService.importUsers(usersData);
+  }
+
 }

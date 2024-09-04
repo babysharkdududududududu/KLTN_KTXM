@@ -17,6 +17,8 @@ export class CreateUserDto {
     phone: string;
     address: string;
     image: string;
+    dateOfBirth: Date;
+    gender: string;
 
     @IsNotEmpty({ message: "role không được để trống" })
     role: string;

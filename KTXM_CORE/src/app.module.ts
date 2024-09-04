@@ -14,13 +14,19 @@ import { TransformInterceptor } from '@/core/transform.interceptor';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ContractsModule } from '@/modules/contracts/contracts.module';
 import { Contract } from './modules/contracts/entities/contract.entity';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
+import { SettingModule } from '@/modules/setting/setting.module';
+import { SocketModule } from './socketgateway/socket.module';
 
 @Module({
   imports: [
+    SocketModule,
     UsersModule,
     AuthModule,
     NotificationModule,
+    MaintenanceModule,
     RoomsModule,
+    SettingModule,
     ContractsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
@@ -60,6 +66,7 @@ import { Contract } from './modules/contracts/entities/contract.entity';
 
     }),
     ContractsModule,
+    MaintenanceModule,
   ],
   controllers: [AppController],
   providers: [
@@ -71,7 +78,7 @@ import { Contract } from './modules/contracts/entities/contract.entity';
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
-    }
+    },
   ],
 })
 export class AppModule { }

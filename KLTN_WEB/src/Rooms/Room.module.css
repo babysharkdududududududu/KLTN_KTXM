@@ -1,7 +1,8 @@
 .room-container{
     padding-left: 20px;
     padding-right: 20px;
-    height: 100vh;
+    height: '100%';
+    /* background-color: '#e7ecf0'; */
 }
 
 .image_block{
