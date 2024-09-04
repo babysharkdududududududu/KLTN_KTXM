@@ -18,10 +18,6 @@ import AvailableSlot from './AvailableSlot/AvailableSlot';
 import Payment from './Pay/Payment';
 
 
-
-
-
-
 const Home = () => {
     const navigate = useNavigate();
 
