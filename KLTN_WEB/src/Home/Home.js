@@ -16,14 +16,10 @@ import TotalStudent from './components/TotalStudent';
 import RoomInfo from './RoomInfo/RoomInfo';
 import AvailableSlot from './AvailableSlot/AvailableSlot';
 import Payment from './Pay/Payment';
-import BasicModal from './components/BasicModal';
 import { Button } from '@mui/material-next';
 
-const Home = () => {
-    const [open, setOpen] = React.useState(false);
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+const Home = () => {
 
     const navigate = useNavigate();
 
@@ -31,7 +27,6 @@ const Home = () => {
 
     return (
         <div className={style['home-container']}>
-            <BasicModal open={open} handleClose={handleClose} />
 
             <Grid container spacing={3} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -57,7 +52,7 @@ const Home = () => {
 
             <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ marginTop: 3 }}>
                 <Grid item xs={2}>
-                    <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={handleOpen} >
+                    <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={() => navigate('/approve-room')} >
                         <IconButton sx={{ color: '#4da1e8' }}>
                             <AddBusinessIcon fontSize="medium" />
                         </IconButton>
