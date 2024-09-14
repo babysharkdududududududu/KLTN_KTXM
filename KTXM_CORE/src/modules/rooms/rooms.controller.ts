@@ -3,15 +3,17 @@ import { RoomsService } from './rooms.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { Public, ResponseMessage } from '@/decorator/customize';
+import { EquipmentService } from '../equipment/equipment.service';
+import { log } from 'node:console';
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly roomsService: RoomsService) { }
+  constructor(private readonly roomsService: RoomsService, private readonly equipmentService: EquipmentService) { }
 
-  @Post()
-  @Public()
-  create(@Body() createRoomDto: CreateRoomDto) {
-    return this.roomsService.create(createRoomDto);
-  }
+  // @Post()
+  // @Public()
+  // create(@Body() createRoomDto: CreateRoomDto) {
+  //   return this.roomsService.create(createRoomDto);
+  // }
 
   @Get()
   @Public()
@@ -23,8 +25,15 @@ export class RoomsController {
   @Get(':roomNumber')
   @Public()
   async findOne(@Param('roomNumber') roomNumber: string) {
-    return this.roomsService.findOne(roomNumber);
+    const room = await this.roomsService.findOne(roomNumber);
+    const equipment = await this.equipmentService.findAll(roomNumber);
+    console.log('equipment:', equipment);
+    return {
+      equipment: equipment || null,
+      room: room || null,
+    };
   }
+
 
   @Patch()
   @Public()
@@ -51,7 +60,6 @@ export class RoomsController {
   @Post('import')
   @Public()
   async importUsers(@Body() usersData: any[]) {
-    // Kiểm tra dữ liệu trước khi nhập
     if (!Array.isArray(usersData) || usersData.length === 0) {
       throw new BadRequestException('Invalid data');
     }

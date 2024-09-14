@@ -17,6 +17,8 @@ import { Contract } from './modules/contracts/entities/contract.entity';
 import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 import { SettingModule } from '@/modules/setting/setting.module';
 import { SocketModule } from './socketgateway/socket.module';
+import { Equipment } from './modules/equipment/entities/equipment.entity';
+import { EquipmentModule } from './modules/equipment/equipment.module';
 
 @Module({
   imports: [
@@ -27,6 +29,7 @@ import { SocketModule } from './socketgateway/socket.module';
     MaintenanceModule,
     RoomsModule,
     SettingModule,
+    EquipmentModule,
     ContractsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
