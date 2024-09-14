@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateContractDto } from './dto/create-contract.dto';
@@ -9,6 +9,9 @@ import { RoomsService } from '../rooms/rooms.service';
 import { User } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
 import { DeleteContractDto } from './dto/delete-contract.dto';
+import { SettingService } from '../setting/setting.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Setting } from '../setting/entities/setting.entity';
 
 @Injectable()
 export class ContractsService {
@@ -16,11 +19,40 @@ export class ContractsService {
   private contractModel: Model<Contract>,
     private readonly roomsService: RoomsService,
     private readonly usersService: UsersService,
+    
     @InjectModel(Room.name)
     private roomModel: Model<Room>,
+
     @InjectModel(User.name)
-    private userModal: Model<User>
+    private userModal: Model<User>,
+
+    private readonly settingService: SettingService
   ) { }
+  private settingId = '66d567a0ebb9cd93566389a9';
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async handleCron() {
+      const setting: Setting = await this.settingService.findOne(this.settingId);
+      
+      if (setting) {
+          const now = new Date();
+          const nowVietnam = new Date(now.getTime() + 7 * 60 * 60 * 1000);
+          const startDate = new Date(setting.registrationStartDate);
+          const endDate = new Date(setting.registrationEndDate);
+
+          const startDateVietnam = new Date(startDate.getTime() + 7 * 60 * 60 * 1000);
+          const endDateVietnam = new Date(endDate.getTime() + 7 * 60 * 60 * 1000);
+  
+          if (nowVietnam >= startDateVietnam && nowVietnam <= endDateVietnam) {
+              console.log('Thời gian hiện tại nằm trong khoảng thời gian đăng ký.');
+          } else {
+              console.log('Thời gian hiện tại không nằm trong khoảng thời gian đăng ký.');
+          }
+      } else {
+          console.error('Không tìm thấy setting với ID:', this.settingId);
+      }
+  }
+  
 
   checkUserRoomExist = async (userId: string, roomNumber: string): Promise<boolean> => {
     const currentDateTime = new Date();
@@ -156,7 +188,7 @@ export class ContractsService {
     await contract.save();
     return contract;
   }
-  
+
 
   async findOne(id: string) {
     const contract = await this.contractModel.findById(id).exec();
@@ -178,16 +210,21 @@ export class ContractsService {
 
   async findUserWithContract(userId: string) {
     const user = await this.findUserByUserId(userId);
-    const contract = await this.findContractByUserId(userId);
-
-    if (!user || !contract) {
-      throw new Error('User or contract not found');
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
+
+    const contract = await this.findContractByUserId(userId);
+    if (!contract) {
+      throw new NotFoundException(`Contract for User ID ${userId} not found`);
+    }
+
     return {
       user,
       contract,
     };
   }
+
   async findUserAndRoomWithContract(userId: string, roomNumber: string) {
     const user = await this.findUserByUserId(userId);
     const contract = await this.findContractByUserId(userId);

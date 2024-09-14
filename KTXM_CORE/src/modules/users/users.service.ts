@@ -29,7 +29,7 @@ export class UsersService {
     return false;
   }
 
-  isUsserIdExist = async (userId: string) => {
+  isUserIdExist = async (userId: string) => {
     const user = await this.userModel.exists({ userId });
     if (user) return true;
     return false;
@@ -43,7 +43,7 @@ export class UsersService {
     if (isExist === true) {
       throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`)
     }
-    const isUserIdExist = await this.isUsserIdExist(userId);
+    const isUserIdExist = await this.isUserIdExist(userId);
     if (isUserIdExist === true) {
       throw new BadRequestException(`Mã số sinh viên đã tồn tại: ${userId}. Vui lòng sử dụng mã số khác.`)
     }
@@ -160,7 +160,7 @@ export class UsersService {
   async handleRegister(registerDto: CreateAuthDto) {
     const { name, password, userId } = registerDto;
 
-    const isUserIdExist = await this.isUsserIdExist(userId);
+    const isUserIdExist = await this.isUserIdExist(userId);
     if (isUserIdExist === true) {
       throw new BadRequestException(`Mã số sinh viên đã tồn tại: ${userId}. Vui lòng sử dụng mã số khác.`)
     }

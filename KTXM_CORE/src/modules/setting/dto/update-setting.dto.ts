@@ -1,23 +1,22 @@
-import { IsNumber, IsNotEmpty, IsDate, IsString } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateSettingDto {
     @IsNumber()
     @IsNotEmpty()
-    firstYearRatio: number;
+    firstYearSpots: number;
 
     @IsNumber()
     @IsNotEmpty()
-    upperYearRatio: number;
+    upperYearSpots: number;
 
     @IsNumber()
     @IsNotEmpty()
-    priorityRatio: number;
-
+    prioritySpots: number;
 
     @IsString()
     @IsNotEmpty()
     registrationStartDate: string;
-    
+
     @IsString()
     @IsNotEmpty()
     registrationEndDate: string;
