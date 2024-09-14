@@ -19,6 +19,8 @@ import { SettingModule } from '@/modules/setting/setting.module';
 import { SocketModule } from './socketgateway/socket.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { DormSubmissionModule } from './modules/dorm_submission/dorm_submission.module';
+import { Equipment } from './modules/equipment/entities/equipment.entity';
+import { EquipmentModule } from './modules/equipment/equipment.module';
 
 @Module({
   imports: [
@@ -29,6 +31,7 @@ import { DormSubmissionModule } from './modules/dorm_submission/dorm_submission.
     MaintenanceModule,
     RoomsModule,
     SettingModule,
+    EquipmentModule,
     ContractsModule,
     DormSubmissionModule,
     ConfigModule.forRoot({ isGlobal: true }),

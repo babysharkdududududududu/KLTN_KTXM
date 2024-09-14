@@ -60,9 +60,10 @@ const RoomInfo = () => {
     const getRoomById = async () => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setUserInfo(data.data.users);
+            setUserInfo(data.data.room.users);
+            console.log(userInfo, "userInfo");
             setEquipment(data.data.equipment || []);
-            console.log(data.data);
+            console.log(equipment, "equipment");
         } catch (err) {
             console.error("Error fetching room by ID:", err);
         }

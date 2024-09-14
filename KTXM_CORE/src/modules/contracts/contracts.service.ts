@@ -191,12 +191,18 @@ export class ContractsService {
 
 
   async findOne(id: string) {
-    const contract = await this.contractModel.findById(id).exec();
-    if (!contract) {
-      throw new NotFoundException(`Contract with ID ${id} not found`);
+    try {
+      const contract = await this.contractModel.findById(id).exec();
+      if (!contract) {
+        throw new NotFoundException(`Contract with ID ${id} not found`);
+      }
+      return contract;
+    } catch (error) {
+      console.error('Error in findOne:', error.message);
+      throw error;
     }
-    return contract;
   }
+
   async findContractByUserId(userId: string) {
     return this.contractModel.findOne({ userId });
   }
@@ -226,26 +232,28 @@ export class ContractsService {
   }
 
   async findUserAndRoomWithContract(userId: string, roomNumber: string) {
-    const user = await this.findUserByUserId(userId);
-    const contract = await this.findContractByUserId(userId);
+    try {
+      const user = await this.findUserByUserId(userId);
+      const contract = await this.findContractByUserId(userId);
 
-    if (!user || !contract) {
-      throw new Error('User or contract not found');
+      if (!user || !contract) {
+        throw new Error('User or contract not found');
+      }
+
+      const room = await this.findRoomByRoomNumber(roomNumber);
+
+      if (!room) {
+        throw new Error('Room not found');
+      }
+
+      return {
+        user,
+        contract,
+        room,
+      };
+    } catch (error) {
+      console.error('Error in findUserAndRoomWithContract:', error.message);
+      throw error;
     }
-
-    const room = await this.findRoomByRoomNumber(roomNumber);
-
-    if (!room) {
-      throw new Error('Room not found');
-    }
-
-    return {
-      user,
-      contract,
-      room,
-    };
   }
-
-
-
 }

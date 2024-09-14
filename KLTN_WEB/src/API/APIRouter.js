@@ -40,6 +40,12 @@ export const updateMaintenanceStatusRoute = `${host}/maintenance`;
 export const importUserRoute = `${host}/users/import`;
 export const checkUserRoute = `${host}/users/check-users`;
 export const importRoomRoute = `${host}/rooms/import`;
+export const importEquipmentRoute = `${host}/equipment/import`;
+
+//equipment
+export const getEquipmentRoute = `${host}/equipment`;
+export const getAllEquipmentRoute = `${host}/equipment/`;
+export const updateLocationEquipmentRoute = `${host}/equipment`;
 
 
 //seting

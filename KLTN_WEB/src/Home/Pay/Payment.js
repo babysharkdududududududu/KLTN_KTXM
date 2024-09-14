@@ -4,15 +4,6 @@ import VNPAYImage from './asset/vnpay.png'; // Thay thế bằng đường dẫn
 import MOMOImage from './asset/momo.png'; // Thay thế bằng đường dẫn tới ảnh MOMO
 
 const Payment = () => {
-    const handleVNPAY = () => {
-        // Logic thanh toán VNPAY
-        console.log("Thanh toán qua VNPAY");
-    };
-
-    const handleMOMO = () => {
-        // Logic thanh toán MOMO
-        console.log("Thanh toán qua MOMO");
-    };
 
     return (
         <Container maxWidth="sm" sx={{ padding: 2, marginTop: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: 200, minHeight: 215 }}>

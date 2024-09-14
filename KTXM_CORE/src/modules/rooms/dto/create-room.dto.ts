@@ -1,13 +1,14 @@
 import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Equipment } from '../../equipment/entities/equipment.entity';
 
-class Equipment {
-    @IsNotEmpty({ message: 'name không được để trống' })
-    name: string;
+// class Equipment {
+//     @IsNotEmpty({ message: 'name không được để trống' })
+//     name: string;
 
-    @IsNotEmpty({ message: 'quantity không được để trống' })
-    quantity: number;
-}
+//     @IsNotEmpty({ message: 'quantity không được để trống' })
+//     quantity: number;
+// }
 
 export class CreateRoomDto {
     @IsNotEmpty({ message: 'roomNumber không được để trống' })

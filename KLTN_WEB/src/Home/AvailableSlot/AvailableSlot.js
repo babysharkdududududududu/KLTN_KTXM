@@ -61,9 +61,11 @@ const AvailableSlot = () => {
     const getRoomById = async (roomNumber) => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setRoomInfo(data.data);
-            setAvailableSlot(data.data.availableSpot);
-            setCapacity(data.data.capacity);
+            setRoomInfo(data.data.room);
+            console.log("Room info:", roomInfo);
+
+            setAvailableSlot(data.data.room.availableSpot);
+            setCapacity(data.data.room.capacity);
             setLoading(false);
         } catch (err) {
             console.error("Error fetching room by ID:", err);
@@ -79,7 +81,7 @@ const AvailableSlot = () => {
     }, [userId]);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: '260px' }}>
+        <Container maxWidth="sm" sx={{ padding: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: '260px', minHeight: '217px' }}>
             {loading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
                     <CircularProgress size={24} />

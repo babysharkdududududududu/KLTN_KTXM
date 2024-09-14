@@ -4,7 +4,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [roleId, setRoleId] = useState(null);
-    const [userId, setUserId] = useState(null);  // New state
+    const [userId, setUserId] = useState(null);
 
     return (
         <UserContext.Provider value={{ roleId, setRoleId, userId, setUserId }}>

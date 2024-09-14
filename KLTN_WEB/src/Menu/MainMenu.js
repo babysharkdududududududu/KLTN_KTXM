@@ -30,14 +30,25 @@ import { useUser } from '../Context/Context';
 import "./MainMenu.css";
 import avt from "./asset/avt.jpg";
 import logo from "./asset/iuh.png";
+import NotificationBadge from '../Context/NotificationBadge';
+import { useWebSocket } from '../Context/WebSocketContext';
 const MainMenu = ({ onLogout }) => {
   const [menuItem1, setMenuItem1] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(true);
-  const navigate = useNavigate();
-
+  const { numberNoti } = useWebSocket();
+  const [prevNoti, setPrevNoti] = useState(numberNoti);
+  const [isShaking, setIsShaking] = useState(false);
+  const { updateNotificationCount } = useWebSocket();
   const { userId, roleId } = useUser();
+
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate('/notification');
+    updateNotificationCount(0);
+  };
+
 
   const handleOpenMenu1 = event => {
     setMenuItem1(event.currentTarget);
@@ -112,14 +123,22 @@ const MainMenu = ({ onLogout }) => {
               }
               <div className='border-line' />
               <Tooltip title="Thông báo">
-                <IconButton onClick={() => navigate('/notification')}>
-                  <NotificationsOutlinedIcon className="menu-icon" />
-                </IconButton>
+                <div style={{ position: 'relative' }}>
+                  <IconButton onClick={handleClick}>
+                    <NotificationsOutlinedIcon className="menu-icon" />
+                  </IconButton>
+                  <NotificationBadge position={{ top: '0', right: '0' }} />
+                </div>
               </Tooltip>
-              <div className='border-line' />
               <Tooltip title="Phòng">
                 <IconButton onClick={() => navigate('/room')}>
                   <BusinessOutlinedIcon className="menu-icon" />
+                </IconButton>
+              </Tooltip>
+              <div className='border-line' />
+              <Tooltip title="Trang thiết bị">
+                <IconButton onClick={() => navigate('/equiment')}>
+                  <SettingsOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
               {
@@ -155,6 +174,7 @@ const MainMenu = ({ onLogout }) => {
                   <SettingsOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>
+
               {/* <Tooltip title="Đăng xuất" onClick={handleLogout}>
               <IconButton>
                 <ExitToAppIcon className="menu-icon" />

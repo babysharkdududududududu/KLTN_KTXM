@@ -7,27 +7,44 @@ import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsAc
 import { IconButton, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NotificationBadge from '../Context/NotificationBadge';
+import { useWebSocket } from '../Context/WebSocketContext';
+import AvailableSlot from './AvailableSlot/AvailableSlot';
 import style from './Home.module.css';
-import ImportXLSX from './Import-xlsx/ImportXlxs';
+import Payment from './Pay/Payment';
+import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
 import TotalStudent from './components/TotalStudent';
-import RoomInfo from './RoomInfo/RoomInfo';
-import AvailableSlot from './AvailableSlot/AvailableSlot';
-import Payment from './Pay/Payment';
-import { Button } from '@mui/material-next';
-
 
 const Home = () => {
-
     const navigate = useNavigate();
+    const [open, setOpen] = React.useState(false);
+    const { numberNoti } = useWebSocket();
+    const [prevNoti, setPrevNoti] = useState(numberNoti);
+    const [isShaking, setIsShaking] = useState(false);
+    const { updateNotificationCount } = useWebSocket();
+
+    useEffect(() => {
+        if (numberNoti > prevNoti) {
+            setIsShaking(true);
+            const timer = setTimeout(() => setIsShaking(false), 10000);
+            return () => clearTimeout(timer);
+        }
+        setPrevNoti(numberNoti);
+    }, [numberNoti, prevNoti]);
+
+    const handleClick = () => {
+        navigate('/notification');
+        updateNotificationCount(0);
+    };
+
 
     const boxStyle = { padding: 2, backgroundColor: '#f5f5f5', borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', cursor: 'pointer', };
 
     return (
         <div className={style['home-container']}>
-
             <Grid container spacing={3} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ ...boxStyle, overflow: 'auto', flex: 1 }}>
@@ -68,13 +85,15 @@ const Home = () => {
                     </Box>
                 </Grid>
                 <Grid item xs={2}>
-                    <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={() => navigate('/notification')} >
-                        <IconButton sx={{ color: '#4da1e8' }}>
+                    <Box sx={{ ...boxStyle, height: 100, marginTop: -4, position: 'relative' }} onClick={handleClick} >
+                        <IconButton sx={{ color: '#4da1e8' }} className={isShaking ? style['shake-icon'] : ''}>
                             <NotificationsActiveOutlinedIcon fontSize="medium" />
                         </IconButton>
+                        <NotificationBadge position={{ top: '40px', right: '75px' }} style={{ fontSize: '8px', padding: '1px 4px' }} />
                         <Typography variant="caption">Thông báo</Typography>
                     </Box>
                 </Grid>
+
                 <Grid item xs={2}>
                     <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={() => navigate('/contract')}>
                         <IconButton sx={{ color: '#4da1e8' }}>

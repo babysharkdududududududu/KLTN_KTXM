@@ -17,6 +17,8 @@ import { WebSocketProvider } from './Context/WebSocketContext';
 import RoomInfo from './RoomInfo/RoomInfo';
 import Contract from './Contract/Contract';
 import Maintenance from './Maintance/Maintenance';
+import NotificationBadge from './Context/NotificationBadge';
+import Equipment from './Equipment/Equipment';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -50,6 +52,7 @@ const App = () => {
               <Route path="/maintenance" element={isLoggedIn ? <Layout onLogout={handleLogout}><Maintenance /></Layout> : <Navigate to="/" />} />
               <Route path="/contract" element={isLoggedIn ? <Layout onLogout={handleLogout}><Contract /></Layout> : <Navigate to="/" />} />
               <Route path="/approve-room" element={isLoggedIn ? <Layout onLogout={handleLogout}><ApproveRoom /></Layout> : <Navigate to="/" />} />
+              <Route path="/equiment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Equipment /></Layout> : <Navigate to="/" />} />
             </Routes>
           </Router>
         </WebSocketProvider>

@@ -29,7 +29,7 @@ const Login = ({ onLoginSuccess }) => {
         setError('');
 
         try {
-            const response = await axios.post(loginRoute, {
+            const response = await axios.post(`http://localhost:8081/api/v1/auth/login`, {
                 username: email,
                 password: password
             });

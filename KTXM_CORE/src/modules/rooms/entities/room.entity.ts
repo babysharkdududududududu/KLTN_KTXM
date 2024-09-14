@@ -1,6 +1,7 @@
 import { User } from '@/modules/users/schemas/user.schema';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
+import mongoose, { HydratedDocument, Schema as MongooseSchema, Types } from 'mongoose';
+// import { Equipment } from '@/modules/equipment/entities/equipment.entity';
 
 export type RoomDocument = HydratedDocument<Room>;
 
@@ -22,6 +23,9 @@ export enum Block {
 
 @Schema({ timestamps: true })
 export class Room {
+    static find(arg0: { roomNumber: { $in: any[]; }; }) {
+        throw new Error('Method not implemented.');
+    }
     @Prop({ index: true })
     roomNumber: string;
 
@@ -30,6 +34,9 @@ export class Room {
 
     @Prop()
     floor: number;
+
+    // @Prop({ type: [Equipment] })
+    // equipment: Equipment[];
 
     @Prop({ type: [Equipment] })
     equipment: Equipment[];
@@ -63,7 +70,6 @@ export class Room {
 
     @Prop({ type: [{ type: User, ref: 'User' }] })
     users: User[];
-
 }
 
 export const RoomSchema = SchemaFactory.createForClass(Room);
