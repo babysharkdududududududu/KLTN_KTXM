@@ -9,6 +9,7 @@ import { useUser } from '../Context/Context';
 import RoomStudent from './RoomStudent/RoomStudent';
 import ImportRoom from '../Home/Import-room/ImportRoom';
 import { Button } from '@mui/material';
+import EquipmentUpload from '../Home/Import-equipment/ImportEquipment';
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
     width: 150,
@@ -59,12 +60,16 @@ const Room = () => {
                     {
                         roleId === 'MANAGER' ?
                             <Button variant="contained" color="primary" onClick={handleImportRoomClick} sx={{ marginTop: 2 }}>
+                                {/* {showImportRoom ? 'Ẩn Import Room' : 'Hiện Import Room'} */}
                                 {showImportRoom ? 'Ẩn Import Room' : 'Hiện Import Room'}
+
                             </Button>
                             : null
                     }
 
                     {showImportRoom && <ImportRoom />}
+                    {showImportRoom && <EquipmentUpload />}
+
                 </div>
             </div>
         </div>

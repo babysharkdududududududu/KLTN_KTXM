@@ -12,16 +12,14 @@ const statusColors = {
     3: '#ff9800',
     4: '#9c27b0',
     5: '#4caf50',
-    6: '#d32f2f'
 };
 
 const statusText = {
-    1: 'Tiếp nhận',
+    1: 'Hoạt động',
     2: 'Kiểm tra',
     3: 'Xử lý',
     4: 'Sửa chữa',
     5: 'Hoàn thành',
-    6: 'Không sửa được'
 };
 
 const Maintenance = () => {

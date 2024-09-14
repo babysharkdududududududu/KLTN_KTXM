@@ -1,0 +1,48 @@
+/* Container for all equipment */
+.equipment-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #f7f9fc;
+    font-family: Arial, sans-serif;
+}
+
+/* Grid layout for cards */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Individual card styling */
+.card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease;
+}
+
+/* Hover effect for card */
+.card:hover {
+    transform: translateY(-10px);
+}
+
+/* Card title (equipment name) */
+.card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #334155;
+}
+
+/* Paragraph inside card */
+.card p {
+    font-size: 1rem;
+    color: #475569;
+    margin: 5px 0;
+}
+
+/* Strong (bold) labels for data */
+.card p strong {
+    color: #1e293b;
+}

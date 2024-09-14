@@ -15,6 +15,7 @@ const RoomInfo = () => {
 
     const handleGetContract = async () => {
         setLoading(true);
+        setLoading(true);
         try {
             const response = await axios.get(`${getContractRoute}/${userId}`);
             const { roomNumber } = response.data.data.contract;
@@ -29,7 +30,9 @@ const RoomInfo = () => {
     const getRoomById = async (roomNumber) => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setRoomInfo(data.data);
+            setRoomInfo(data.data.room);
+            console.log("Room info:", roomInfo);
+
             setLoading(false);
         } catch (err) {
             console.error("Error fetching room by ID:", err);

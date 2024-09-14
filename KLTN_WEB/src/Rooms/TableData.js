@@ -41,19 +41,18 @@ const TableData = ({ filterBlock }) => {
   const [newEquipment, setNewEquipment] = useState({ name: '', quantity: 0 });
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
-  const [loading, setLoading] = useState(true); // Thêm biến trạng thái loading
+  const [loading, setLoading] = useState(true);
 
   const fetchRooms = async () => {
-    setLoading(true); // Bắt đầu tải dữ liệu
+    setLoading(true);
     try {
       const { data } = await axios.get(getRoomRoute, { params: { all: true } });
       const filteredRooms = filterBlock ? data.data.results.filter(room => room.block === filterBlock) : data.data.results;
-      console.log("Filtered rooms:", filteredRooms);
       setListRooms(filteredRooms);
     } catch (err) {
       console.error("Error fetching rooms:", err);
     } finally {
-      setLoading(false); // Kết thúc tải dữ liệu
+      setLoading(false);
     }
   };
 
@@ -65,9 +64,8 @@ const TableData = ({ filterBlock }) => {
   const paginatedRooms = listRooms.slice(startIndex, startIndex + pageSize);
 
   const handlePageChange = (newPage) => {
-    setCurrentPage(Number(newPage)); // Chuyển đổi giá trị sang số
+    setCurrentPage(Number(newPage));
   };
-
 
   useEffect(() => {
     fetchRooms();
@@ -85,7 +83,7 @@ const TableData = ({ filterBlock }) => {
 
   const handleCellClick = async (cell) => {
     const roomData = await getRoomById(cell.row.roomNumber);
-    if (roomData) {
+    if (roomData.room) {
       setSelectedRoom(roomData);
       setOpenDialog(true);
     }
@@ -100,13 +98,21 @@ const TableData = ({ filterBlock }) => {
     electricityNumber: room.electricityNumber,
     status: room.status,
     availableSpot: room.availableSpot,
-    equipment: room.equipment,
+    equipment: room.equipment.map(equip => ({
+      name: equip.name,
+      quantity: equip.quantity,
+    })),
     status: room.status === 0 ? '0' : '1'
   });
 
+
   const handleSave = async () => {
     try {
-      const updateData = prepareUpdateData(selectedRoom);
+      const updateData = prepareUpdateData(selectedRoom.room);
+      console.log(selectedRoom.room);
+      console.log(updateData);
+
+
       const response = await axios.patch(updateRoomRoute, updateData);
       fetchRooms();
       handleCloseDialog();
@@ -168,7 +174,6 @@ const TableData = ({ filterBlock }) => {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           <CircularProgress size={50} thickness={5} color="primary" />
         </div>
-
       ) : (
         <>
           <DataGrid
