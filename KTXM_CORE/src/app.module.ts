@@ -17,6 +17,8 @@ import { Contract } from './modules/contracts/entities/contract.entity';
 import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 import { SettingModule } from '@/modules/setting/setting.module';
 import { SocketModule } from './socketgateway/socket.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { DormSubmissionModule } from './modules/dorm_submission/dorm_submission.module';
 import { Equipment } from './modules/equipment/entities/equipment.entity';
 import { EquipmentModule } from './modules/equipment/equipment.module';
 
@@ -31,7 +33,9 @@ import { EquipmentModule } from './modules/equipment/equipment.module';
     SettingModule,
     EquipmentModule,
     ContractsModule,
+    DormSubmissionModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

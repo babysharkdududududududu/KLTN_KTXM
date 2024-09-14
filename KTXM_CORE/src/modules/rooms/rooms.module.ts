@@ -15,6 +15,6 @@ import { EquipmentService } from '../equipment/equipment.service';
   ],
   controllers: [RoomsController],
   providers: [RoomsService, EquipmentService],
-  exports: [RoomsService],
+  exports: [RoomsService, MongooseModule],
 })
 export class RoomsModule { }

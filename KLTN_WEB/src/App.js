@@ -10,6 +10,7 @@ import Notification from './Notification/Notification';
 import Profile from './Profile/Profile';
 import Setting from './Setting/Setting';
 import Statistical from './Statistical/Statistical';
+import ApproveRoom from './ApproveRoom/ApproveRoom';
 import Room from './Rooms/Room';
 import { UserProvider } from './Context/Context';
 import { WebSocketProvider } from './Context/WebSocketContext';
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/room-info" element={isLoggedIn ? <Layout onLogout={handleLogout}><RoomInfo /></Layout> : <Navigate to="/" />} />
               <Route path="/maintenance" element={isLoggedIn ? <Layout onLogout={handleLogout}><Maintenance /></Layout> : <Navigate to="/" />} />
               <Route path="/contract" element={isLoggedIn ? <Layout onLogout={handleLogout}><Contract /></Layout> : <Navigate to="/" />} />
+              <Route path="/approve-room" element={isLoggedIn ? <Layout onLogout={handleLogout}><ApproveRoom /></Layout> : <Navigate to="/" />} />
               <Route path="/equiment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Equipment /></Layout> : <Navigate to="/" />} />
             </Routes>
           </Router>

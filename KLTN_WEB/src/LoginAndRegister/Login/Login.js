@@ -66,8 +66,8 @@ const Login = ({ onLoginSuccess }) => {
         return (
             <Box component="form" onSubmit={handleLogin} sx={{ position: 'relative', zIndex: 1, backgroundColor: 'white', borderRadius: 2, padding: 3 }}>
                 <Typography variant="h4" gutterBottom color="primary">Đăng Nhập</Typography>
-                <TextField label="Email" type="" fullWidth margin="normal" name="email" InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập email của bạn" required />
-                <TextField label="Mật khẩu" type="password" variant="outlined" fullWidth margin="normal" name="password" InputProps={{ startAdornment: <LockIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập mật khẩu của bạn" required />
+                <TextField label="Email" type="" fullWidth margin="normal" name="email" value={'20017271'} InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập email của bạn" required />
+                <TextField label="Mật khẩu" type="password" variant="outlined" fullWidth margin="normal" value={'ktxm@123'} name="password" InputProps={{ startAdornment: <LockIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập mật khẩu của bạn" required />
                 {error && <Alert severity="error" sx={{ marginTop: 2 }}>{error}</Alert>}
                 <FormControlLabel control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />} label="Nhớ mật khẩu" />
                 <Link onClick={handleForgotPassword} variant="body2" sx={{ display: 'flex', marginTop: 1, justifyContent: "flex-end" }}>Quên mật khẩu?</Link>

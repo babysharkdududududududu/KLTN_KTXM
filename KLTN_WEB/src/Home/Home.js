@@ -16,7 +16,6 @@ import style from './Home.module.css';
 import Payment from './Pay/Payment';
 import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
-import BasicModal from './components/BasicModal';
 import TotalStudent from './components/TotalStudent';
 
 const Home = () => {
@@ -42,14 +41,10 @@ const Home = () => {
     };
 
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
     const boxStyle = { padding: 2, backgroundColor: '#f5f5f5', borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', cursor: 'pointer', };
 
     return (
         <div className={style['home-container']}>
-            <BasicModal open={open} handleClose={handleClose} />
             <Grid container spacing={3} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ ...boxStyle, overflow: 'auto', flex: 1 }}>
@@ -74,7 +69,7 @@ const Home = () => {
 
             <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ marginTop: 3 }}>
                 <Grid item xs={2}>
-                    <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={handleOpen}  >
+                    <Box sx={{ ...boxStyle, height: 100, marginTop: -4 }} onClick={() => navigate('/approve-room')} >
                         <IconButton sx={{ color: '#4da1e8' }}>
                             <AddBusinessIcon fontSize="medium" />
                         </IconButton>
