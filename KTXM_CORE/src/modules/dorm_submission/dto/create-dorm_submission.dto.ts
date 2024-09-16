@@ -13,4 +13,8 @@ export class CreateDormSubmissionDto {
     @IsString()
     @IsNotEmpty()
     settingId: string;
+
+    @IsString()
+    @IsNotEmpty()
+    roomNumber: string;
 }

@@ -5,6 +5,7 @@ import { DormSubmission } from './entities/dorm_submission.entity';
 import { Model } from 'mongoose';
 import { SettingService } from '../setting/setting.service';
 import { UsersService } from '../users/users.service';
+import { ContractsService } from '../contracts/contracts.service';
 
 @Injectable()
 export class DormSubmissionService {
@@ -13,6 +14,7 @@ export class DormSubmissionService {
     private dormSubmissionModel: Model<DormSubmission>,
     private readonly settingService: SettingService,
     private readonly userService: UsersService,
+    private readonly contractService: ContractsService,
   ) {}
 
   // kiểm tra không cho đăng ký 2 lần một kỳ
@@ -23,6 +25,8 @@ export class DormSubmissionService {
 
   async create(createDormSubmissionDto: CreateDormSubmissionDto) {
     const { userId, settingId } = createDormSubmissionDto;
+
+    
   
     // Kiểm tra xem userId có tồn tại không
     const userExists = await this.userService.isUserIdExist(userId);
@@ -53,6 +57,17 @@ export class DormSubmissionService {
     try {
       const dormSubmissions = await this.dormSubmissionModel.find().exec();
       return dormSubmissions; 
+    } catch (error) {
+      console.error('Error fetching dorm submissions:', error);
+      throw new Error('Failed to fetch dorm submissions');
+    }
+  }
+
+  // find by settingId
+  async findBySettingId(settingId: string) {
+    try {
+      const dormSubmissions = await this.dormSubmissionModel.find({ settingId }).exec();
+      return dormSubmissions;
     } catch (error) {
       console.error('Error fetching dorm submissions:', error);
       throw new Error('Failed to fetch dorm submissions');

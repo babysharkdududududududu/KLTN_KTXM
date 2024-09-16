@@ -22,6 +22,7 @@ import { Setting, SettingSchema } from '../setting/entities/setting.entity';
     SettingModule
   ],
   controllers: [ContractsController],
-  providers: [ContractsService, RoomsService, UsersService, SettingService, SettingService]
+  providers: [ContractsService, RoomsService, UsersService, SettingService, SettingService],
+  exports: [ContractsService],
 })
 export class ContractsModule { }

@@ -14,6 +14,9 @@ export class DormSubmission {
 
     @Prop()
     settingId: string;
+
+    @Prop()
+    roomNumber: string;
 }
 
 export const DormSubmissionSchema = SchemaFactory.createForClass(DormSubmission);

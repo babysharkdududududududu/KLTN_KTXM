@@ -53,3 +53,8 @@ export const getSettingRoute = `${host}/setting`;
 export const updateSettingRoute = `${host}/setting`;
 
 
+//submit form dorm
+export const submitDormRoute = `${host}/dorm-submission`;
+export const getDormSubmissionRoute = `${host}/dorm-submission`;
+export const checkSubmit = `${host}/dorm-submission/exists`;
+export const getBySettingId = `${host}/dorm-submission/setting`;
