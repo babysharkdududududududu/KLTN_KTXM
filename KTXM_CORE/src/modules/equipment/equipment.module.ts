@@ -6,6 +6,7 @@ import { Equipment, EquipmentSchema } from './entities/equipment.entity';
 import { RoomsService } from '../rooms/rooms.service';
 import { Room, RoomSchema } from '../rooms/entities/room.entity';
 
+
 @Module({
   imports: [
     MongooseModule.forFeature([

@@ -36,7 +36,7 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { name, email, userId, password, phone, address, image, role } = createUserDto;
+    const { name, email, userId, password, phone, address, image, role, gender } = createUserDto;
 
     //check email
     const isExist = await this.isEmailExist(email);
@@ -51,7 +51,7 @@ export class UsersService {
     //hash password
     const hashPassword = await hashPasswordHelper(password);
     const user = await this.userModel.create({
-      name, email, userId, password: hashPassword, phone, address, image, role
+      name, email, userId, password: hashPassword, phone, address, image, role, gender
     })
     return {
       _id: user._id

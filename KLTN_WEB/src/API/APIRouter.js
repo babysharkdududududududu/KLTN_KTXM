@@ -53,3 +53,24 @@ export const getSettingRoute = `${host}/setting`;
 export const updateSettingRoute = `${host}/setting`;
 
 
+//submit form dorm
+export const submitDormRoute = `${host}/dorm-submission`;
+export const getDormSubmissionRoute = `${host}/dorm-submission`;
+export const checkSubmit = `${host}/dorm-submission/exists`;
+export const getBySettingId = `${host}/dorm-submission/setting`;
+
+// status of submit
+// Router cho trạng thái đã chấp nhận
+export const updateStatusPending = `${host}/dorm-submission/accept`;
+
+// Router cho trạng thái đã từ chối
+export const updateStatusRejected = `${host}/dorm-submission/reject`;
+
+// Router cho trạng thái đang chờ thanh toán
+export const updateStatusAwaitingPayment = `${host}/dorm-submission/awaiting-payment`;
+
+// Router cho trạng thái đã thanh toán
+export const updateStatusPaid = `${host}/dorm-submission/paid`;
+
+// Router cho trạng thái đã xếp phòng
+export const updateStatusRoomAssigned = `${host}/dorm-submission/room-assigned`;
