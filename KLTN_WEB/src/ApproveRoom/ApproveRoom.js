@@ -57,6 +57,15 @@ const ApproveRoom = () => {
         fetchData();
     }, []);
 
+    const updateStudentData = (updatedStudent) => {
+        setStudentData((prevData) => 
+            prevData.map((student) => 
+                student.id === updatedStudent.id ? updatedStudent : student
+            )
+        );
+    };
+    
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -76,12 +85,16 @@ const ApproveRoom = () => {
                     const studentData = await studentResponse.json();
                     return {
                         id: submission.userId,
-                        fullName: studentData.data.name,
-                        phoneNumber: studentData.data.phone,
-                        address: studentData.data.address,
+                        fullName: studentData.data ? studentData.data.name : 'Không xác định',
+                        phoneNumber: studentData.data ? studentData.data.phone : 'Không xác định',
+                        address: studentData.data ? studentData.data.address : 'Không xác định',
                         roomNumber: submission.roomNumber || 'N/A',
                         action: 'Xem',
-                    };
+                        gender: studentData.data ? studentData.data.gender  : 'Không xác định',
+                        email: studentData.data ? studentData.data.email : 'Không xác định',
+                        status: submission.status ? submission.status : 'Chưa xác định',
+                        submitId: submission._id,
+                    };                    
                 });
 
                 const students = await Promise.all(studentPromises);
@@ -142,7 +155,7 @@ const ApproveRoom = () => {
             {setingID && (
                 <div style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between", marginTop: '10px' }}>
                     <DataTable studentData={studentData} handleRowClick={handleRowClick}/> {/* Truyền dữ liệu sinh viên vào DataTable */}
-                    <InfoDetail student={selectedStudent}/>
+                    <InfoDetail student={selectedStudent} updateStudentData={updateStudentData} />
                 </div>
             )}
         </div>

@@ -12,6 +12,7 @@ const columns = [
     width: 150,
   },
   { field: 'roomNumber', headerName: 'Phòng', width: 90 },
+  { field: 'status', headerName: 'Trạng thái', width: 120 },
   {
     field: 'action',
     headerName: 'Hành động',

@@ -256,15 +256,11 @@ export class ContractsService {
       throw error;
     }
   }
-  // check contract
-  async getLatestRoomByUserId(userId: string): Promise<string> {
-    const latestContract = await this.contractModel
+  async getLatestRoomByUserId(userId: string): Promise<Contract | null> {
+    return this.contractModel
       .findOne({ userId })
       .sort({ startDate: -1 })
       .exec();
-    if (!latestContract) {
-      return "No";
-    }
-    return latestContract.roomNumber;
   }
+  
 }

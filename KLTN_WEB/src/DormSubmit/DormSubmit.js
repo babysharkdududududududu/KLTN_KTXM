@@ -23,7 +23,6 @@ export default function DormSubmit() {
     const settingId = "66e1a156ec541f415d9dc2be";
     const { userId } = useUser();
     const [userInfo, setUserInfo] = useState(null);
-    const [status, setStatus] = useState("pending"); 
     const [note, setNote] = useState("");
     const [isRegistered, setIsRegistered] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -84,7 +83,6 @@ export default function DormSubmit() {
             },
             body: JSON.stringify({
                 userId,
-                status,
                 note,
                 settingId,
             }),
