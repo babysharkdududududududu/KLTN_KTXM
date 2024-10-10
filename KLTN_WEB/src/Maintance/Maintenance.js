@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, Typography, Grid, Button, Box, Paper } from '@mui/material';
-import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot, TimelineOppositeContent } from '@mui/lab';
-import { Build, CheckCircle, HourglassEmpty, Error, Work, BuildCircle } from '@mui/icons-material';
+import { Build, BuildCircle, CheckCircle, Error, HourglassEmpty, Work } from '@mui/icons-material';
+import BackIcon from '@mui/icons-material/ArrowBack';
+import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator } from '@mui/lab';
+import { Box, Button, CardContent, CardHeader, Grid, Paper, Typography } from '@mui/material';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { getMaintenanceRoute, updateMaintenanceStatusRoute } from '../API/APIRouter';
 import { useUser } from "../Context/Context";
+import Avatar from '@mui/material/Avatar';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import styles from './Maintenance.module.css';
 
 const statusColors = {
     1: '#4caf50',
@@ -24,6 +29,7 @@ const statusText = {
 
 const Maintenance = () => {
     const [maintenanceData, setMaintenanceData] = useState([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const { userId } = useUser();
 
     const handleGetMaintenance = async () => {
@@ -54,10 +60,34 @@ const Maintenance = () => {
         handleGetMaintenance();
     }, []);
 
+    const handleBack = () => {
+        window.history.back();
+    };
+
+    const filteredData = maintenanceData.filter(item => {
+        const reportedDate = new Date(item.reportedAt);
+        return reportedDate.getFullYear() === selectedDate.getFullYear() && reportedDate.getMonth() === selectedDate.getMonth();
+    });
+
     return (
         <Box sx={{ padding: 4, backgroundColor: '#eaeff1', minHeight: '100vh' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: 2 }}>
+                <Avatar sx={{ backgroundColor: '#1976d2' }} onClick={handleBack}>
+                    <BackIcon />
+                </Avatar>
+                <DatePicker
+                    selected={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
+                    dateFormat="MM/yyyy"
+                    showMonthYearPicker
+                    className={styles.datePicker} // Apply custom styles
+                    popperClassName={styles.datePicker__calendar} // Style for calendar popper
+                    wrapperClassName={styles.datePicker__input} // Style for input wrapper
+                />
+            </Box>
+
             <Grid container spacing={2}>
-                {Array.isArray(maintenanceData) && maintenanceData.map((item, index) => (
+                {Array.isArray(filteredData) && filteredData.map((item, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
                         <Paper elevation={2} sx={{ borderRadius: '8px', overflow: 'hidden', backgroundColor: '#fff' }}>
                             <CardHeader title={<Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>{item.item}</Typography>}
@@ -73,10 +103,10 @@ const Maintenance = () => {
                             />
                             <CardContent sx={{ padding: 2 }}>
                                 <div style={{ flexDirection: "row", justifyContent: "space-between", display: 'flex' }}>
-                                    <Typography variant="body2" sx={{ marginBottom: 1, fontWeight: 500, display: 'inline' }}>
+                                    <Typography variant="body2" sx={{ marginBottom: 1, fontWeight: 500 }}>
                                         <strong>Phòng:</strong> {item.roomNumber}
                                     </Typography>
-                                    <Typography variant="body2" sx={{ color: '#555', marginBottom: 1, display: 'inline', marginLeft: 1 }}>
+                                    <Typography variant="body2" sx={{ color: '#555', marginBottom: 1 }}>
                                         <strong>Ngày tiếp nhận:</strong> <span style={{ color: "red" }}> {new Date(item.reportedAt).toLocaleDateString()}</span>
                                     </Typography>
                                 </div>
@@ -108,7 +138,8 @@ const Maintenance = () => {
                                 <div style={{ flexDirection: "row", justifyContent: "end", display: 'flex' }}>
                                     {item.status === 5 && (
                                         <Typography variant="body2" sx={{ marginTop: 1, fontWeight: 500 }}>
-                                            <strong> Ngày hoàn thành: </strong> <span style={{ color: '#4caf50', }}> {new Date(item.updatedAt).toLocaleDateString()}</span>
+                                            <strong> Ngày hoàn thành:</strong>
+                                            <span style={{ color: '#4caf50' }}> {new Date(item.updatedAt).toLocaleDateString()}</span>
                                         </Typography>
                                     )}
                                 </div>

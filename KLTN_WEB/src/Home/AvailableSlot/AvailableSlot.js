@@ -2,10 +2,11 @@ import { Alert, Box, CircularProgress, Container, Divider, Typography } from '@m
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Cell, Legend, Pie, PieChart, Tooltip } from 'recharts';
-import { getContractRoute, getRoomByIdRoute } from '../../API/APIRouter';
+import { getAllRoomRoute, getContractRoute, getRoomByIdRoute } from '../../API/APIRouter';
 import { useUser } from '../../Context/Context';
 
 const DoubleDoughnutChart = ({ total, used }) => {
+
     const dataUsed = [
         { name: 'Còn lại', value: total - used > 0 ? total - used : 0 },
         { name: 'Đã sử dụng', value: used },
@@ -15,6 +16,10 @@ const DoubleDoughnutChart = ({ total, used }) => {
         { name: 'Tổng số chỗ', value: total > 0 ? total : 1 },
         { name: 'Chỗ trống', value: 0 },
     ];
+
+
+
+
 
     return (
         <PieChart width={260} height={150} >
@@ -44,6 +49,28 @@ const AvailableSlot = () => {
     const [error, setError] = useState(null);
     const [availableSlot, setAvailableSlot] = useState(null);
     const [capacity, setCapacity] = useState(null);
+    const [totalAvailableSlot, setTotalAvailableSlot] = useState(0);
+
+    // API get all room to sum available slot
+    const handleGetAllRoom = async () => {
+        try {
+            const rs = await axios.get(`${getAllRoomRoute}`);
+            const roomData = rs.data.data.results;
+            console.log("Room data:", roomData);
+            const totalAvailableSlot = roomData.reduce((acc, room) => acc + room.availableSpot, 0);
+            const totalCapacity = roomData.reduce((acc, room) => acc + room.capacity, 0);
+            setTotalAvailableSlot(totalAvailableSlot);
+            console.log("Total capacity slot:", totalCapacity);
+            console.log("Total available slot:", totalAvailableSlot);
+            console.log("Room data:");
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    useEffect(() => {
+        handleGetAllRoom();
+    }, []);
 
     const handleGetContract = async () => {
         setLoading(true);

@@ -10,9 +10,6 @@ export class UpdateUserDto {
     email: string;
 
     @IsOptional()
-    name: string;
-
-    @IsOptional()
     phone: string;
 
     @IsOptional()
@@ -20,4 +17,8 @@ export class UpdateUserDto {
 
     @IsOptional()
     image: string;
+
+    @IsOptional()
+    dateOfBirth: Date;
+
 }

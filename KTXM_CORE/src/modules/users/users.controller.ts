@@ -26,6 +26,7 @@ export class UsersController {
 
 
   @Patch()
+  @Public()
   update(@Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(updateUserDto);
   }

@@ -47,6 +47,12 @@ export class User {
     @Prop()
     gender: string;
 
+    @Prop()
+    faculty: string;
+
+    @Prop()
+    class: string;
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

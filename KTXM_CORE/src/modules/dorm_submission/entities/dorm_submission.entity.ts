@@ -10,6 +10,7 @@ export enum DormSubmissionStatus {
     PAID = 'PAID', // Đã thanh toán
     ASSIGNED = 'ASSIGNED', // Đã xếp phòng
     REJECTED = 'REJECTED', // Từ chối đơn đăng ký
+    ROOM_REQUESTED = 'ROOM_REQUESTED', // Yêu cầu phòng
 }
 
 @Schema({ timestamps: true })

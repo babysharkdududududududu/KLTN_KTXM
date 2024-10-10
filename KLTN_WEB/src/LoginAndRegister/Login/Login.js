@@ -9,6 +9,8 @@ import styles from './Login.module.css';
 import { loginRoute } from '../../API/APIRouter';
 import axios from 'axios';
 import { useUser } from '../../Context/Context'
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const Login = ({ onLoginSuccess }) => {
     const [error, setError] = useState('');
@@ -18,6 +20,7 @@ const Login = ({ onLoginSuccess }) => {
     const [visibleRegister, setVisibleRegister] = useState(false);
     const { setRoleId } = useUser();
     const { setUserId } = useUser();
+    const [showPassword, setShowPassword] = useState(false);
 
     //API login 
     const handleLogin = async (event) => {
@@ -32,12 +35,8 @@ const Login = ({ onLoginSuccess }) => {
                 username: email,
                 password: password
             });
-
-            console.log("Đăng nhập thành công", response.data);
             const role = response.data.data.user.role;
             const mssv = response.data.data.user.userId;
-            console.log("Đăng nhập thành công", role);
-            console.log("Đăng nhập thành công", mssv);
             setRoleId(role);
             setUserId(mssv);
             onLoginSuccess();
@@ -66,7 +65,18 @@ const Login = ({ onLoginSuccess }) => {
             <Box component="form" onSubmit={handleLogin} sx={{ position: 'relative', zIndex: 1, backgroundColor: 'white', borderRadius: 2, padding: 3 }}>
                 <Typography variant="h4" gutterBottom color="primary">Đăng Nhập</Typography>
                 <TextField label="Email" type="" fullWidth margin="normal" name="email" InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập email của bạn" required />
-                <TextField label="Mật khẩu" type="password" variant="outlined" fullWidth margin="normal"  name="password" InputProps={{ startAdornment: <LockIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập mật khẩu của bạn" required />
+                <TextField label="Mật khẩu" type={showPassword ? 'text' : 'password'} variant="outlined" fullWidth margin="normal" name="password"
+                    InputProps={{
+                        startAdornment: <LockIcon sx={{ marginRight: 1 }} />,
+                        endAdornment: (
+                            <Button onClick={() => setShowPassword(!showPassword)} sx={{ padding: 0 }}>
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </Button>
+                        ),
+                    }}
+                    placeholder="Nhập mật khẩu của bạn"
+                    required
+                />
                 {error && <Alert severity="error" sx={{ marginTop: 2 }}>{error}</Alert>}
                 <FormControlLabel control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />} label="Nhớ mật khẩu" />
                 <Link onClick={handleForgotPassword} variant="body2" sx={{ display: 'flex', marginTop: 1, justifyContent: "flex-end" }}>Quên mật khẩu?</Link>

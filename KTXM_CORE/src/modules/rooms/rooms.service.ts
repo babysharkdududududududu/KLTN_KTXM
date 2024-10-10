@@ -163,8 +163,8 @@ export class RoomsService {
         equipment: room.equipment || [],
         type: room.type || '',
         block: room.block,
-        capacity: availableSpot,
-        availableSpot: availableSpot,
+        capacity: 16,
+        availableSpot: 16,
         occupied: room.occupied || false,
         price: room.price || '',
         waterNumber: room.waterNumber || '',
@@ -207,6 +207,6 @@ export class RoomsService {
       rooms
     }
   }
-  
+
 
 }

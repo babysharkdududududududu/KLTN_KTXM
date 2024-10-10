@@ -70,6 +70,15 @@ const ApproveRoom = () => {
         fetchData();
     }, []);
 
+    const updateStudentData = (updatedStudent) => {
+        setStudentData((prevData) =>
+            prevData.map((student) =>
+                student.id === updatedStudent.id ? updatedStudent : student
+            )
+        );
+    };
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -93,6 +102,8 @@ const ApproveRoom = () => {
                         address: studentData.data ? studentData.data.address : 'Không xác định',
                         roomNumber: submission.roomNumber || 'N/A',
                         action: 'Xem',
+                        gender: studentData.data ? studentData.data.gender : 'Không xác định',
+                        email: studentData.data ? studentData.data.email : 'Không xác định',
                         status: submission.status ? submission.status : 'Chưa xác định',
                         submitId: submission._id,
                     };
@@ -118,13 +129,6 @@ const ApproveRoom = () => {
         setFilteredStudentData(filteredData);
     }, [statusID, studentData]);
 
-    const updateStudentData = (updatedStudent) => {
-        setStudentData((prevData) =>
-            prevData.map((student) =>
-                student.id === updatedStudent.id ? updatedStudent : student
-            )
-        );
-    };
 
     const submitDorm = () => {
         navigate('/dorm-submit');
