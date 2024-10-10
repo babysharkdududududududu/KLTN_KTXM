@@ -28,7 +28,7 @@ export class ContractsService {
 
     private readonly settingService: SettingService
   ) { }
-  private settingId = '66d567a0ebb9cd93566389a9';
+  private settingId = '66e1a156ec541f415d9dc2be';
 
   @Cron(CronExpression.EVERY_MINUTE)
   async handleCron() {
@@ -262,5 +262,5 @@ export class ContractsService {
       .sort({ startDate: -1 })
       .exec();
   }
-  
+
 }

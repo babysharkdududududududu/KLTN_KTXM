@@ -1,26 +1,25 @@
-import { Module } from '@nestjs/common';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
-import { UsersModule } from '@/modules/users/users.module';
-import { RoomsModule } from './modules/rooms/rooms.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from '@/auth/auth.module';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
+import { TransformInterceptor } from '@/core/transform.interceptor';
+import { ContractsModule } from '@/modules/contracts/contracts.module';
+import { SettingModule } from '@/modules/setting/setting.module';
+import { UsersModule } from '@/modules/users/users.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-import { TransformInterceptor } from '@/core/transform.interceptor';
-import { NotificationModule } from './modules/notification/notification.module';
-import { ContractsModule } from '@/modules/contracts/contracts.module';
-import { Contract } from './modules/contracts/entities/contract.entity';
-import { MaintenanceModule } from './modules/maintenance/maintenance.module';
-import { SettingModule } from '@/modules/setting/setting.module';
-import { SocketModule } from './socketgateway/socket.module';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
+import { JwtAuthGuard } from './auth/passport/jwt-auth.guard';
 import { DormSubmissionModule } from './modules/dorm_submission/dorm_submission.module';
-import { Equipment } from './modules/equipment/entities/equipment.entity';
 import { EquipmentModule } from './modules/equipment/equipment.module';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
+import { NotificationModule } from './modules/notification/notification.module';
+import { RoomsModule } from './modules/rooms/rooms.module';
+import { SocketModule } from './socketgateway/socket.module';
+import { StudentDisciplineModule } from './modules/student-discipline/student-discipline.module';
 
 @Module({
   imports: [
@@ -74,6 +73,7 @@ import { EquipmentModule } from './modules/equipment/equipment.module';
     }),
     ContractsModule,
     MaintenanceModule,
+    StudentDisciplineModule,
   ],
   controllers: [AppController],
   providers: [
