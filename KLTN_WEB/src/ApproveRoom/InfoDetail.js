@@ -9,13 +9,33 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import { updateStatusPending, updateStatusRejected, updateStatusAwaitingPayment, updateStatusPaid, updateStatusRoomAssigned } from '../API/APIRouter';
+import axios from 'axios';
+import { updateStatusPending, updateStatusRejected, updateStatusAwaitingPayment, updateStatusPaid, updateStatusRoomAssigned, getAllRoomRoute } from '../API/APIRouter';
+import { set } from 'date-fns';
+import CircleIcon from '@mui/icons-material/Circle'; // Thêm import cho icon
+
 
 export default function InfoDetail({ student, updateStudentData }) {
   const [value, setValue] = React.useState('blockI');
   const [floor, setFloor] = React.useState('');
   const [room, setRoom] = React.useState('');
   const [showRoomSelection, setShowRoomSelection] = React.useState(false);
+  const [roomList, setRoomList] = React.useState([]);
+  const [floors, setFloors] = React.useState([]);
+  const [blocks, setBlocks] = React.useState([]);
+  const [roomBlockG, setRoomBlockG] = React.useState([]);
+  const [roomBlockI, setRoomBlockI] = React.useState([]);
+  const [floorBlockG, setFloorBlockG] = React.useState([]);
+  const [floorBlockI, setFloorBlockI] = React.useState([]);
+
+  React.useEffect(() => {
+    if (student) {
+      setValue(student.gender === '1' ? 'blockI' : student.gender === '2' ? 'blockG' : 'blockI');
+      setRoom('');
+      setFloor('');
+      setShowRoomSelection(false);
+    }
+  }, [student]);
 
   React.useEffect(() => {
     if (student) {
@@ -111,6 +131,84 @@ export default function InfoDetail({ student, updateStudentData }) {
     }
   };
 
+  const getAllRooms = async () => {
+    try {
+      const response = await axios.get(getAllRoomRoute);
+      const results = response.data.data.results;
+
+      setRoomList(results);
+      console.log("Danh sách phòng", results);
+
+      const newBlocks = [...new Set(results.map((room) => room.block))];
+      setBlocks(newBlocks);
+
+      const floorBlockG = [...new Set(results.filter((room) => room.block === 'G').map((room) => room.floor))];
+      // const roomBlockG = [...new Set(results.filter((room) => room.block === 'G').map((room) => room.roomNumber))];
+      const roomBlockG = [
+        ...new Set(
+          results
+            .filter((room) => room.block === 'G')
+            .map((room) => ({
+              roomNumber: room.roomNumber,
+              availableSpot: room.availableSpot
+            }))
+        )
+      ];
+
+
+      setFloorBlockG(floorBlockG);
+      setRoomBlockG(roomBlockG);
+
+      const floorBlockI = [...new Set(results.filter((room) => room.block === 'I').map((room) => room.floor))];
+      // const roomBlockI = [...new Set(results.filter((room) => room.block === 'I').map((room) => room.roomNumber))];
+      const roomBlockI = [
+        ...new Set(
+          results
+            .filter((room) => room.block === 'I')
+            .map((room) => ({
+              roomNumber: room.roomNumber,
+              availableSpot: room.availableSpot
+            }))
+        )
+      ];
+
+      setFloorBlockI(floorBlockI);
+      setRoomBlockI(roomBlockI);
+
+      console.log("Danh sách tầng của block G", floorBlockG);
+      console.log("Danh sách phòng của block G", roomBlockG);
+      console.log("Danh sách tầng của block I", floorBlockI);
+      console.log("Danh sách phòng của block I", roomBlockI);
+
+      setRoomList(results.map((room) => room.roomNumber));
+
+      if (newBlocks.length > 0) {
+        setValue(newBlocks[0]);
+      }
+
+      const uniqueFloors = [...new Set(results.map((room) => room.floor))];
+      if (uniqueFloors.length > 0) {
+        setFloor(uniqueFloors[0]);
+      }
+      setRoom('');
+
+      console.log("Danh sách tòa nhà", newBlocks);
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách phòng:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    getAllRooms();
+  }, [student]);
+
+
+
+  React.useEffect(() => {
+    getAllRooms();
+  }, [student]);
+
+
   const handleChange = (event) => {
     setValue(event.target.value);
     setFloor('');
@@ -127,17 +225,31 @@ export default function InfoDetail({ student, updateStudentData }) {
   };
 
   const getFloors = () => {
-    return value === 'blockG' ? Array.from({ length: 9 }, (_, i) => i + 1) : Array.from({ length: 11 }, (_, i) => i + 3);
-  };
-
-  const getRooms = () => {
-    if (value === 'blockG' && floor) {
-      return Array.from({ length: 10 }, (_, i) => `G${floor}${i + 1 < 10 ? '0' : ''}${i + 1}`);
-    } else if (value === 'blockI' && floor) {
-      return Array.from({ length: 14 }, (_, i) => `I${floor}${i + 1 < 10 ? '0' : ''}${i + 1}`);
+    if (value === 'G') {
+      return floorBlockG;
+    } else if (value === 'I') {
+      return floorBlockI;
     }
     return [];
   };
+
+  const getRooms = () => {
+    if (value === 'G' && floor) {
+      return roomBlockG.filter(room => room.roomNumber.startsWith(`G${floor}`));
+    } else if (value === 'I' && floor) {
+      return roomBlockI.filter(room => room.roomNumber.startsWith(`I${floor}`));
+    }
+    return [];
+  };
+
+  const getIconColor = (availableSpots, totalSpots) => {
+    const percentageAvailable = (availableSpots / 16) * 100;
+    if (percentageAvailable >= 60) return 'green';
+    if (percentageAvailable > 0) return 'yellow';
+    return 'red';
+  };
+
+
 
   return (
     <Paper sx={{ height: 550, width: '33%', display: 'flex', flexDirection: 'column' }}>
@@ -168,8 +280,8 @@ export default function InfoDetail({ student, updateStudentData }) {
                       value={value}
                       onChange={handleChange}
                     >
-                      <FormControlLabel value="blockI" control={<Radio />} label="Tòa I" />
-                      <FormControlLabel value="blockG" control={<Radio />} label="Tòa G" />
+                      <FormControlLabel value="I" control={<Radio />} label="Tòa I" />
+                      <FormControlLabel value="G" control={<Radio />} label="Tòa G" />
                     </RadioGroup>
                   </FormControl>
                   <FormControl sx={{ width: 120 }}>
@@ -184,7 +296,9 @@ export default function InfoDetail({ student, updateStudentData }) {
                         <em>Chọn tầng</em>
                       </MenuItem>
                       {getFloors().map((floor) => (
-                        <MenuItem key={floor} value={floor}>{floor}</MenuItem>
+                        <MenuItem key={floor} value={floor}>
+                          {floor}
+                        </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
@@ -200,8 +314,13 @@ export default function InfoDetail({ student, updateStudentData }) {
                         <em>Chọn phòng</em>
                       </MenuItem>
                       {getRooms().map((room) => (
-                        <MenuItem key={room} value={room}>{room}</MenuItem>
+                        <MenuItem key={room.roomNumber} value={room.roomNumber}>
+                          {`${room.roomNumber}`}
+                          <CircleIcon sx={{ color: getIconColor(room.availableSpot), fontSize: 12, position: 'absolute', right: 10 }} />
+                        </MenuItem>
                       ))}
+
+
                     </Select>
                   </FormControl>
                 </div>

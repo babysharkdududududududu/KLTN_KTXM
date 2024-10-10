@@ -20,6 +20,7 @@ import Maintenance from './Maintance/Maintenance';
 import NotificationBadge from './Context/NotificationBadge';
 import Equipment from './Equipment/Equipment';
 import DormSubmit from './DormSubmit/DormSubmit';
+import Discipline from './Discipline/Discipline';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -55,6 +56,8 @@ const App = () => {
               <Route path="/approve-room" element={isLoggedIn ? <Layout onLogout={handleLogout}><ApproveRoom /></Layout> : <Navigate to="/" />} />
               <Route path="/equiment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Equipment /></Layout> : <Navigate to="/" />} />
               <Route path="/dorm-submit" element={isLoggedIn ? <Layout onLogout={handleLogout}><DormSubmit /></Layout> : <Navigate to="/" />} />
+              <Route path="/discipline" element={isLoggedIn ? <Layout onLogout={handleLogout}><Discipline /></Layout> : <Navigate to="/" />} />
+
             </Routes>
           </Router>
         </WebSocketProvider>

@@ -64,32 +64,26 @@ const UploadRoom = () => {
             const data = new Uint8Array(event.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-
-            console.log('Dữ liệu từ file:', jsonData);
-
-            const isValid = jsonData.every(room => room.roomNumber && room.floor && room.block && room.equipment_name && room.equipment_quantity);
-
+            const isValid = jsonData.every(room => room.roomNumber && room.floor && room.block);
             if (!isValid) {
                 showSnackbar('Dữ liệu không hợp lệ!', 'error');
                 return;
             }
-
             const normalizedUserData = jsonData.map(room => ({
-                roomNumber: String(room.roomNumber || '').toLowerCase(),
+                roomNumber: String(room.roomNumber || '').toUpperCase(),
                 floor: Number(room.floor),
                 block: room.block,
+                capacity: 16,
+                availableSpot: 16,
                 equipment: [{
                     name: room.equipment_name,
                     quantity: Number(room.equipment_quantity),
                 }]
             }));
-
             const existingRoomNumbers = checkForExistingRoomNumbers(normalizedUserData);
             console.log('Mã số phòng đã tồn tại:', existingRoomNumbers);
-
             const duplicateRoomNumbersInFile = findDuplicateRoomNumber(normalizedUserData);
             console.log('Mã số phòng trùng trong file:', duplicateRoomNumbersInFile);
-
             const validRooms = normalizedUserData.filter(room =>
                 !existingRoomNumbers.includes(room.roomNumber) &&
                 !duplicateRoomNumbersInFile.includes(room.roomNumber)

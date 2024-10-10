@@ -58,13 +58,13 @@ const ApproveRoom = () => {
     }, []);
 
     const updateStudentData = (updatedStudent) => {
-        setStudentData((prevData) => 
-            prevData.map((student) => 
+        setStudentData((prevData) =>
+            prevData.map((student) =>
                 student.id === updatedStudent.id ? updatedStudent : student
             )
         );
     };
-    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -90,11 +90,11 @@ const ApproveRoom = () => {
                         address: studentData.data ? studentData.data.address : 'Không xác định',
                         roomNumber: submission.roomNumber || 'N/A',
                         action: 'Xem',
-                        gender: studentData.data ? studentData.data.gender  : 'Không xác định',
+                        gender: studentData.data ? studentData.data.gender : 'Không xác định',
                         email: studentData.data ? studentData.data.email : 'Không xác định',
                         status: submission.status ? submission.status : 'Chưa xác định',
                         submitId: submission._id,
-                    };                    
+                    };
                 });
 
                 const students = await Promise.all(studentPromises);
@@ -148,13 +148,14 @@ const ApproveRoom = () => {
                     <Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} disabled={!setingID}>Đăng ký</Button>
                     <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID}>Tự động xếp phòng</Button>
                     <Button variant="contained" color="primary" onClick={handleOpen} disabled={!setingID}>Cài đặt</Button>
+
                 </div>
             </div>
 
             {/* Chỉ hiển thị DataTable và InfoDetail khi đã chọn một MenuItem */}
             {setingID && (
                 <div style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between", marginTop: '10px' }}>
-                    <DataTable studentData={studentData} handleRowClick={handleRowClick}/> {/* Truyền dữ liệu sinh viên vào DataTable */}
+                    <DataTable studentData={studentData} handleRowClick={handleRowClick} /> {/* Truyền dữ liệu sinh viên vào DataTable */}
                     <InfoDetail student={selectedStudent} updateStudentData={updateStudentData} />
                 </div>
             )}

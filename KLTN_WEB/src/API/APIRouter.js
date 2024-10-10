@@ -21,6 +21,7 @@ export const updateRoomRoute = `${host}/rooms/`;
 //user
 export const getAllUserRoute = `${host}/users`;
 export const getUserByIdRoute = `${host}/users/id/`;
+export const updateUserRoute = `${host}/users/`;
 
 //register room
 export const registerRoomRoute = `${host}/contracts`;
@@ -51,6 +52,9 @@ export const updateLocationEquipmentRoute = `${host}/equipment`;
 //seting
 export const getSettingRoute = `${host}/setting`;
 export const updateSettingRoute = `${host}/setting`;
+
+//Room
+export const getAllRoomRoute = `${host}/rooms/?all=true`;
 
 
 //submit form dorm

@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import BackIcon from '@mui/icons-material/ArrowBack';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
-import { useWebSocket } from '../Context/WebSocketContext';
-import { getNotificationRoute, createNotificationRoute, deleteNotificationRoute } from '../API/APIRouter';
+import Typography from '@mui/material/Typography';
 import axios from 'axios';
-import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Dialog, DialogActions, DialogContent, IconButton, DialogTitle, TextField, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { createNotificationRoute, deleteNotificationRoute, getNotificationRoute } from '../API/APIRouter';
 import { useUser } from '../Context/Context';
+import { useWebSocket } from '../Context/WebSocketContext';
+
 
 const Notification = () => {
     const { sendMessage, messages } = useWebSocket();
@@ -90,15 +92,27 @@ const Notification = () => {
     const handleCloseDetails = () => {
         setSelectedNotification(null);
     }
+    const handleBack = () => {
+        window.history.back();
+    };
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '90vh', padding: 4 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap', mb: 4 }}>
-                <Button variant={!selectedFilter ? 'contained' : 'outlined'} color="primary" onClick={() => setSelectedFilter('')}>
+            {/* Icon back */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: 2, cursor: 'pointer', display: { xs: 'flex', md: 'none', } }}>
+                <Avatar sx={{ backgroundColor: '#1976d2' }} onClick={handleBack}>
+                    <BackIcon />
+                </Avatar>
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', mb: 4, padding: 2, }}>
+                <Button variant={!selectedFilter ? 'contained' : 'outlined'} color="primary" onClick={() => setSelectedFilter('')}
+                    sx={{ flex: '1 1 30%', minWidth: '120px', marginBottom: { xs: 1, sm: 1 }, marginRight: '10px', fontSize: { xs: 8, sm: 15 } }}>
                     Tất cả
                 </Button>
                 {typeFilter.map((type, index) => (
-                    <Button key={index} variant={selectedFilter === type ? 'contained' : 'outlined'} color="primary" onClick={() => setSelectedFilter(type)}>
+                    <Button key={index} variant={selectedFilter === type ? 'contained' : 'outlined'} color="primary" onClick={() => setSelectedFilter(type)}
+                        sx={{ flex: '1 1 30%', minWidth: '100px', marginBottom: { xs: 1, sm: 1 }, marginRight: '10px', fontSize: { xs: 8, sm: 15 } }}>
                         {type}
                     </Button>
                 ))}
@@ -109,30 +123,28 @@ const Notification = () => {
                     {filteredNotifications.length > 0 ? (
                         filteredNotifications.map(notification => (
                             <Card key={notification._id} variant="outlined" sx={{ mb: 2, borderRadius: 2, boxShadow: 2 }}>
-                                <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-
-                                    {/* <Avatar sx={{ bgcolor: '#1976d2', mr: 2 }}>
-                                        <NotificationsIcon />
-                                    </Avatar> */}
-                                    <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 0, marginRight: 5 }}>
+                                <CardContent sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexDirection: { xs: 'column', sm: 'row' }, }}>
+                                    {/* Date Section */}
+                                    <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 0, marginRight: { xs: 0, sm: 5 }, }}>
                                         <div style={{ backgroundColor: '#005ab7', color: 'white', padding: '5px', textAlign: 'center', width: '100px' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'center', gap: '5px' }}>
-                                                <Typography variant="h6" style={{ margin: 0 }}>
-                                                    {`${new Date(notification.sentAt).getMonth() + 1}/${new Date(notification.sentAt).getFullYear()}`}
-                                                </Typography>
-                                            </div>
+                                            <Typography variant="h6" style={{ margin: 0 }}>
+                                                {`${new Date(notification.sentAt).getMonth() + 1}/${new Date(notification.sentAt).getFullYear()}`}
+                                            </Typography>
                                         </div>
-                                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '8px' }}>
-                                            <Typography variant="h4" style={{ color: '#005ab7', fontWeight: 'bold' }}>{new Date(notification.sentAt).getDate()}</Typography>
-                                        </div>
+                                        <Typography variant="h4" style={{ color: '#005ab7', fontWeight: 'bold', marginTop: '8px' }}>
+                                            {new Date(notification.sentAt).getDate()}
+                                        </Typography>
                                     </Box>
 
-                                    <Box sx={{ flexGrow: 1 }}>
+                                    {/* Notification Details */}
+                                    <Box sx={{ flexGrow: 1, minWidth: { xs: '100%', sm: 'auto' } }}>
                                         <Typography variant="h6" component="h3" gutterBottom>{notification.title}</Typography>
                                         <Typography variant="body2" color="text.secondary" gutterBottom>{notification.message.slice(0, 50)}...</Typography>
                                         <Typography variant="caption" color="text.secondary">{new Date(notification.sentAt).toLocaleString()} - {notification.type}</Typography>
                                     </Box>
-                                    <Box>
+
+                                    {/* Action Buttons */}
+                                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 1 }}>
                                         <Button onClick={() => handleViewDetails(notification)} color="primary">Xem chi tiết</Button>
                                         <Button onClick={() => handleDelete(notification._id)} color="secondary">Xóa</Button>
                                     </Box>
@@ -144,6 +156,7 @@ const Notification = () => {
                     )}
                 </List>
             </Box>
+
 
             {
                 roleId === 'USERS' ? null : (

@@ -38,36 +38,36 @@ const UserInfo = () => {
                         </Typography>
                         <Divider />
                         <Grid container spacing={2} alignItems="center" sx={{ marginTop: 2 }}>
-                            <Grid item xs={12} sm={4} md={4} container justifyContent="center">
+                            <Grid item xs={12} sm={4} container justifyContent="center">
                                 <Avatar src={userInfo.image} alt="User Avatar" sx={{ width: 100, height: 100, border: '3px solid #3f51b5', boxShadow: 3 }} />
                             </Grid>
-                            <Grid item xs={12} sm={8} md={8}>
+                            <Grid item xs={12} sm={8}>
                                 <Typography variant="h5" gutterBottom sx={{ fontFamily: 'Tahoma', fontSize: 20, textAlign: 'center' }}>
                                     <strong>{userInfo.name}</strong>
                                 </Typography>
-                                <Grid container spacing={10}>
-                                    <Grid item xs={12} sm={6}>
+                                <Grid container>
+                                    <Grid item xs={6} sm={6} md={6}>
                                         <Box sx={{ textAlign: 'left' }}>
-                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: 12 }}>
+                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 } }}>
                                                 MSSV: <strong>{userInfo.userId || 'Chưa có MSSV'}</strong>
                                             </Typography>
-                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: 12 }}>
+                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 } }}>
                                                 Số điện thoại: <strong>{userInfo.phone || 'Chưa có số điện thoại'}</strong>
                                             </Typography>
-                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: 12 }}>
+                                            <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, display: { xs: 'none', sm: 'block' } }}>
                                                 Giới tính: <strong>{userInfo.gender || 'Chưa có giới tính'}</strong>
                                             </Typography>
                                         </Box>
                                     </Grid>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={6} sm={6} md={6}>
                                         <Box sx={{ textAlign: 'left' }}>
-                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: 12 }}>
+                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 } }}>
                                                 Năm sinh: <strong>{userInfo.dateOfBirth ? new Date(userInfo.dateOfBirth).getFullYear() : 'Chưa có năm sinh'}</strong>
                                             </Typography>
-                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: 12 }}>
+                                            <Typography variant="body1" style={{ display: { xs: 'none', sm: 'none' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12, }, display: { xs: 'none', sm: 'block' } }}>
                                                 Email: <strong>{userInfo.email || 'Chưa có email'}</strong>
                                             </Typography>
-                                            <Typography variant="body1" color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: 12 }}>
+                                            <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, }}>
                                                 Địa chỉ: <strong>{userInfo.address || 'Chưa có địa chỉ'}</strong>
                                             </Typography>
                                         </Box>
@@ -78,7 +78,7 @@ const UserInfo = () => {
                     </Box>
                 )
             )}
-        </Container>
+        </Container >
     );
 };
 

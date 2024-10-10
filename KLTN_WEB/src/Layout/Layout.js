@@ -9,8 +9,18 @@ const Layout = ({ children, onLogout }) => {
     const { messages } = useWebSocket();
     const [openDialog, setOpenDialog] = useState(false);
     const [dialogMessage, setDialogMessage] = useState('');
-    const [menuOpen, setMenuOpen] = useState(false); // Menu mặc định ẩn
-    const menuRef = useRef(null); // Ref để theo dõi menu
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         if (messages.length > 0) {
@@ -26,19 +36,21 @@ const Layout = ({ children, onLogout }) => {
     };
 
     return (
-        <div style={{ display: 'flex', background: "#e7ecf0", }}>
-            <IconButton
-                onClick={toggleMenu}
-                style={{
-                    position: menuOpen ? 'absolute' : 'fixed',
-                    top: menuOpen ? 10 : 10,
-                    left: menuOpen ? 80 : 10,
-                    zIndex: 1001,
-                    transition: 'left 0.3s',
-                }}
-            >
-                <MenuIcon />
-            </IconButton>
+        <div style={{ display: 'flex', background: "#e7ecf0" }}>
+            {!isMobile && (
+                <IconButton
+                    onClick={toggleMenu}
+                    style={{
+                        position: menuOpen ? 'absolute' : 'fixed',
+                        top: 10,
+                        left: menuOpen ? 80 : 10,
+                        zIndex: 1001,
+                        transition: 'left 0.3s',
+                    }}
+                >
+                    <MenuIcon />
+                </IconButton>
+            )}
             {menuOpen && (
                 <div ref={menuRef} style={{ position: 'relative' }}>
                     <MainMenu onLogout={onLogout} />
@@ -46,6 +58,7 @@ const Layout = ({ children, onLogout }) => {
             )}
             <div style={{ marginLeft: menuOpen ? 80 : 0, flexGrow: 1, transition: 'margin-left 0.9s' }}>
                 {children}
+
             </div>
         </div>
     );

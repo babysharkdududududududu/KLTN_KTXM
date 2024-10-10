@@ -10,6 +10,7 @@ import RoomStudent from './RoomStudent/RoomStudent';
 import ImportRoom from '../Home/Import-room/ImportRoom';
 import { Button } from '@mui/material';
 import EquipmentUpload from '../Home/Import-equipment/ImportEquipment';
+import ImportX from '../Home/Import-xlsx/ImportXlxs';
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
     width: 150,
@@ -69,6 +70,8 @@ const Room = () => {
 
                     {showImportRoom && <ImportRoom />}
                     {showImportRoom && <EquipmentUpload />}
+                    {showImportRoom && <ImportX />}
+
 
                 </div>
             </div>
