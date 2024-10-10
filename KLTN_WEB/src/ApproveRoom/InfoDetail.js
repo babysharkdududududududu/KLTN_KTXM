@@ -41,7 +41,7 @@ export default function InfoDetail({ student, updateStudentData }) {
 
       const data = await response.json();
       console.log('Đơn đã được duyệt:', data);
-      updateStudentData({ ...student, status: 'AWAITING_PAYMENT' });
+      updateStudentData({ ...student, status: 'ACCEPTED' });
     } catch (error) {
       console.error('Lỗi khi duyệt đơn:', error);
     }
@@ -96,20 +96,21 @@ export default function InfoDetail({ student, updateStudentData }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ roomNumber: room }), // Gửi roomNumber
+        body: JSON.stringify({ roomNumber: room.toLowerCase() }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        const errorData = await response.json();
+        throw new Error(`Error: ${errorData.message || 'Unknown error'}`);
       }
 
       const data = await response.json();
-      console.log('Phòng đã được xếp:', data);
-      updateStudentData({ ...student, status: 'ASSIGNED', roomNumber: room });
+      updateStudentData({ ...student, status: 'ASSIGNED', roomNumber: room.toLowerCase() });
     } catch (error) {
       console.error('Lỗi khi xếp phòng:', error);
     }
   };
+
 
   const handleChange = (event) => {
     setValue(event.target.value);

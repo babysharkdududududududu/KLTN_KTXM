@@ -14,21 +14,24 @@ import { UsersService } from '../users/users.service';
 import { ContractsService } from '../contracts/contracts.service';
 import { ContractsModule } from '../contracts/contracts.module';
 import { Contract, ContractSchema } from '../contracts/entities/contract.entity';
+import { Room, RoomSchema } from '../rooms/entities/room.entity';
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: DormSubmission.name, schema: DormSubmissionSchema },
       { name: Setting.name, schema: SettingSchema },
       { name: User.name, schema: UserSchema },
-      { name: Contract.name, schema: ContractSchema }
+      { name: Contract.name, schema: ContractSchema },
+      { name: Room.name, schema: RoomSchema }
     ]),
     SettingModule,
-    RoomsModule,
     ContractsModule,
     UsersModule,
+    RoomsModule
   ],
   controllers: [DormSubmissionController],
   providers: [DormSubmissionService, SettingService, UsersService, ContractsService],
   exports: [DormSubmissionService],
 })
 export class DormSubmissionModule { }
+

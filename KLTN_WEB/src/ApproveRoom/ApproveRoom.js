@@ -1,29 +1,37 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { Button, Card, CardContent, Typography, Grid, Box, Divider } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+import { Button, FormControl, Select, MenuItem, Typography } from '@mui/material';
 
 import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import InfoDetail from "./InfoDetail";
 
-import { getSettingRoute, getBySettingId, getUserByIdRoute } from '../API/APIRouter'; // Import thêm getUserByIdRoute
+import { getSettingRoute, getBySettingId, getUserByIdRoute } from '../API/APIRouter';
+
+const statuses = [
+    { id: '', name: 'Tất cả' },
+    { id: 'PENDING', name: 'Chờ xử lý' },
+    { id: 'ACCEPTED', name: 'Đã chấp nhận' },
+    { id: 'AWAITING_PAYMENT', name: 'Chờ thanh toán' },
+    { id: 'PAID', name: 'Đã thanh toán' },
+    { id: 'ASSIGNED', name: 'Đã xếp phòng' },
+    { id: 'REJECTED', name: 'Từ chối đơn đăng ký' },
+];
 
 const ApproveRoom = () => {
-    const [open, setOpen] = React.useState(false);
-    const [setingID, setSetingID] = React.useState('');
-    const [setting, setSetting] = React.useState([]);
-    const [openSucessfull, setOpenSucessfull] = React.useState(false);
-    const [dormSubmitList, setDormSubmitList] = React.useState([]);
-    const [studentData, setStudentData] = React.useState([]); // Mới: Lưu dữ liệu sinh viên
+    const [open, setOpen] = useState(false);
+    const [setingID, setSetingID] = useState('');
+    const [setting, setSetting] = useState([]);
+    const [openSucessfull, setOpenSucessfull] = useState(false);
+    const [dormSubmitList, setDormSubmitList] = useState([]);
+    const [studentData, setStudentData] = useState([]);
+    const [filteredStudentData, setFilteredStudentData] = useState([]);
     const navigate = useNavigate();
-    const [selectedStudent, setSelectedStudent] = React.useState(null);
+    const [selectedStudent, setSelectedStudent] = useState(null);
+    const [statusID, setStatusID] = useState('');
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const handleOpenSucessfull = () => {
@@ -36,7 +44,12 @@ const ApproveRoom = () => {
 
     const handleChange = (event) => {
         setSetingID(event.target.value);
-        setSelectedStudent(null)
+        setSelectedStudent(null);
+        setStatusID('');
+    };
+
+    const handleChangeStatus = (event) => {
+        setStatusID(event.target.value);
     };
 
     // Fetch API data
@@ -57,15 +70,6 @@ const ApproveRoom = () => {
         fetchData();
     }, []);
 
-    const updateStudentData = (updatedStudent) => {
-        setStudentData((prevData) => 
-            prevData.map((student) => 
-                student.id === updatedStudent.id ? updatedStudent : student
-            )
-        );
-    };
-    
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -76,7 +80,6 @@ const ApproveRoom = () => {
                 const data = await response.json();
                 setDormSubmitList(data.data);
 
-                // Lấy thông tin sinh viên
                 const studentPromises = data.data.map(async (submission) => {
                     const studentResponse = await fetch(`${getUserByIdRoute}${submission.userId}`);
                     if (!studentResponse.ok) {
@@ -90,15 +93,14 @@ const ApproveRoom = () => {
                         address: studentData.data ? studentData.data.address : 'Không xác định',
                         roomNumber: submission.roomNumber || 'N/A',
                         action: 'Xem',
-                        gender: studentData.data ? studentData.data.gender  : 'Không xác định',
-                        email: studentData.data ? studentData.data.email : 'Không xác định',
                         status: submission.status ? submission.status : 'Chưa xác định',
                         submitId: submission._id,
-                    };                    
+                    };
                 });
 
                 const students = await Promise.all(studentPromises);
                 setStudentData(students);
+                setFilteredStudentData(students);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -109,9 +111,25 @@ const ApproveRoom = () => {
         }
     }, [setingID]);
 
+    useEffect(() => {
+        const filteredData = studentData.filter(student => {
+            return statusID === '' || student.status === statusID;
+        });
+        setFilteredStudentData(filteredData);
+    }, [statusID, studentData]);
+
+    const updateStudentData = (updatedStudent) => {
+        setStudentData((prevData) =>
+            prevData.map((student) =>
+                student.id === updatedStudent.id ? updatedStudent : student
+            )
+        );
+    };
+
     const submitDorm = () => {
         navigate('/dorm-submit');
-    }
+    };
+
     const handleRowClick = (student) => {
         setSelectedStudent(student);
     };
@@ -125,7 +143,7 @@ const ApproveRoom = () => {
             <div style={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
                 <Typography variant="h6" style={{ flex: 1 }}>Danh sách đơn đăng ký</Typography>
 
-                <FormControl sx={{ minWidth: 120 }}>
+                <FormControl sx={{ minWidth: 120, marginRight: 3 }}>
                     <Select
                         value={setingID}
                         onChange={handleChange}
@@ -133,12 +151,28 @@ const ApproveRoom = () => {
                         inputProps={{ 'aria-label': 'Without label' }}
                         sx={{ height: 35, width: 180 }}
                     >
-                        <MenuItem value="">
-                            <em>Không</em>
-                        </MenuItem>
                         {setting.map((item) => (
                             <MenuItem key={item._id} value={item._id} sx={{ width: 180 }}>
                                 {item.name}
+                            </MenuItem>
+                        ))}
+                        <MenuItem value="">
+                            <em>Tạo mới</em>
+                        </MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl sx={{ minWidth: 120 }}>
+                    <Select
+                        value={statusID}
+                        onChange={handleChangeStatus}
+                        displayEmpty
+                        inputProps={{ 'aria-label': 'Without label' }}
+                        sx={{ height: 35, width: 180 }}
+                    >
+                        {statuses.map((status) => (
+                            <MenuItem key={status.id} value={status.id} sx={{ width: 180 }}>
+                                {status.name}
                             </MenuItem>
                         ))}
                     </Select>
@@ -146,15 +180,18 @@ const ApproveRoom = () => {
 
                 <div style={{ height: "50px", alignItems: 'center', display: 'flex', marginLeft: "10px" }}>
                     <Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} disabled={!setingID}>Đăng ký</Button>
-                    <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID}>Tự động xếp phòng</Button>
-                    <Button variant="contained" color="primary" onClick={handleOpen} disabled={!setingID}>Cài đặt</Button>
+                    {setingID !== '' && (
+                        <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID}>Tự động xếp phòng</Button>
+                    )}
+                    {setingID == '' && (
+                        <Button variant="contained" color="primary" disabled={!setingID} onClick={handleOpen}>Cài đặt</Button>
+                    )}
                 </div>
             </div>
 
-            {/* Chỉ hiển thị DataTable và InfoDetail khi đã chọn một MenuItem */}
             {setingID && (
                 <div style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between", marginTop: '10px' }}>
-                    <DataTable studentData={studentData} handleRowClick={handleRowClick}/> {/* Truyền dữ liệu sinh viên vào DataTable */}
+                    <DataTable studentData={filteredStudentData} handleRowClick={handleRowClick} />
                     <InfoDetail student={selectedStudent} updateStudentData={updateStudentData} />
                 </div>
             )}
