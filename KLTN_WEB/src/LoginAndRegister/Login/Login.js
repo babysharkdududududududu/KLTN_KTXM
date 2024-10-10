@@ -3,7 +3,6 @@ import EmailIcon from '@mui/icons-material/Email';
 import { Alert, Box, Button, Checkbox, CircularProgress, Container, FormControlLabel, Link, TextField, Typography } from '@mui/material';
 import Divider from "@mui/material/Divider";
 import React, { useState } from 'react';
-import ParticlesComponent from '../../Particles/Particle';
 import ForgotPassword from '../ForgotPasswordForm/ForgotPassword';
 import Register from '../Register/Register';
 import styles from './Login.module.css';
@@ -94,7 +93,7 @@ const Login = ({ onLoginSuccess }) => {
         <div>
             <Container maxWidth="xs" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', position: 'relative' }}>
                 <Box className={styles.box} sx={{ position: 'relative', overflow: 'hidden', padding: 2 }}>
-                    <ParticlesComponent />
+                    
                     {visibleForgotPassword ? <ForgotPassword onClose={handleForgotPassword} /> :
                         visibleRegister ? <Register onClose={handleRegister} /> :
                             <LoginForm />

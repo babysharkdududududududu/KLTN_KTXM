@@ -1,5 +1,4 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
-import ParticlesComponent from "../../Particles/Particle";
 import styles from '../Register/Register.module.css';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
@@ -46,7 +45,7 @@ const Register = ({ onClose }) => {
 
     return (
         <Box className={styles.box}>
-            <ParticlesComponent />
+           
             <Box component="form" className={styles.form} onSubmit={handleRegister}>
                 <Typography variant="h4" gutterBottom color="primary">Đăng ký</Typography>
 
