@@ -48,10 +48,13 @@ const UploadXLSX = () => {
     };
 
     const checkForExistingUserIds = (jsonData) => {
+        if (!userData) return []; // Trả về mảng rỗng nếu userData không có giá trị
+
         const existingUserIds = userData.map(user => String(user.userId || '').toLowerCase());
         return jsonData.filter(user => existingUserIds.includes(String(user.userId || '').toLowerCase()))
             .map(user => user.userId);
     };
+
 
     const handleUpload = async () => {
         if (!file) {

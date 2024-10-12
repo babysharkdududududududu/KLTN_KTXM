@@ -31,4 +31,10 @@ export class CreateUserDto {
 
     @IsNotEmpty({ message: "role không được để trống" })
     role: string;
+
+    @IsOptional() // Thêm @IsOptional() cho trường class
+    class?: string;
+
+    @IsOptional() // Thêm @IsOptional() cho khoa faculty
+    faculty?: string;
 }

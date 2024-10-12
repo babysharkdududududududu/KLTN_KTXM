@@ -81,15 +81,12 @@ export class RoomsService {
   //   return { _id: room._id };
   // }
 
-
-
   async findAll() {
     const results = await this.roomModel.find().select("-occupied -price -waterNumber -electricityNumber");
     return {
       results
     };
   }
-
 
   findOne(roomNumber: string) {
     const a = this.roomModel.findOne({ roomNumber });
@@ -153,7 +150,6 @@ export class RoomsService {
 
   async importRooms(roomsData: any[]) {
     const roomData = roomsData.map(room => {
-      // Calculate availableSpot based on equipment
       const bedEquipment = room.equipment?.find(equip => equip.name === 'Giường');
       const availableSpot = bedEquipment ? bedEquipment.quantity * 2 : 0;
       return {
@@ -181,7 +177,6 @@ export class RoomsService {
       throw error;
     }
   }
-
 
 
   async remove(_id: string) {

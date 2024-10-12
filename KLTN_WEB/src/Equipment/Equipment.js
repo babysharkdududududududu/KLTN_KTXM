@@ -67,6 +67,7 @@ const Equipment = () => {
         handleGetAllEquipment();
     }, []);
 
+    // Lọc dữ liệu theo tên thiết bị và số phòng
     const filteredEquipment = equipment.filter(equip => {
         const matchesSearchTerm =
             equip.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -97,7 +98,7 @@ const Equipment = () => {
                     variant="contained"
                     color="primary"
                     onClick={() => handleSelectEquipment(params.row)}
-                    sx={{ borderRadius: '8px', fontSize: '10px', }}
+                    sx={{ borderRadius: '8px', fontSize: '10px' }}
                 >
                     Chỉnh sửa
                 </Button>
@@ -106,30 +107,43 @@ const Equipment = () => {
     ];
 
     return (
-        <Box sx={{ width: '100%', marginTop: '20px', display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '90vh', padding: 4, justifyContent: 'center', alignItems: 'center' }}>
             {/* Bảng và Tabs bên trái */}
-            <Box sx={{ flex: 3, marginRight: '20px' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                    <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
-                        <Tab label="Tất cả" />
-                        {uniqueNameEquipment.map((name, index) => (
-                            <Tab key={index} label={name} />
-                        ))}
-                    </Tabs>
+            <Box sx={{ flex: 3, width: '90%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Box sx={{ width: '100%', display: 'flex', flexDirection: 'row', marginBottom: '10px', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <TextField
+                        variant="outlined"
+                        label="Tìm kiếm thiết bị"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        sx={{ marginRight: '10px', flex: 0.7 }}
+                    />
+                    <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+                        <Tabs value={selectedTab} onChange={(event, newValue) => setSelectedTab(newValue)}>
+                            <Tab label="Tất cả" />
+                            {uniqueNameEquipment.map((name, index) => (
+                                <Tab key={index} label={name} />
+                            ))}
+                        </Tabs>
+                    </Box>
+                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                        <PrintButton equipment={filteredEquipment} sx={{ marginLeft: '10px' }} />
+                    </Box>
                 </Box>
+
 
                 <DataGrid
                     rows={paginatedEquipment}
                     columns={columns}
-                    pageSize={pageSize}
+                    pageSize={paginatedEquipment.length}
                     autoHeight
                     hideFooter
                     getRowId={(row) => row.equipNumber}
-                    sx={{ height: 400, width: '90%', padding: '1px', borderRadius: '8px', marginLeft: '20px', backgroundColor: '#fcfcfc' }}
+                    sx={{ width: '100%', padding: '1px', borderRadius: '8px', backgroundColor: '#fcfcfc' }}
                 />
 
                 {/* Phân trang */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
                     <Pagination
                         count={totalPages}
                         page={currentPage}
@@ -141,19 +155,6 @@ const Equipment = () => {
                         boundaryCount={1}
                     />
                 </div>
-            </Box>
-
-            <Box sx={{ marginRight: '10px', backgroundColor: '#fcfcfc', padding: '30px', borderRadius: '5px' }}>
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', }}>
-                    <TextField
-                        variant="outlined"
-                        label="Tìm kiếm thiết bị"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        sx={{ marginBottom: '20px', width: '340px' }}
-                    />
-                    <PrintButton equipment={filteredEquipment} />
-                </Box>
 
                 <EquipmentDialog
                     open={openDialog}

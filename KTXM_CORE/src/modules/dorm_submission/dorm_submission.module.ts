@@ -15,6 +15,7 @@ import { ContractsService } from '../contracts/contracts.service';
 import { ContractsModule } from '../contracts/contracts.module';
 import { Contract, ContractSchema } from '../contracts/entities/contract.entity';
 import { Room, RoomSchema } from '../rooms/entities/room.entity';
+import { StudentDiscipline, StudentDisciplineSchema } from '../student-discipline/entities/student-discipline.entity';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -22,7 +23,9 @@ import { Room, RoomSchema } from '../rooms/entities/room.entity';
       { name: Setting.name, schema: SettingSchema },
       { name: User.name, schema: UserSchema },
       { name: Contract.name, schema: ContractSchema },
+      { name: StudentDiscipline.name, schema: StudentDisciplineSchema },
       { name: Room.name, schema: RoomSchema }
+      
     ]),
     SettingModule,
     ContractsModule,

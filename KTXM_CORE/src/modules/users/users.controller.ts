@@ -16,12 +16,8 @@ export class UsersController {
 
   @Get()
   @Public()
-  async findAll(
-    @Query() query: string,
-    @Query("current") current: string,
-    @Query("pageSize") pageSize: string,
-  ) {
-    return this.usersService.findAll(query, +current, +pageSize);
+  async findAll() {
+    return this.usersService.findAll();
   }
 
 

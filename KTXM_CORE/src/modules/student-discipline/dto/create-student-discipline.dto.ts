@@ -1,15 +1,26 @@
 import { Type } from 'class-transformer';
 import { PenaltyType, ViolationType } from './../entities/student-discipline.entity';
-import { IsString, IsEnum, IsDate, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsEnum, IsDate, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
+
+class DescriptionDto {
+    @IsNotEmpty()
+    @IsString()
+    content: string;
+
+    @IsNotEmpty()
+    @IsDate()
+    @Type(() => Date)
+    violationDate: Date;
+
+    @IsNotEmpty()
+    @IsEnum(ViolationType, { message: 'violationType must be one of the following values: Giờ giấc, Vệ sinh' })
+    violationType: ViolationType;
+}
 
 export class CreateStudentDisciplineDto {
     @IsNotEmpty()
     @IsString()
     userId: string;
-
-    @IsNotEmpty()
-    @IsEnum(ViolationType)
-    violationType: ViolationType;
 
     @IsNotEmpty()
     @IsDate()
@@ -21,6 +32,6 @@ export class CreateStudentDisciplineDto {
     penalty: PenaltyType;
 
     @IsOptional()
-    @IsString()
-    description?: string;
+    @IsArray()
+    descriptions?: DescriptionDto[];
 }

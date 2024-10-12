@@ -80,3 +80,5 @@ export const updateStatusPaid = `${host}/dorm-submission/paid`;
 export const updateStatusRoomAssigned = `${host}/dorm-submission/room-assigned`;
 
 export const autoAsignRoom = `${host}/dorm-submission/auto-assign-rooms`;
+// Router disciplines
+export const createDisciplineRoute = `${host}/student-discipline`;

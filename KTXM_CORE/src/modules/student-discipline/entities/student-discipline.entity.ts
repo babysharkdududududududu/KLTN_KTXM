@@ -19,11 +19,10 @@ export enum PenaltyType {
 
 @Schema({ timestamps: true })
 export class StudentDiscipline {
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+    @Prop({ type: String, required: true })
     student: User;
 
-    @Prop({ type: String, enum: ViolationType })
-    violationType: ViolationType;
+
 
     @Prop()
     violationDate: Date;
@@ -34,8 +33,12 @@ export class StudentDiscipline {
     @Prop({ default: 1 })
     violationCount: number;
 
-    @Prop()
-    description: string;
+    @Prop([{
+        content: { type: String, required: true },
+        violationDate: { type: Date, required: true },
+        violationType: { type: String, enum: ViolationType, required: true },
+    }])
+    descriptions: { content: string, violationDate: Date }[];
 
     @Prop({ default: false })
     isReviewed: boolean;
@@ -43,6 +46,7 @@ export class StudentDiscipline {
 
 export const StudentDisciplineSchema = SchemaFactory.createForClass(StudentDiscipline);
 
+// Middleware để cập nhật trạng thái isReviewed nếu vi phạm > 3
 StudentDisciplineSchema.pre('save', function (next) {
     if (this.violationCount > 3) {
         this.isReviewed = true;
