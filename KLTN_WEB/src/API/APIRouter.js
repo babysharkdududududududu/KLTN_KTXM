@@ -79,5 +79,6 @@ export const updateStatusPaid = `${host}/dorm-submission/paid`;
 // Router cho trạng thái đã xếp phòng
 export const updateStatusRoomAssigned = `${host}/dorm-submission/room-assigned`;
 
+export const autoAsignRoom = `${host}/dorm-submission/auto-assign-rooms`;
 // Router disciplines
 export const createDisciplineRoute = `${host}/student-discipline`;

@@ -8,7 +8,7 @@ import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import InfoDetail from "./InfoDetail";
 
-import { getSettingRoute, getBySettingId, getUserByIdRoute } from '../API/APIRouter';
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom } from '../API/APIRouter';
 
 const statuses = [
     { id: '', name: 'Tất cả' },
@@ -137,12 +137,23 @@ const ApproveRoom = () => {
     const handleRowClick = (student) => {
         setSelectedStudent(student);
     };
+    
+    const handleAutoAsignRoom = async () => {
+        const response = await axios.post(autoAsignRoom, {
+            settingId: setingID,
+        });
+        if (response.data && response.data.data) {
+            console.log("Xếp phòng thành công:", response.data.data);
+        } else {
+            console.error("Lỗi xếp phòng:", response.data.message);
+        }
+    };
 
     return (
         <div style={{ padding: '20px', marginLeft: '25px', position: 'relative' }}>
-            {setingID && (
-                <BasicModal setingID={setingID} open={open} handleClose={handleClose} handleOpenSucessfull={handleOpenSucessfull} />
-            )}
+            
+            <BasicModal setingID={setingID} open={open} handleClose={handleClose} handleOpenSucessfull={handleOpenSucessfull} />
+            
             <SucessfullModal open={openSucessfull} handleClose={handleCloseSucessfull} />
             <div style={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
                 <Typography variant="h6" style={{ flex: 1 }}>Danh sách đơn đăng ký</Typography>
@@ -184,11 +195,13 @@ const ApproveRoom = () => {
 
                 <div style={{ height: "50px", alignItems: 'center', display: 'flex', marginLeft: "10px" }}>
                     <Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} disabled={!setingID}>Đăng ký</Button>
-                    {setingID !== '' && (
-                        <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID}>Tự động xếp phòng</Button>
+                    {setingID !== '' && statusID === 'PAID' && (
+                        <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={handleAutoAsignRoom}>
+                            Tự động xếp phòng
+                        </Button>
                     )}
                     {setingID == '' && (
-                        <Button variant="contained" color="primary" disabled={!setingID} onClick={handleOpen}>Cài đặt</Button>
+                        <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button>
                     )}
                 </div>
             </div>

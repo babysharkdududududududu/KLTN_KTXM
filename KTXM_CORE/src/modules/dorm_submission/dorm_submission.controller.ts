@@ -74,4 +74,29 @@ export class DormSubmissionController {
   ): Promise<DormSubmission> {
     return this.dormSubmissionService.setRoomAssigned(id, roomNumber);
   }
+
+  // Tự động xếp phòng
+  @Post('auto-assign-rooms')
+  @Public()
+  async autoAssignRooms(): Promise<{ message: string }> {
+    try {
+      await this.dormSubmissionService.autoAssignRooms();
+      return { message: 'Đã xếp phòng cho tất cả sinh viên có đơn đăng ký.' };
+    } catch (error) {
+      console.error('Lỗi khi xếp phòng:', error);
+      throw new Error('Có lỗi xảy ra khi xếp phòng.');
+    }
+  }
+  @Post('auto-assign-room-by-ids')
+  @Public()
+  async autoAssignRoomsByIds(@Body('submissionIds') submissionIds: string[]): Promise<{ message: string }> {
+    try {
+      await this.dormSubmissionService.autoAssignRoomsByIds(submissionIds);
+      return { message: 'Đã xếp phòng cho các sinh viên có đơn đăng ký.' };
+    } catch (error) {
+      console.error('Lỗi khi xếp phòng:', error);
+      throw new Error('Có lỗi xảy ra khi xếp phòng.');
+    }
+  }
+
 }

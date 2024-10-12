@@ -187,21 +187,4 @@ export class RoomsService {
     }
   }
 
-  async calculateAvailableRooms() {
-    const rooms = await this.roomModel.find().exec();
-    let totalAvailableRooms = 0;
-
-    console.log('Rooms:', rooms);
-    rooms.forEach(room => {
-      totalAvailableRooms += room.availableSpot;
-    });
-
-    console.log('Total Available Rooms:', totalAvailableRooms);
-    return {
-      totalAvailableRooms,
-      rooms
-    }
-  }
-
-
 }
