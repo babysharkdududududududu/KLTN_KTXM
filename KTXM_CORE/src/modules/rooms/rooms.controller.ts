@@ -50,11 +50,11 @@ export class RoomsController {
   @Get('hihihihi')
   @Public()
   async findAvailableRooms() {
-    console.log('findAvailableRooms called'); // Log để kiểm tra
+    console.log('findAvailableRooms called');
     return {
       statusCode: 200,
       message: 'Hello from rooms module',
-      data: null // Hoặc có thể là dữ liệu bạn muốn trả về
+      data: null
     };
   }
   @Post('import')
