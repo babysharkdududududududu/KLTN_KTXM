@@ -1,4 +1,4 @@
-import { StudentDisciplineDocument } from './entities/student-discipline.entity';
+import { PenaltyType, StudentDisciplineDocument } from './entities/student-discipline.entity';
 import { StudentDiscipline } from './entities/student-discipline.entity';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -15,52 +15,62 @@ export class StudentDisciplineService {
     @InjectModel(StudentDiscipline.name) private studentDisciplineModel: Model<StudentDisciplineDocument>,
   ) { }
 
+  // Tạo mới hoặc cập nhật kỷ luật sinh viên
   async create(createStudentDisciplineDto: CreateStudentDisciplineDto): Promise<StudentDiscipline> {
-    const { userId, violationType, violationDate, penalty, description } = createStudentDisciplineDto;
+    const { userId, violationDate, penalty, descriptions } = createStudentDisciplineDto;
     try {
       const student = await this.studentModel.findOne({ userId }).exec();
       if (!student) {
         console.log(`Student not found for userId: ${userId}`);
         throw new HttpException('Student not found', HttpStatus.NOT_FOUND);
       }
-      const existingDiscipline = await this.studentDisciplineModel.findOne({ student: student._id }).exec();
+
+      const existingDiscipline = await this.studentDisciplineModel.findOne({ student: student.userId }).exec();
+
       if (existingDiscipline) {
         if (existingDiscipline.violationCount < 3) {
           existingDiscipline.violationCount += 1;
+          existingDiscipline.violationDate = violationDate;
+          existingDiscipline.penalty = penalty;
+          if (descriptions) {
+            existingDiscipline.descriptions.push(...descriptions);
+          }
           return await existingDiscipline.save();
-        }
-        else if (existingDiscipline.violationCount === 3) {
+        } else if (existingDiscipline.violationCount === 3) {
           existingDiscipline.isReviewed = true;
-          existingDiscipline.violationCount = 0;
+          existingDiscipline.penalty = PenaltyType.REVIEW_FORM;
+          existingDiscipline.violationCount += 1;
+          if (descriptions) {
+            existingDiscipline.descriptions.push(...descriptions);
+          }
+          return await existingDiscipline.save();
+        } else if (existingDiscipline.violationCount > 3) {
+          existingDiscipline.violationCount = 1;
+          existingDiscipline.violationDate = violationDate;
+          existingDiscipline.penalty = penalty;
+          existingDiscipline.descriptions = descriptions || [];
           return await existingDiscipline.save();
         }
-        else {
-          throw new HttpException('Student has reached the maximum violation count', HttpStatus.BAD_REQUEST);
-        }
-
       }
+
       const newDiscipline = new this.studentDisciplineModel({
-        student: student._id,
-        violationType,
+        student: student.userId,
         violationDate,
         penalty,
-        description,
+        descriptions: descriptions || [],
         violationCount: 1,
         isReviewed: false,
       });
 
       return await newDiscipline.save();
     } catch (error) {
-      console.log('Failed to create or update student discipline', error);
+      console.error('Failed to create or update student discipline', error.message, error.stack);
       throw new HttpException('Could not create or update student discipline', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
 
-
-
-
-
+  // Lấy tất cả thông tin sinh viên cùng với kỷ luật
   findAll() {
     return `This action returns all studentDiscipline`;
   }

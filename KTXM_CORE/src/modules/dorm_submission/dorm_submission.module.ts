@@ -14,13 +14,15 @@ import { UsersService } from '../users/users.service';
 import { ContractsService } from '../contracts/contracts.service';
 import { ContractsModule } from '../contracts/contracts.module';
 import { Contract, ContractSchema } from '../contracts/entities/contract.entity';
+import { StudentDiscipline, StudentDisciplineSchema } from '../student-discipline/entities/student-discipline.entity';
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: DormSubmission.name, schema: DormSubmissionSchema },
       { name: Setting.name, schema: SettingSchema },
       { name: User.name, schema: UserSchema },
-      { name: Contract.name, schema: ContractSchema }
+      { name: Contract.name, schema: ContractSchema },
+      { name: StudentDiscipline.name, schema: StudentDisciplineSchema }
     ]),
     SettingModule,
     RoomsModule,
