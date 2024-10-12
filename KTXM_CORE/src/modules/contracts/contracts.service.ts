@@ -100,6 +100,7 @@ export class ContractsService {
   }
 
 
+
   async create(createContractDto: CreateContractDto): Promise<Contract> {
     const { contractNumber, userId, roomNumber } = createContractDto;
 
