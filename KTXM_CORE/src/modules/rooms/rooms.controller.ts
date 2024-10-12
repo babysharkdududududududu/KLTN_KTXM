@@ -47,16 +47,7 @@ export class RoomsController {
     return this.roomsService.remove(id);
   }
 
-  @Get('hihihihi')
-  @Public()
-  async findAvailableRooms() {
-    console.log('findAvailableRooms called'); // Log để kiểm tra
-    return {
-      statusCode: 200,
-      message: 'Hello from rooms module',
-      data: null // Hoặc có thể là dữ liệu bạn muốn trả về
-    };
-  }
+  
   @Post('import')
   @Public()
   async importUsers(@Body() usersData: any[]) {
