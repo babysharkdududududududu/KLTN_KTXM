@@ -19,9 +19,10 @@ export class StudentDisciplineController {
     return this.studentDisciplineService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentDisciplineService.findOne(+id);
+  @Get(':student')
+  @Public()
+  findOne(@Param('student') student: string) {
+    return this.studentDisciplineService.findOne(student);
   }
 
   @Patch(':id')

@@ -87,7 +87,11 @@ export class RoomsService {
       results
     };
   }
-
+  async getAvailableRooms() {
+    const rooms = await this.roomModel.find({ availableSpot: { $gt: 0 } });
+    const availableRooms = rooms.reduce((total, room) => total + room.availableSpot, 0);
+    return `Tổng số phòng trống hiện tại là: ${availableRooms}`;
+  }
   findOne(roomNumber: string) {
     const a = this.roomModel.findOne({ roomNumber });
     return a;
@@ -187,21 +191,7 @@ export class RoomsService {
     }
   }
 
-  async calculateAvailableRooms() {
-    const rooms = await this.roomModel.find().exec();
-    let totalAvailableRooms = 0;
 
-    console.log('Rooms:', rooms);
-    rooms.forEach(room => {
-      totalAvailableRooms += room.availableSpot;
-    });
-
-    console.log('Total Available Rooms:', totalAvailableRooms);
-    return {
-      totalAvailableRooms,
-      rooms
-    }
-  }
 
 
 }

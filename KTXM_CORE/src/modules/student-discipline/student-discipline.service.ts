@@ -75,8 +75,9 @@ export class StudentDisciplineService {
     return `This action returns all studentDiscipline`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} studentDiscipline`;
+  findOne(studentId: string) {
+    const studentDiscipline = this.studentDisciplineModel.findOne({ student: studentId }).exec();
+    return studentDiscipline;
   }
 
   update(id: number, updateStudentDisciplineDto: UpdateStudentDisciplineDto) {
