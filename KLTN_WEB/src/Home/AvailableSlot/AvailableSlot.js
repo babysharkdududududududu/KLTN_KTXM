@@ -17,10 +17,6 @@ const DoubleDoughnutChart = ({ total, used }) => {
         { name: 'Chỗ trống', value: 0 },
     ];
 
-
-
-
-
     return (
         <PieChart width={260} height={150} >
             <Pie data={dataUsed} cx="50%" cy="50%" innerRadius={35} outerRadius={50} fill="#8884d8" paddingAngle={0} dataKey="value" isAnimationActive={true} animationBegin={0} animationDuration={5000}>
@@ -50,6 +46,8 @@ const AvailableSlot = () => {
     const [availableSlot, setAvailableSlot] = useState(null);
     const [capacity, setCapacity] = useState(null);
     const [totalAvailableSlot, setTotalAvailableSlot] = useState(0);
+    const [roomNumber, setRoomNumber] = useState(null);
+
 
     // API get all room to sum available slot
     const handleGetAllRoom = async () => {
@@ -89,6 +87,8 @@ const AvailableSlot = () => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
             setRoomInfo(data.data.room);
+            setRoomNumber(data.data.room.roomNumber);
+            console.log("Room number:", roomNumber);
             console.log("Room info:", roomInfo);
 
             setAvailableSlot(data.data.room.availableSpot);
@@ -114,7 +114,7 @@ const AvailableSlot = () => {
                     <CircularProgress size={24} />
                 </Box>
             )}
-            <Typography variant="h6" sx={{ marginBottom: 0.5, fontSize: '15px', textAlign: 'center', color: '#53556a' }}>Phòng trống</Typography>
+            <Typography variant="h6" sx={{ marginBottom: 0.5, fontSize: '15px', textAlign: 'center', color: '#53556a' }}>Phòng {roomNumber}</Typography>
             <Divider sx={{ marginBottom: 1 }} />
             {error && <Alert severity="error" sx={{ marginBottom: 2, fontSize: '0.8rem' }}>{error}</Alert>}
             {roomInfo && (

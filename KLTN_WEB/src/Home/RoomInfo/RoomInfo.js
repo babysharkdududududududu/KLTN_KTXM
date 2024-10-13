@@ -54,11 +54,11 @@ const RoomInfo = () => {
                     <CircularProgress />
                 </Box>
             )}
-            <Typography variant="h6" sx={{ marginBottom: 0.5 }}>Thông tin phòng</Typography>
-            <Divider sx={{ marginBottom: 1 }} />
-            {error && <Alert severity="error" sx={{ marginBottom: 2 }}>{error}</Alert>}
+            <Typography variant="h6" >Thông tin phòng</Typography>
+            <Divider />
+            {error && <Alert severity="error" >{error}</Alert>}
             {roomInfo && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <MeetingRoomIcon color="primary" />
                         <Typography variant="caption"><strong>Số phòng:</strong> {roomInfo.roomNumber}</Typography>

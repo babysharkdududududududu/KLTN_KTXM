@@ -21,6 +21,7 @@ import Payment from './Pay/Payment';
 import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
 import TotalStudent from './components/TotalStudent';
+import Discipline from './Discipline/Discipline';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -58,14 +59,9 @@ const Home = () => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ ...boxStyle, overflow: 'hidden', minHeight: '50px', marginBottom: 2, flex: 1, display: { xs: 'none', sm: 'block' } }}>
-                        <Typography variant="h6">Quy phạm</Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            - Quy tắc 1: Không sử dụng điện thoại trong lớp học.
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            - Quy tắc 2: Tôn trọng ý kiến của người khác.
-                        </Typography>
+                    {/* display: { xs: 'none', sm: 'block' } */}
+                    <Box sx={{ ...boxStyle, overflow: 'hidden', minHeight: '100px', marginBottom: 2, flex: 1, }}>
+                        <Discipline />
                     </Box>
                     <Box sx={{ ...boxStyle, minHeight: '50px', flex: 1, marginTop: '-10px' }}>
                         <RoomInfo />

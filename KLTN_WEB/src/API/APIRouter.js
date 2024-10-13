@@ -62,6 +62,7 @@ export const submitDormRoute = `${host}/dorm-submission`;
 export const getDormSubmissionRoute = `${host}/dorm-submission`;
 export const checkSubmit = `${host}/dorm-submission/exists`;
 export const getBySettingId = `${host}/dorm-submission/setting`;
+export const getDormSubmissionByUserId = `${host}/dorm-submission/user/`;
 
 // status of submit
 // Router cho trạng thái đã chấp nhận
@@ -82,3 +83,4 @@ export const updateStatusRoomAssigned = `${host}/dorm-submission/room-assigned`;
 export const autoAsignRoom = `${host}/dorm-submission/auto-assign-rooms`;
 // Router disciplines
 export const createDisciplineRoute = `${host}/student-discipline`;
+export const getDisciplineRoute = `${host}/student-discipline`;

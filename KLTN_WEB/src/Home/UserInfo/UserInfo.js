@@ -33,11 +33,11 @@ const UserInfo = () => {
             ) : (
                 userInfo && (
                     <Box elevation={3} sx={{ padding: 2, borderRadius: 2, maxWidth: 800, minHeight: 150, background: '#f5f5f5' }}>
-                        <Typography gutterBottom sx={{ fontFamily: 'Tahoma', textAlign: 'center', fontSize: 16 }}>
+                        <Typography gutterBottom sx={{ fontFamily: 'Tahoma', textAlign: 'center', }} variant="h6">
                             Thông tin cá nhân
                         </Typography>
                         <Divider />
-                        <Grid container spacing={2} alignItems="center" sx={{ marginTop: 2 }}>
+                        <Grid container spacing={2} alignItems="center" sx={{ marginTop: 1 }}>
                             <Grid item xs={12} sm={4} container justifyContent="center">
                                 <Avatar src={userInfo.image} alt="User Avatar" sx={{ width: 100, height: 100, border: '3px solid #3f51b5', boxShadow: 3 }} />
                             </Grid>
@@ -57,6 +57,9 @@ const UserInfo = () => {
                                             <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, display: { xs: 'none', sm: 'block' } }}>
                                                 Giới tính: <strong>{userInfo.gender || 'Chưa có giới tính'}</strong>
                                             </Typography>
+                                            <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, display: { xs: 'none', sm: 'block' } }}>
+                                                Lớp: <strong>{userInfo.class || 'NaN'}</strong>
+                                            </Typography>
                                         </Box>
                                     </Grid>
                                     <Grid item xs={6} sm={6} md={6}>
@@ -69,6 +72,9 @@ const UserInfo = () => {
                                             </Typography>
                                             <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, }}>
                                                 Địa chỉ: <strong>{userInfo.address || 'Chưa có địa chỉ'}</strong>
+                                            </Typography>
+                                            <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, display: { xs: 'none', sm: 'block' } }}>
+                                                Khoa: <strong>{userInfo.faculty || 'NaN'}</strong>
                                             </Typography>
                                         </Box>
                                     </Grid>
