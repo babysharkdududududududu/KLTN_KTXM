@@ -48,7 +48,7 @@ const RoomInfo = () => {
     }, [userId]);
 
     return (
-        <Container>
+        <Box sx={{ npmborderRadius: '4px', height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
             {loading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
                     <CircularProgress />
@@ -73,7 +73,7 @@ const RoomInfo = () => {
                     </Box>
                 </Box>
             )}
-        </Container>
+        </Box>
     );
 }
 

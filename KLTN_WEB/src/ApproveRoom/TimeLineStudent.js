@@ -80,10 +80,11 @@ const TimeLineStudent = () => {
         return <div style={{ textAlign: 'center', marginTop: '50px' }}>Đang tải...</div>;
     }
 
-    const isRoomAssigned = dormSubmission.statusHistory.includes('ASSIGNED');
-
     return (
-        <div style={{ padding: '30px', backgroundColor: '#f7f9fc', borderRadius: '16px', maxWidth: '900px', margin: '40px auto', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)' }}>
+        <div style={{ padding: '30px', borderRadius: '16px', maxWidth: '900px', margin: '40px auto', }}>
+            <Typography variant="h4" align="center" gutterBottom>
+                Quá trình xử lý đơn đăng ký
+            </Typography>
             <Timeline position="alternate">
                 {
                     dormSubmission.statusHistory.map((status, index) => (
@@ -115,11 +116,6 @@ const TimeLineStudent = () => {
                     ))
                 }
             </Timeline>
-            {isRoomAssigned && (
-                <Typography variant="body1" align="center" style={{ marginTop: '20px', color: 'green', fontWeight: 'bold' }}>
-                    Bạn đã được xếp phòng, bạn có thể kiểm tra thông tin phòng nhé!
-                </Typography>
-            )}
         </div>
     );
 };

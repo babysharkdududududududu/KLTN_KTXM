@@ -41,7 +41,7 @@ export default function DormSubmit() {
                         settingId,
                     }),
                 });
-    
+
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Toàn bộ phản hồi:', data); // In ra toàn bộ phản hồi
@@ -56,7 +56,7 @@ export default function DormSubmit() {
                 setLoading(false);
             }
         };
-    
+
         const handleGetUserInfo = async (userId) => {
             try {
                 const response = await axios.get(`${getUserByIdRoute}${userId}`);
@@ -69,11 +69,11 @@ export default function DormSubmit() {
                 console.error("Error fetching user info:", error);
             }
         };
-    
+
         checkRegistration();
         handleGetUserInfo(userId);
     }, [userId, settingId]);
-    
+
 
     const handleSubmit = async () => {
         const response = await fetch(submitDormRoute, {

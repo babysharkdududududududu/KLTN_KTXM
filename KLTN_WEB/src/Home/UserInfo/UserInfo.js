@@ -55,7 +55,7 @@ const UserInfo = () => {
                                                 Số điện thoại: <strong>{userInfo.phone || 'Chưa có số điện thoại'}</strong>
                                             </Typography>
                                             <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, display: { xs: 'none', sm: 'block' } }}>
-                                                Giới tính: <strong>{userInfo.gender || 'Chưa có giới tính'}</strong>
+                                                Giới tính: <strong>{userInfo.gender == 1 ? 'Nam' : 'Nữ' || 'Chưa có giới tính'}</strong>
                                             </Typography>
                                             <Typography variant="body1" style={{ display: { xs: 'none', sm: 'block' } }} color="textSecondary" sx={{ fontFamily: 'Tahoma', fontSize: { xs: 8, sm: 12 }, display: { xs: 'none', sm: 'block' } }}>
                                                 Lớp: <strong>{userInfo.class || 'NaN'}</strong>

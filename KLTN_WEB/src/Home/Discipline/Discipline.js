@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { Box, Divider, Typography } from "@mui/material";
 
 const Discipline = () => {
-    const [discipline, setDiscipline] = useState(null); // Khởi tạo là null
+    const [discipline, setDiscipline] = useState(null);
     const { userId } = useUser();
 
     const handleGetDiscipline = async () => {
         try {
             const rs = await axios.get(`${getDisciplineRoute}/${userId}`);
-            console.log(rs.data.data); // Kiểm tra dữ liệu trả về
-            setDiscipline(rs.data.data); // Cập nhật discipline với dữ liệu trả về
+            console.log(rs.data.data);
+            setDiscipline(rs.data.data);
         } catch (err) {
             console.log(err);
         }
@@ -23,21 +23,33 @@ const Discipline = () => {
     }, []);
 
     return (
-        <Box sx={{ padding: 1, borderRadius: '4px', height: '100%', paddingBottom: 2 }}>
+        <Box sx={{ borderRadius: '4px', height: '100%', paddingBottom: 2, display: 'flex', flexDirection: 'column', width: '100%' }}>
             <Typography variant="h6">Vi phạm</Typography>
             <Divider sx={{ marginBottom: 1 }} />
             {
-                discipline === null ? ( // Kiểm tra nếu dữ liệu chưa sẵn sàng
+                discipline === null ? (
                     <Typography variant="body2" color="success"><strong>Sinh viên không có vi phạm.</strong></Typography>
                 ) : (
                     <>
                         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Typography variant="caption" color={discipline.violationCount > 3 ? "error" : "warning"}>
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: discipline.violationCount > 3 ? '#FF0000' : (discipline.violationCount >= 1 ? '#FFA500' : '#00C853')
+                                }}
+                            >
                                 <strong>Hình thức:</strong> {discipline.penalty || 'Không có hình thức'}
                             </Typography>
-                            <Typography variant="caption" color={discipline.violationCount > 3 ? "error" : (discipline.violationCount >= 1 ? "warning" : "success")}>
+
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    color: discipline.violationCount > 3 ? '#FF0000' : (discipline.violationCount >= 1 ? '#FFA500' : '#00C853')
+                                }}
+                            >
                                 <strong>Số lần:</strong> {discipline.violationCount || 0}
                             </Typography>
+
                         </Box>
 
                         {

@@ -39,7 +39,7 @@ const DoubleDoughnutChart = ({ total, used }) => {
 };
 
 const AvailableSlot = () => {
-    const { userId } = useUser();
+    const { userId, roleId } = useUser();
     const [roomInfo, setRoomInfo] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -109,21 +109,32 @@ const AvailableSlot = () => {
 
     return (
         <Container maxWidth="sm" sx={{ padding: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: '260px', minHeight: '217px' }}>
-            {loading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
-                    <CircularProgress size={24} />
-                </Box>
-            )}
-            <Typography variant="h6" sx={{ marginBottom: 0.5, fontSize: '15px', textAlign: 'center', color: '#53556a' }}>Phòng {roomNumber}</Typography>
-            <Divider sx={{ marginBottom: 1 }} />
-            {error && <Alert severity="error" sx={{ marginBottom: 2, fontSize: '0.8rem' }}>{error}</Alert>}
-            {roomInfo && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <DoubleDoughnutChart total={capacity} used={capacity - availableSlot} />
-                </Box>
+            {roleId === 'USERS' && (
+                <>
+                    {loading && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+                            <CircularProgress size={24} />
+                        </Box>
+                    )}
+                    <Typography variant="h6" sx={{ marginBottom: 0.5, fontSize: '15px', textAlign: 'center', color: '#53556a' }}>
+                        Phòng {roomNumber}
+                    </Typography>
+                    <Divider sx={{ marginBottom: 1 }} />
+                    {error && (
+                        <Alert severity="error" sx={{ marginBottom: 2, fontSize: '0.8rem' }}>
+                            {error}
+                        </Alert>
+                    )}
+                    {roomInfo ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <DoubleDoughnutChart total={capacity} used={capacity - availableSlot} />
+                        </Box>
+                    ) : null}
+                </>
             )}
         </Container>
     );
+
 }
 
 export default AvailableSlot;

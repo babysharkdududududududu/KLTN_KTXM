@@ -84,3 +84,6 @@ export const autoAsignRoom = `${host}/dorm-submission/auto-assign-rooms`;
 // Router disciplines
 export const createDisciplineRoute = `${host}/student-discipline`;
 export const getDisciplineRoute = `${host}/student-discipline`;
+
+// Router for payment
+export const getDormPaymentWithUserId = `${host}/dorm-payment`;
