@@ -1,3 +1,4 @@
+import { DormPaymentModule } from './modules/dorm_payment/dorm_payment.module';
 import { AppController } from '@/app.controller';
 import { AppService } from '@/app.service';
 import { AuthModule } from '@/auth/auth.module';
@@ -32,6 +33,7 @@ import { StudentDisciplineModule } from './modules/student-discipline/student-di
     SettingModule,
     EquipmentModule,
     ContractsModule,
+    DormPaymentModule,
     DormSubmissionModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),

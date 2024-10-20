@@ -87,6 +87,7 @@ export class RoomsService {
       results
     };
   }
+
   async getAvailableRooms() {
     const rooms = await this.roomModel.find({ availableSpot: { $gt: 0 } });
     const availableRooms = rooms.reduce((total, room) => total + room.availableSpot, 0);

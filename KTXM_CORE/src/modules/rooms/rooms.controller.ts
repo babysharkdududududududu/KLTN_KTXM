@@ -1,8 +1,9 @@
 import { Public } from '@/decorator/customize';
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { EquipmentService } from '../equipment/equipment.service';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { RoomsService } from './rooms.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService, private readonly equipmentService: EquipmentService) { }
@@ -15,9 +16,12 @@ export class RoomsController {
 
   @Get()
   @Public()
+  @UseInterceptors(CacheInterceptor)
   async findAll() {
     return this.roomsService.findAll();
   }
+
+
 
   @Get('getAvailableRooms')
   @Public()
@@ -48,9 +52,6 @@ export class RoomsController {
   remove(@Param('id') id: string) {
     return this.roomsService.remove(id);
   }
-
-
-
 
   @Post('import')
   @Public()
