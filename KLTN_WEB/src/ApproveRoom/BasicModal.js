@@ -82,11 +82,11 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                 setName(data.data.name);
                 setPriorityValue(data.data.prioritySpots);
                 setAllAvailable(
-                    Number(data.data.totalAvailableSpots) - 
-                    (Number(data.data.firstYearSpots) + 
-                     Number(data.data.upperYearSpots) + 
-                     Number(data.data.prioritySpots))
-                );                
+                    Number(data.data.totalAvailableSpots) -
+                    (Number(data.data.firstYearSpots) +
+                        Number(data.data.upperYearSpots) +
+                        Number(data.data.prioritySpots))
+                );
                 setRegistrationStart({
                     date: data.data.registrationStartDate.split('T')[0],
                     time: data.data.registrationStartDate.split('T')[1].split(':')[0] + ':' + data.data.registrationStartDate.split('T')[1].split(':')[1],

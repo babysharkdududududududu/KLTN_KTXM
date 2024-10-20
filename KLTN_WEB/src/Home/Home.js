@@ -13,6 +13,7 @@ import NotificationBadge from '../Context/NotificationBadge';
 import { useWebSocket } from '../Context/WebSocketContext';
 import AvailableSlot from './AvailableSlot/AvailableSlot';
 import GavelIcon from '@mui/icons-material/Gavel';
+import iuh from '../Payment/asset/iuh.png';
 
 
 import { useUser } from '../Context/Context';
@@ -21,6 +22,7 @@ import Payment from './Pay/Payment';
 import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
 import TotalStudent from './components/TotalStudent';
+import Discipline from './Discipline/Discipline';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -30,7 +32,6 @@ const Home = () => {
     const [isShaking, setIsShaking] = useState(false);
     const { updateNotificationCount } = useWebSocket();
     const { userId, roleId } = useUser();
-    console.log(userId, roleId, 'Home');
 
     useEffect(() => {
         if (numberNoti > prevNoti) {
@@ -51,6 +52,49 @@ const Home = () => {
 
     return (
         <div className={style['home-container']}>
+            <Grid container spacing={3} justifyContent="center" alignItems="center" style={{ marginBottom: '20px' }}>
+                <Grid item xs={12}>
+                    <Box
+                        sx={{
+                            position: 'relative',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: "#f5f5f5",
+                            borderRadius: '8px',
+                            minHeight: { xs: '30px', sm: '30px' },
+                            padding: { xs: 1, sm: 3 },
+                        }}>
+                        <Box
+                            component="img"
+                            src={iuh}
+                            alt="iuh"
+                            sx={{
+                                position: 'absolute',
+                                top: '50%',
+                                left: '10px',
+                                transform: 'translateY(-50%)',
+                                height: { xs: '30px', sm: '70px' },
+                                marginRight: '10px',
+                            }}
+                        />
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                color: '#4da1e8',
+                                fontSize: { xs: '16px', sm: '20px' },  // Thay đổi kích thước chữ theo thiết bị
+                                textAlign: 'center',
+                                marginLeft: { xs: '60px', sm: '0px' },  // Giữ khoảng cách giữa ảnh và chữ trên mobile
+                            }}
+                        >
+                            Hệ thống quản lý ký túc xá
+                        </Typography>
+                    </Box>
+                </Grid>
+            </Grid>
+
+
+
             <Grid container spacing={3} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ ...boxStyle, overflow: 'auto', flex: 1 }}>
@@ -58,14 +102,8 @@ const Home = () => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ ...boxStyle, overflow: 'hidden', minHeight: '50px', marginBottom: 2, flex: 1, display: { xs: 'none', sm: 'block' } }}>
-                        <Typography variant="h6">Quy phạm</Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            - Quy tắc 1: Không sử dụng điện thoại trong lớp học.
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            - Quy tắc 2: Tôn trọng ý kiến của người khác.
-                        </Typography>
+                    <Box sx={{ ...boxStyle, overflow: 'hidden', minHeight: '100px', marginBottom: 2, flex: 1, }}>
+                        <Discipline />
                     </Box>
                     <Box sx={{ ...boxStyle, minHeight: '50px', flex: 1, marginTop: '-10px' }}>
                         <RoomInfo />
@@ -167,6 +205,7 @@ const Home = () => {
                         <Payment />
                     </Box>
                 </Grid> */}
+
                 <Grid item xs={12} sm={6} md={4}>
                     <Box sx={{ marginTop: 2 }}>
                         <AvailableSlot />

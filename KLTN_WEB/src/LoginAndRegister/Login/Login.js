@@ -11,6 +11,7 @@ import axios from 'axios';
 import { useUser } from '../../Context/Context'
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+// import ParticlesComponent from '../../Particles/Particle';
 
 const Login = ({ onLoginSuccess }) => {
     const [error, setError] = useState('');
@@ -93,7 +94,7 @@ const Login = ({ onLoginSuccess }) => {
         <div>
             <Container maxWidth="xs" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', position: 'relative' }}>
                 <Box className={styles.box} sx={{ position: 'relative', overflow: 'hidden', padding: 2 }}>
-                    
+                    {/* <ParticlesComponent /> */}
                     {visibleForgotPassword ? <ForgotPassword onClose={handleForgotPassword} /> :
                         visibleRegister ? <Register onClose={handleRegister} /> :
                             <LoginForm />

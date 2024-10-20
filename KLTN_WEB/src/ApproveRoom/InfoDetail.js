@@ -137,8 +137,6 @@ export default function InfoDetail({ student, updateStudentData }) {
       const results = response.data.data.results;
 
       setRoomList(results);
-      console.log("Danh sách phòng", results);
-
       const newBlocks = [...new Set(results.map((room) => room.block))];
       setBlocks(newBlocks);
 
@@ -175,11 +173,6 @@ export default function InfoDetail({ student, updateStudentData }) {
       setFloorBlockI(floorBlockI);
       setRoomBlockI(roomBlockI);
 
-      console.log("Danh sách tầng của block G", floorBlockG);
-      console.log("Danh sách phòng của block G", roomBlockG);
-      console.log("Danh sách tầng của block I", floorBlockI);
-      console.log("Danh sách phòng của block I", roomBlockI);
-
       setRoomList(results.map((room) => room.roomNumber));
 
       if (newBlocks.length > 0) {
@@ -192,7 +185,6 @@ export default function InfoDetail({ student, updateStudentData }) {
       }
       setRoom('');
 
-      console.log("Danh sách tòa nhà", newBlocks);
     } catch (error) {
       console.error('Lỗi khi lấy danh sách phòng:', error);
     }

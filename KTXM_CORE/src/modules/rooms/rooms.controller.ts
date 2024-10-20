@@ -1,10 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
-import { CreateRoomDto } from './dto/create-room.dto';
-import { UpdateRoomDto } from './dto/update-room.dto';
-import { Public, ResponseMessage } from '@/decorator/customize';
+import { Public } from '@/decorator/customize';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
 import { EquipmentService } from '../equipment/equipment.service';
-import { log } from 'node:console';
+import { UpdateRoomDto } from './dto/update-room.dto';
+import { RoomsService } from './rooms.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService, private readonly equipmentService: EquipmentService) { }
@@ -17,6 +16,7 @@ export class RoomsController {
 
   @Get()
   @Public()
+  @UseInterceptors(CacheInterceptor)
   async findAll() {
     return this.roomsService.findAll();
   }
@@ -26,7 +26,7 @@ export class RoomsController {
   async getAvailableRooms() {
     return this.roomsService.getAvailableRooms();
   }
-
+  
   @Get(':roomNumber')
   @Public()
   async findOne(@Param('roomNumber') roomNumber: string) {
@@ -52,7 +52,6 @@ export class RoomsController {
     return this.roomsService.remove(id);
   }
 
-  
   @Post('import')
   @Public()
   async importUsers(@Body() usersData: any[]) {

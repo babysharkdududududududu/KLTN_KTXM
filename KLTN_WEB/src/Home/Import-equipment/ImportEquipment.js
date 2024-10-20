@@ -107,7 +107,7 @@ const EquipmentUpload = () => {
                 endDate: equip.endDate ? new Date(equip.endDate) : null,
                 fixedDate: equip.fixedDate ? new Date(equip.fixedDate) : null,
                 location: equip.location || '',
-                roomNumber: String(equip.roomNumber || '').toLowerCase()
+                roomNumber: String(equip.roomNumber || '').toUpperCase(),
             }));
 
             try {

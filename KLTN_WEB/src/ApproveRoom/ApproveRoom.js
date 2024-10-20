@@ -6,6 +6,7 @@ import { Button, FormControl, Select, MenuItem, Typography } from '@mui/material
 import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
+import InfoDetail from "./InfoDetail";
 import RoomAssignment from './RoomAssignment'; // Import component mới
 import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment } from '../API/APIRouter';
 import { set } from "date-fns";

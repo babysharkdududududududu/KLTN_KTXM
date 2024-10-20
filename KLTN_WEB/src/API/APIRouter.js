@@ -65,6 +65,7 @@ export const submitDormRoute = `${host}/dorm-submission`;
 export const getDormSubmissionRoute = `${host}/dorm-submission`;
 export const checkSubmit = `${host}/dorm-submission/exists`;
 export const getBySettingId = `${host}/dorm-submission/setting`;
+export const getDormSubmissionByUserId = `${host}/dorm-submission/user/`;
 
 // status of submit
 // Router cho trạng thái đã chấp nhận
@@ -88,3 +89,7 @@ export const createDisciplineRoute = `${host}/student-discipline`;
 
 // set accepted to waiting payment
 export const setAcceptedToWaitingPayment = `${host}/dorm-submission/awaiting-payment-all`;
+export const getDisciplineRoute = `${host}/student-discipline`;
+
+// Router for payment
+export const getDormPaymentWithUserId = `${host}/dorm-payment`;

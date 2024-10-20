@@ -21,6 +21,7 @@ import NotificationBadge from './Context/NotificationBadge';
 import Equipment from './Equipment/Equipment';
 import DormSubmit from './DormSubmit/DormSubmit';
 import Discipline from './Discipline/Discipline';
+import Payment from './Payment/Payment';
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -57,6 +58,7 @@ const App = () => {
               <Route path="/equiment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Equipment /></Layout> : <Navigate to="/" />} />
               <Route path="/dorm-submit" element={isLoggedIn ? <Layout onLogout={handleLogout}><DormSubmit /></Layout> : <Navigate to="/" />} />
               <Route path="/discipline" element={isLoggedIn ? <Layout onLogout={handleLogout}><Discipline /></Layout> : <Navigate to="/" />} />
+              <Route path="/payment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Payment /></Layout> : <Navigate to="/" />} />
 
             </Routes>
           </Router>

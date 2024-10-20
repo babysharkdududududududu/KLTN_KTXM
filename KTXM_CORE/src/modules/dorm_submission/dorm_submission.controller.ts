@@ -24,6 +24,12 @@ export class DormSubmissionController {
     return await this.dormSubmissionService.findOne(id);
   }
 
+  @Get('user/:userId')
+  @Public()
+  async findByUser(@Param('userId') userId: string) {
+    return await this.dormSubmissionService.findOneWithUserId(userId);
+  }
+
   @Get('setting/:settingId')
   @Public()
   async findBySeting(@Param('settingId') settingId: string) {

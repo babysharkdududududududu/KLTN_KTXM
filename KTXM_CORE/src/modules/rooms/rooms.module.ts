@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { RoomsService } from './rooms.service';
 import { RoomsController } from './rooms.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -12,6 +13,9 @@ import { EquipmentService } from '../equipment/equipment.service';
       { name: Room.name, schema: RoomSchema },
       { name: Equipment.name, schema: EquipmentSchema },
     ]),
+    CacheModule.register({
+      ttl: 10000,
+    }), // CacheModule mới
   ],
   controllers: [RoomsController],
   providers: [RoomsService, EquipmentService],

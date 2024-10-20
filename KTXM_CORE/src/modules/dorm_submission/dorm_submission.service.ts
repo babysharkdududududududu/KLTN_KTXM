@@ -104,13 +104,27 @@ export class DormSubmissionService {
     }
   }
 
+  async findOneWithUserId(userId: string) {
+    try {
+      const dormSubmission = await this.dormSubmissionModel.findOne({ userId: userId }).exec();
+      if (!dormSubmission) {
+        throw new Error('Dorm submission not found');
+      }
+      return dormSubmission;
+    } catch (error) {
+      console.error('Error fetching dorm submission:', error);
+      throw new Error(`Failed to fetch dorm submission: ${error.message}`);
+    }
+  }
+
+
   // chấp nhận đơn đăng ky
   async acceptSubmission(id: string): Promise<DormSubmission> {
     const submission = await this.dormSubmissionModel.findById(id);
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-
+    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.ACCEPTED;
     return submission.save();
   }
@@ -120,7 +134,7 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-
+    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.REJECTED;
     return submission.save();
   }
@@ -131,7 +145,7 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-
+    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
     return submission.save();
   }
@@ -142,7 +156,7 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-
+    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.PAID;
     return submission.save();
   }
@@ -179,7 +193,7 @@ export class DormSubmissionService {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     //G2g201-20013581-2024930
-
+    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.ASSIGNED; // Cập nhật trạng thái
     submission.roomNumber = roomNumber; // Cập nhật roomNumber
 

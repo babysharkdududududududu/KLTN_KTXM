@@ -48,17 +48,17 @@ const RoomInfo = () => {
     }, [userId]);
 
     return (
-        <Container>
+        <Box sx={{ npmborderRadius: '4px', height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
             {loading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
                     <CircularProgress />
                 </Box>
             )}
-            <Typography variant="h6" sx={{ marginBottom: 0.5 }}>Thông tin phòng</Typography>
-            <Divider sx={{ marginBottom: 1 }} />
-            {error && <Alert severity="error" sx={{ marginBottom: 2 }}>{error}</Alert>}
+            <Typography variant="h6" >Thông tin phòng</Typography>
+            <Divider />
+            {error && <Alert severity="error" >{error}</Alert>}
             {roomInfo && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <MeetingRoomIcon color="primary" />
                         <Typography variant="caption"><strong>Số phòng:</strong> {roomInfo.roomNumber}</Typography>
@@ -73,7 +73,7 @@ const RoomInfo = () => {
                     </Box>
                 </Box>
             )}
-        </Container>
+        </Box>
     );
 }
 
