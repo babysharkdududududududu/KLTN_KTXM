@@ -41,7 +41,7 @@ export class DormPayment extends Document {
     returnUrl: string;
 
     @Prop()
-    checkoutUrl: string; // Lưu link thanh toán được trả về
+    checkoutUrl: string;
 }
 
 export const DormPaymentSchema = SchemaFactory.createForClass(DormPayment);
