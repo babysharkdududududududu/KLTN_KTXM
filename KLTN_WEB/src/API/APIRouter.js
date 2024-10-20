@@ -93,3 +93,6 @@ export const getDisciplineRoute = `${host}/student-discipline`;
 
 // Router for payment
 export const getDormPaymentWithUserId = `${host}/dorm-payment`;
+
+//router change room
+export const changeRoomRoute = `${host}/dorm-submission/change-room`;

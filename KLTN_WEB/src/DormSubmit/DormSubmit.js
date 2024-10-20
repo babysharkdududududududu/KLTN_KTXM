@@ -4,12 +4,11 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
 import { submitDormRoute, checkSubmit, getUserByIdRoute } from '../API/APIRouter';
-
 import { useUser } from '../Context/Context';
-
 import sucessImage from './images/sucess.png';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import { Phone, Email, Home, AccountCircle, Class } from '@mui/icons-material'; // Thêm biểu tượng
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
     width: 700,
@@ -72,7 +71,6 @@ export default function DormSubmit() {
         handleGetUserInfo(userId);
     }, [userId, settingId]);
 
-
     const handleSubmit = async () => {
         const response = await fetch(submitDormRoute, {
             method: 'POST',
@@ -95,6 +93,15 @@ export default function DormSubmit() {
         }
     };
 
+    const handleCancelRegistration = async () => {
+        // Thực hiện hủy đăng ký tại đây
+        // Ví dụ: Gọi API để hủy đăng ký
+
+        console.log('Hủy đăng ký cho người dùng:', userId);
+        setIsRegistered(false);
+        // Có thể thực hiện thêm các bước khác nếu cần
+    };
+
     return (
         <div style={{ padding: '20px', marginLeft: '25px', position: 'relative', display: "flex", justifyContent: "center" }}>
             <DemoPaper square={false}>
@@ -105,36 +112,46 @@ export default function DormSubmit() {
                     <div>
                         <img src={sucessImage} alt="Đăng ký thành công" style={{ width: '100px', height: '100px' }} />
                         <h2>Bạn đã đăng ký thành công!</h2>
+                        <Button variant="contained" color="error" onClick={handleCancelRegistration}>
+                            Hủy đăng ký
+                        </Button>
                     </div>
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         {userInfo ? (
                             <>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <AccountCircle style={{ marginRight: 5 }} />
                                     <label>Mã số sinh viên:</label>
                                     <label>{userInfo.userId}</label>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <AccountCircle style={{ marginRight: 5 }} />
                                     <label>Giới tính:</label>
                                     <label>{userInfo.gender}</label>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <AccountCircle style={{ marginRight: 5 }} />
                                     <label>Họ tên:</label>
                                     <label>{userInfo.name}</label>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <Class style={{ marginRight: 5 }} />
                                     <label>Lớp:</label>
                                     <label>{userInfo.class}</label>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <Home style={{ marginRight: 5 }} />
                                     <label>Địa chỉ:</label>
                                     <label>{userInfo.address}</label>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <Email style={{ marginRight: 5 }} />
                                     <label>Email:</label>
                                     <label>{userInfo.email}</label>
                                 </div>
-                                <div style={{ display: "flex", flexDirection: "row" }}>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <Phone style={{ marginRight: 5 }} />
                                     <label>Số điện thoại:</label>
                                     <label>{userInfo.phone}</label>
                                 </div>

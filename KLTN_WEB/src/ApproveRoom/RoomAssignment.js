@@ -3,7 +3,7 @@ import { Typography, Button, Divider, FormControl, FormLabel, RadioGroup, Radio,
 import CircleIcon from '@mui/icons-material/Circle';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import axios from 'axios';
-import { getAllRoomRoute, updateStatusRoomAssigned, getRoomByIdRoute } from '../API/APIRouter';
+import { getAllRoomRoute, updateStatusRoomAssigned, getRoomByIdRoute, changeRoomRoute } from '../API/APIRouter';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
@@ -13,7 +13,6 @@ import StudentTable from './StudentTable';
 import PhoneIcon from '@mui/icons-material/Phone';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import PaymentIcon from '@mui/icons-material/Payment';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData }) => {
@@ -29,7 +28,8 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
     const [roomBlockG, setRoomBlockG] = useState([]);
     const [floorBlockI, setFloorBlockI] = useState([]);
     const [roomBlockI, setRoomBlockI] = useState([]);
-
+    const [currentRoomNumber, setCurrentRoomNumber] = useState(studentData.roomNumber); 
+    console.log(studentData);
     // Lấy danh sách phòng khi component được mount
     useEffect(() => {
         const getAllRooms = async () => {
@@ -86,7 +86,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
             };
             getRoom();
         }
-    }, [room, assignSuscess]);
+    }, [room, assignSuscess, currentRoomNumber]);
 
 
     // Kiểm tra nếu studentData không tồn tại
@@ -152,11 +152,36 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
 
             const data = await response.json();
             setAssignSuscess(true);
+            setCurrentRoomNumber(room);
             updateStudentData({ ...studentData, status: 'ASSIGNED', roomNumber: room });
         } catch (error) {
             console.error('Lỗi khi xếp phòng:', error);
         }
     };
+
+    const changeRoom = async () => {
+        try {
+            const response = await fetch(`${changeRoomRoute}/${studentData.submitId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ roomNumber: room }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Error: ${errorData.message || 'Unknown error'}`);
+            }
+
+            const data = await response.json();
+            setAssignSuscess(true);
+            setCurrentRoomNumber(room);
+            updateStudentData({ ...studentData, status: 'ASSIGNED', roomNumber: room });
+        } catch (error) {
+            console.error('Lỗi khi xếp phòng:', error); 
+        }
+    }
 
     return (
         <div style={{ width: "100%", paddingLeft: "16px", paddingRight: "16px" }}>
@@ -186,7 +211,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                         </Typography>
                         <Typography variant="body1" style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                             <HomeIcon style={{ marginRight: 5 }} />
-                            Phòng: {studentData.roomNumber === "NaN" ? "Chưa có phòng" : studentData.roomNumber}
+                            Phòng: {currentRoomNumber === "NaN" ? "Chưa có phòng" : currentRoomNumber}
                         </Typography>
                     </div>
                 </div>
@@ -237,7 +262,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                         </>
                     )}
                     <div style={{ marginTop: "20px" }}>
-                        <StudentTable studentList={studentList} />
+                        <StudentTable studentList={studentList} studentDataID = {studentData.id} />
                     </div>
                     <div style={{ marginTop: "20px", width: "100%", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
                         {assignSuscess && (
@@ -255,6 +280,21 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                                 XÁC NHẬN
                             </Button>
                         )}
+                        {studentData.status === 'ASSIGNED' && studentData.roomNumber !== room && (
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    disabled={!room}
+                                    onClick={() => {
+                                        changeRoom();
+                                        setAssignSuscess(true);
+                                    }}
+                                    style={{ marginLeft: "20px" }}
+                                >
+                                    Đổi phòng
+                                </Button>
+                            )
+                        }
                     </div>
 
                 </div>
