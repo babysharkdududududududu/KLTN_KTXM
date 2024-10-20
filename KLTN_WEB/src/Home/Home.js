@@ -47,53 +47,20 @@ const Home = () => {
         updateNotificationCount(0);
     };
 
-
     const boxStyle = { padding: 2, backgroundColor: '#f5f5f5', borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', cursor: 'pointer', };
 
     return (
         <div className={style['home-container']}>
             <Grid container spacing={3} justifyContent="center" alignItems="center" style={{ marginBottom: '20px' }}>
                 <Grid item xs={12}>
-                    <Box
-                        sx={{
-                            position: 'relative',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            background: "#f5f5f5",
-                            borderRadius: '8px',
-                            minHeight: { xs: '30px', sm: '30px' },
-                            padding: { xs: 1, sm: 3 },
-                        }}>
-                        <Box
-                            component="img"
-                            src={iuh}
-                            alt="iuh"
-                            sx={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '10px',
-                                transform: 'translateY(-50%)',
-                                height: { xs: '30px', sm: '70px' },
-                                marginRight: '10px',
-                            }}
-                        />
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                color: '#4da1e8',
-                                fontSize: { xs: '16px', sm: '20px' },  // Thay đổi kích thước chữ theo thiết bị
-                                textAlign: 'center',
-                                marginLeft: { xs: '60px', sm: '0px' },  // Giữ khoảng cách giữa ảnh và chữ trên mobile
-                            }}
-                        >
+                    <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: "#f5f5f5", borderRadius: '8px', minHeight: { xs: '30px', sm: '30px' }, padding: { xs: 1, sm: 3 }, }}>
+                        <Box component="img" src={iuh} alt="iuh" sx={{ position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', height: { xs: '30px', sm: '70px' }, marginRight: '10px', }} />
+                        <Typography variant="h6" sx={{ color: '#4da1e8', fontSize: { xs: '16px', sm: '20px' }, textAlign: 'center', marginLeft: { xs: '60px', sm: '0px' }, }}>
                             Hệ thống quản lý ký túc xá
                         </Typography>
                     </Box>
                 </Grid>
             </Grid>
-
-
 
             <Grid container spacing={3} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
