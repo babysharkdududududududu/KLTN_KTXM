@@ -24,7 +24,7 @@ const style = {
   flexDirection: 'column',
 };
 
-export default function SucessfullModal({ open,  handleClose }) {
+export default function SucessfullModal({ open,  handleClose, text }) {
 
   return (
     <div>
@@ -45,7 +45,7 @@ export default function SucessfullModal({ open,  handleClose }) {
           <Box sx={style}>
             <img src={image} alt="sucessful" style={{ width: '50%', height: 'auto', borderRadius: '10px', }} />
             <Typography variant="h6" id="transition-modal-title" sx={{ marginTop: 2 }}>
-              Cài đặt đăng ký thành công
+              {text}
             </Typography>
           </Box>
         </Fade>

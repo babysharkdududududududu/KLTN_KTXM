@@ -8,6 +8,7 @@ import { UsersService } from '../users/users.service';
 import { ContractsService } from '../contracts/contracts.service';
 import { Room } from '../rooms/entities/room.entity';
 import { User } from '../users/schemas/user.schema';
+import { Contract } from '../contracts/entities/contract.entity';
 
 @Injectable()
 export class DormSubmissionService {
@@ -18,6 +19,8 @@ export class DormSubmissionService {
     private roomModel: Model<Room>,
     @InjectModel(User.name)
     private userModel: Model<User>,
+    @InjectModel(Contract.name)
+    private contractModel: Model<Contract>,
     private readonly settingService: SettingService,
     private readonly userService: UsersService,
     private readonly contractService: ContractsService,
@@ -143,6 +146,23 @@ export class DormSubmissionService {
     submission.status = DormSubmissionStatus.PAID;
     return submission.save();
   }
+
+  // set tất cả trạng thái ACCEPTED thành AWAITING_PAYMENT
+  async setAwaitingPaymentAll(settingId: string): Promise<DormSubmission[]> {
+    // Cập nhật trạng thái
+    await this.dormSubmissionModel.updateMany(
+      { status: DormSubmissionStatus.ACCEPTED, settingId: settingId },
+      { status: DormSubmissionStatus.AWAITING_PAYMENT },
+    ).exec();
+
+    // Lấy lại các tài liệu đã cập nhật
+    const submissions = await this.dormSubmissionModel.find(
+      { status: DormSubmissionStatus.AWAITING_PAYMENT, settingId: settingId }
+    ).exec();
+
+    return submissions;
+  }
+
 
   // render số hợp đồng gần
   async renderContractNumber(submission: DormSubmission): Promise<string> {

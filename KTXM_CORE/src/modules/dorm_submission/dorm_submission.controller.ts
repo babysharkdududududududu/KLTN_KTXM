@@ -60,6 +60,13 @@ export class DormSubmissionController {
   async setAwaitingPayment(@Param('id') id: string): Promise<DormSubmission> {
     return this.dormSubmissionService.setAwaitingPayment(id);
   }
+  // set all Accepted to Awaiting Payment
+  @Patch('awaiting-payment-all/:settingId') // Nếu muốn truyền qua params
+  @Public()
+  async setAllAwaitingPayment(@Param('settingId') settingId: string): Promise<DormSubmission[]> {
+      return this.dormSubmissionService.setAwaitingPaymentAll(settingId);
+  }
+
   //đã thanh toán
   @Patch('paid/:id')
   @Public()

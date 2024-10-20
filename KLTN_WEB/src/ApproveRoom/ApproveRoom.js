@@ -6,9 +6,9 @@ import { Button, FormControl, Select, MenuItem, Typography } from '@mui/material
 import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
-import InfoDetail from "./InfoDetail";
-
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom } from '../API/APIRouter';
+import RoomAssignment from './RoomAssignment'; // Import component mới
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment } from '../API/APIRouter';
+import { set } from "date-fns";
 
 const statuses = [
     { id: '', name: 'Tất cả' },
@@ -137,7 +137,16 @@ const ApproveRoom = () => {
     const handleRowClick = (student) => {
         setSelectedStudent(student);
     };
-    
+
+    const [openDetail, setOpenDetail] = useState(false);
+    const handleAssignRoom = (student) => {
+        setSelectedStudent(student)
+        setOpenDetail(true);
+    };
+    const handleOffAssignRoom = () => {
+        setOpenDetail(false);
+    };
+
     const handleAutoAsignRoom = async () => {
         const response = await axios.post(autoAsignRoom, {
             settingId: setingID,
@@ -149,14 +158,47 @@ const ApproveRoom = () => {
         }
     };
 
+    // Chuyển tất cả đơn đã chấp nhận sang chờ thanh toán
+    const setAllAcceptedToWaitingPayment = async () => {
+        try {
+            const response = await axios.patch(`${setAcceptedToWaitingPayment}/${setingID}`, {
+                // Không cần truyền settingId trong body nữa
+            });
+
+            if (response.data && response.data.data) {
+                console.log("Chuyển tất cả sang chờ thanh toán thành công:", response.data.data);
+
+                // Cập nhật lại bảng
+                const updatedStudentData = studentData.map(student => {
+                    // Kiểm tra trạng thái và cập nhật
+                    if (student.status === 'ACCEPTED') {
+                        return {
+                            ...student,
+                            status: 'AWAITING_PAYMENT',
+                        };
+                    }
+                    return student;
+                });
+
+                // Cập nhật state với dữ liệu đã thay đổi
+                setStudentData(updatedStudentData);
+            } else {
+                console.error("Lỗi chuyển tất cả sang chờ thanh toán:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi chuyển tất cả sang chờ thanh toán:", error);
+        }
+    };
+
+
     return (
         <div style={{ padding: '20px', marginLeft: '25px', position: 'relative' }}>
-            
+
             <BasicModal setingID={setingID} open={open} handleClose={handleClose} handleOpenSucessfull={handleOpenSucessfull} />
-            
-            <SucessfullModal open={openSucessfull} handleClose={handleCloseSucessfull} />
+
+            <SucessfullModal open={openSucessfull} handleClose={handleCloseSucessfull} text="Cài đặt đăng ký thành công" />
             <div style={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
-                <Typography variant="h6" style={{ flex: 1 }}>Danh sách đơn đăng ký</Typography>
+                <Typography variant="h6" style={{ flex: 1 }}></Typography>
 
                 <FormControl sx={{ minWidth: 120, marginRight: 3 }}>
                     <Select
@@ -200,18 +242,82 @@ const ApproveRoom = () => {
                             Tự động xếp phòng
                         </Button>
                     )}
-                    {setingID == '' && (
-                        <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button>
+                    {setingID !== '' && statusID === 'ACCEPTED' && (
+                        <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={setAllAcceptedToWaitingPayment}>
+                            Mở thanh toán
+                        </Button>
                     )}
+
+                    <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button>
                 </div>
             </div>
-
-            {setingID && (
-                <div style={{ display: 'flex', flexDirection: "row", justifyContent: "space-between", marginTop: '10px' }}>
-                    <DataTable studentData={filteredStudentData} handleRowClick={handleRowClick} />
-                    <InfoDetail student={selectedStudent} updateStudentData={updateStudentData} />
+            {!openDetail && (
+                <div style={{ width: '100%', height: '65px', display: "flex", flexDirection: "row", backgroundColor: "#fff", borderRadius: 15, justifyContent: 'space-around', alignItems: 'center' }}>
+                    <div>
+                        <Typography style={{ color: '#464f43' }}>Tổng đơn đăng ký</Typography>
+                        <Typography variant="h6" style={{ fontWeight: 'bold' }}>{filteredStudentData.length}</Typography>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                        <div>
+                            <Typography style={{ color: '#464f43' }}>Chờ xử lý</Typography>
+                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'PENDING').length}</Typography>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                        <div>
+                            <Typography style={{ color: '#464f43' }}>Đã chấp nhận</Typography>
+                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'ACCEPTED').length}</Typography>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                        <div>
+                            <Typography style={{ color: '#464f43' }}>Chờ thanh toán</Typography>
+                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'AWAITING_PAYMENT').length}</Typography>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                        <div>
+                            <Typography style={{ color: '#464f43' }}>Đã thanh toán</Typography>
+                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'PAID').length}</Typography>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                        <div>
+                            <Typography style={{ color: '#464f43' }}>Đã xếp phòng</Typography>
+                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'ASSIGNED').length}</Typography>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                        <div>
+                            <Typography style={{ color: '#464f43' }}>Từ chối</Typography>
+                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'REJECTED').length}</Typography>
+                        </div>
+                    </div>
                 </div>
             )}
+
+            {setingID && (
+                <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", marginTop: '10px', backgroundColor: "#fff", borderRadius: 20, paddingTop: '10px' }}>
+                    {!openDetail && (
+                        <DataTable
+                            studentData={filteredStudentData}
+                            handleRowClick={handleRowClick}
+                            handleAssignRoom={handleAssignRoom}
+                            updateStudentData={updateStudentData}
+                        />
+                    )}
+                    {openDetail && selectedStudent && (
+                        <RoomAssignment studentData={selectedStudent} handleOffAssignRoom={handleOffAssignRoom} onBack={() => setOpenDetail(false)} updateStudentData={updateStudentData} />
+                    )}
+                </div>
+            )}
+
         </div>
     );
 };
