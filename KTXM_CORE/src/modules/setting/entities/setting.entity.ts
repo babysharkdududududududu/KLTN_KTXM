@@ -26,6 +26,9 @@ export class Setting {
 
     @Prop({ type: Date, required: true })
     registrationEndDate: Date;
+
+    @Prop({ default: false })
+    isRegistrationOpen: boolean;
 }
 
 export const SettingSchema = SchemaFactory.createForClass(Setting);

@@ -20,14 +20,13 @@ export class RoomsController {
   async findAll() {
     return this.roomsService.findAll();
   }
-
-
-
+  
   @Get('getAvailableRooms')
   @Public()
   async getAvailableRooms() {
     return this.roomsService.getAvailableRooms();
   }
+  
   @Get(':roomNumber')
   @Public()
   async findOne(@Param('roomNumber') roomNumber: string) {
@@ -61,4 +60,5 @@ export class RoomsController {
     }
     return this.roomsService.importRooms(usersData);
   }
+
 }

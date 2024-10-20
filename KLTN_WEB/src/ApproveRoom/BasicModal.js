@@ -15,8 +15,9 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
 import { DateField } from '@mui/x-date-pickers/DateField';
 import TextField from '@mui/material/TextField';
-import { getSettingRoute, updateSettingRoute } from '../API/APIRouter';
+import { getSettingRoute, updateSettingRoute, getEmptyRoomRoute, createSettingRoute } from '../API/APIRouter';
 import dayjs from 'dayjs';
+import { set } from 'date-fns';
 
 const style = {
     position: 'absolute',
@@ -39,9 +40,32 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
     const [priorityValue, setPriorityValue] = React.useState(0);
     const [registrationStart, setRegistrationStart] = React.useState({ date: null, time: null });
     const [registrationEnd, setRegistrationEnd] = React.useState({ date: null, time: null });
+    const [name, setName] = React.useState('');
     const [messageError, setMessageError] = React.useState('Đây là lỗi');
     const [isError, setIsError] = React.useState(false);
     const [allAvailable, setAllAvailable] = React.useState(0);
+
+    // Fetch API data getEmptyRoomRoute
+    React.useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`${getEmptyRoomRoute}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                setTotalAvailable(data.data);
+                setAllAvailable(Number(data.data));
+                setFirstYearValue(0);
+                setUpperYearValue(0);
+                setPriorityValue(0);
+                console.log('Tổng số chỗ trống:', data.data);
+            } catch (error) {
+                console.error('Failed to fetch settings:', error);
+            }
+        };
+        fetchData();
+    }, []);
 
     React.useEffect(() => {
         const fetchData = async () => {
@@ -55,6 +79,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                 setTotalAvailable(data.data.totalAvailableSpots);
                 setFirstYearValue(data.data.firstYearSpots);
                 setUpperYearValue(data.data.upperYearSpots);
+                setName(data.data.name);
                 setPriorityValue(data.data.prioritySpots);
                 setAllAvailable(
                     Number(data.data.totalAvailableSpots) -
@@ -74,8 +99,9 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                 console.error('Failed to fetch settings:', error);
             }
         };
-
-        fetchData();
+        if (settingId) {
+            fetchData();
+        }
     }, [settingId]);
 
 
@@ -147,6 +173,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             prioritySpots: parseInt(priorityValue, 10),
             registrationStartDate,
             registrationEndDate,
+            name,
         };
 
         console.log('Updated settings:', updatedSettings);
@@ -171,6 +198,47 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             console.error('Cập nhật thất bại:', error);
         }
     };
+//createSettingRoute
+    const hadleCreate = async () => {
+        if (!registrationStart.date || !registrationStart.time || !registrationEnd.date || !registrationEnd.time) {
+            console.error('Ngày hoặc giờ không hợp lệ.');
+            return;
+        }
+
+        const registrationStartDate = `${registrationStart.date}T${registrationStart.time}:00Z`;
+        const registrationEndDate = `${registrationEnd.date}T${registrationEnd.time}:00Z`;
+
+        const updatedSettings = {
+            firstYearSpots: parseInt(firstYearValue, 10),
+            upperYearSpots: parseInt(upperYearValue, 10),
+            prioritySpots: parseInt(priorityValue, 10),
+            registrationStartDate,
+            registrationEndDate,
+            name,
+        };
+
+        console.log('Created settings:', updatedSettings);
+
+        try {
+            const response = await fetch(`${createSettingRoute}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedSettings),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            handleClose();
+            handleOpenSucessfull();
+            const data = await response.json();
+            console.log('Tạo thành công:', data);
+        } catch (error) {
+            console.error('Tạo thất bại:', error);
+        }
+    };
 
     return (
         <div>
@@ -189,6 +257,14 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             Tổng số chỗ trống: {allAvailable}
                         </div>
                     </div>
+                    <TextField 
+                        id="outlined-basic"
+                        label="Học kỳ"
+                        variant="outlined"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        sx={{ width: '100%', marginTop: '10px' }}
+                    />
                     <SwitchesGroup
                         setting={setting}
                         firstYearSpots={firstYearValue}
@@ -229,7 +305,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                         <Button variant="outlined" color="error" onClick={handleClose} sx={{ marginRight: '10px' }}>Đóng</Button>
                         <Button
                             variant="contained"
-                            onClick={handleUpdateSettings}
+                            onClick={settingId ? handleUpdateSettings : hadleCreate}
                             disabled={isError}
                             style={{ backgroundColor: isError ? '#EBEBEB' : undefined }}
                         >

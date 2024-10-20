@@ -19,5 +19,9 @@ export class UpdateSettingDto {
 
     @IsString()
     @IsNotEmpty()
+    name: string;
+
+    @IsString()
+    @IsNotEmpty()
     registrationEndDate: string;
 }
