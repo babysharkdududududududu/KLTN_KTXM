@@ -21,6 +21,7 @@ export class CreateSettingDto {
     @IsString()
     @IsNotEmpty()
     registrationStartDate: string;
+
     @IsString()
     @IsNotEmpty()
     registrationEndDate: string;

@@ -44,8 +44,6 @@ export default function DormSubmit() {
 
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('Toàn bộ phản hồi:', data); // In ra toàn bộ phản hồi
-                    console.log('Kiểm tra đăng ký:', data.data.exists);
                     setIsRegistered(data.data.exists);
                 } else {
                     console.error('Kiểm tra đăng ký không thành công:', response.statusText);

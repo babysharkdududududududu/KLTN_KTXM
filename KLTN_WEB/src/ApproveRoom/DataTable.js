@@ -1,31 +1,135 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
 
-const columns = [
-  { field: 'id', headerName: 'MSSV', width: 90 },
-  { field: 'fullName', headerName: 'Họ và tên', width: 160 },
-  { field: 'phoneNumber', headerName: 'Số điện thoại', width: 130 },
-  {
-    field: 'address',
-    headerName: 'Địa chỉ',
-    width: 150,
-  },
-  { field: 'roomNumber', headerName: 'Phòng', width: 90 },
-  { field: 'status', headerName: 'Trạng thái', width: 120 },
+import { updateStatusPending, updateStatusRejected, updateStatusPaid } from '../API/APIRouter';
+
+const columns = (handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable) => [
+  { field: 'id', headerName: 'MSSV', flex: 1 },
+  { field: 'fullName', headerName: 'Họ và tên', flex: 2 },
+  { field: 'phoneNumber', headerName: 'Số điện thoại', flex: 1 },
+  { field: 'address', headerName: 'Địa chỉ', flex: 2 },
+  { field: 'roomNumber', headerName: 'Phòng', flex: 1 },
+  { field: 'status', headerName: 'Trạng thái', flex: 1 },
   {
     field: 'action',
     headerName: 'Hành động',
-    width: 120,
+    flex: 1,
+    renderCell: (params) => {
+      return (
+        <>
+          {params.row.status === 'PENDING' && (
+            <Button variant="contained" color="success" onClick={() => handleApprove(params.row)}>
+              DUYỆT ĐƠN
+            </Button>
+          )}
+          {params.row.status === 'AWAITING_PAYMENT' && (
+            <Button variant="contained" color="success" onClick={() => handleConfirmPayment(params.row)}>
+              ĐÃ THANH TOÁN
+            </Button>
+          )}
+          {params.row.status === 'PAID' && (
+            <Button variant="contained" color="primary" onClick={() => handleAssignRoomTable(params.row)}>
+              XẾP PHÒNG
+            </Button>
+          )}
+          {
+            params.row.status === 'ASSIGNED' && (
+              <Button variant="contained" color="primary" onClick={() => handleAssignRoomTable(params.row)}>
+                CHUYỂN PHÒNG
+              </Button>
+            )
+          }
+          {params.row.status === 'REJECTED' ? (
+            <Button variant="outlined" color="error" onClick={() => handleApprove(params.row)}>
+              DUYỆT LẠI
+            </Button>
+          ) : (
+            <Button variant="outlined" color="error" onClick={() => handleReject(params.row)}>
+              TỪ CHỐI
+            </Button>
+          )}
+
+        </>
+      );
+    },
   },
 ];
 
-export default function DataTable({ studentData, handleRowClick }) {
+export default function DataTable({ studentData, handleRowClick, updateStudentData, handleAssignRoom }) {
+
+  const handleApprove = async (student) => {
+    try {
+      const response = await fetch(`${updateStatusPending}/${student.submitId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Đơn đã được duyệt:', data);
+      updateStudentData({ ...student, status: 'ACCEPTED' });
+    } catch (error) {
+      console.error('Lỗi khi duyệt đơn:', error);
+    }
+  };
+
+  const handleReject = async (student) => {
+    try {
+      const response = await fetch(`${updateStatusRejected}/${student.submitId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Đơn đã bị từ chối:', data);
+    } catch (error) {
+      console.error('Lỗi khi từ chối đơn:', error);
+    }
+  };
+
+  const handleConfirmPayment = async (student) => {
+    try {
+      const response = await fetch(`${updateStatusPaid}/${student.submitId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log('Đơn đã được xác nhận thanh toán:', data);
+      updateStudentData({ ...student, status: 'PAID' });
+    } catch (error) {
+      console.error('Lỗi khi xác nhận thanh toán:', error);
+    }
+  };
+
+  const handleAssignRoomTable = async (student) => {
+    handleAssignRoom(student);
+  };
+
   return (
-    <Paper sx={{ height: 550, width: '65%' }}>
+    <Paper sx={{ height: 550, width: '98%' }}>
       <DataGrid
         rows={studentData}
-        columns={columns}
+        columns={columns(handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable)}
         pageSizeOptions={[5, 10]}
         checkboxSelection
         sx={{ border: 0 }}
@@ -33,7 +137,6 @@ export default function DataTable({ studentData, handleRowClick }) {
           handleRowClick(params.row);
         }}
       />
-
     </Paper>
   );
 }

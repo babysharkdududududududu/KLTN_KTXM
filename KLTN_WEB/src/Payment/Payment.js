@@ -144,7 +144,6 @@ const Payment = () => {
             .then((response) => {
                 if (response.data && response.data.data && Array.isArray(response.data.data.data)) {
                     setPaymentDetails(response.data.data.data);
-                    (response.data.data.studentInfo || {});
                 } else {
                     setPaymentDetails([]);
                 }

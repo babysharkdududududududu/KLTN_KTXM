@@ -25,6 +25,8 @@ export const updateUserRoute = `${host}/users/`;
 
 //register room
 export const registerRoomRoute = `${host}/contracts`;
+//phòng trống
+export const getEmptyRoomRoute = `${host}/rooms/getAvailableRooms`;
 
 //contract
 export const getContractRoute = `${host}/contracts`;
@@ -52,6 +54,7 @@ export const updateLocationEquipmentRoute = `${host}/equipment`;
 //seting
 export const getSettingRoute = `${host}/setting`;
 export const updateSettingRoute = `${host}/setting`;
+export const createSettingRoute = `${host}/setting`;
 
 //Room
 export const getAllRoomRoute = `${host}/rooms/?all=true`;
@@ -83,6 +86,9 @@ export const updateStatusRoomAssigned = `${host}/dorm-submission/room-assigned`;
 export const autoAsignRoom = `${host}/dorm-submission/auto-assign-rooms`;
 // Router disciplines
 export const createDisciplineRoute = `${host}/student-discipline`;
+
+// set accepted to waiting payment
+export const setAcceptedToWaitingPayment = `${host}/dorm-submission/awaiting-payment-all`;
 export const getDisciplineRoute = `${host}/student-discipline`;
 
 // Router for payment

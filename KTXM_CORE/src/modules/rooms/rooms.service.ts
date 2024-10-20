@@ -88,11 +88,6 @@ export class RoomsService {
     };
   }
 
-  async getAvailableRooms() {
-    const rooms = await this.roomModel.find({ availableSpot: { $gt: 0 } });
-    const availableRooms = rooms.reduce((total, room) => total + room.availableSpot, 0);
-    return `Tổng số phòng trống hiện tại là: ${availableRooms}`;
-  }
   findOne(roomNumber: string) {
     const a = this.roomModel.findOne({ roomNumber });
     return a;
@@ -191,8 +186,9 @@ export class RoomsService {
       throw new BadRequestException("Id không đúng định dạng mongodb")
     }
   }
-
-
-
-
+  async getAvailableRooms() {
+    const rooms = await this.roomModel.find({ availableSpot: { $gt: 0 } });
+    const availableRooms = rooms.reduce((total, room) => total + room.availableSpot, 0);
+    return availableRooms;
+  }
 }
