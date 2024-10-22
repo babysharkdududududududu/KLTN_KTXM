@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 export const host = "http://14.225.211.35:8081/api/v1";
 //export const host = process.env.REACT_APP_API_HOST;
-=======
-// export const host = "http://localhost:8081/api/v1";
-export const host = process.env.REACT_APP_API_HOST;
->>>>>>> 3c744aab7e15f0f5f20d0ad3231c01ac831ffac0
 
 console.log('API Host:', host);
 
