@@ -14,6 +14,7 @@ import Lottie from 'lottie-react';
 import buildAnimation from './asset/buildingv2.json';
 import logo from './asset/iuh.png';
 import ParticlesComponent from '../../Particles/ParticlesBackground';
+import { loginRoute } from '../../API/APIRouter';
 
 const Login = ({ onLoginSuccess }) => {
     const [error, setError] = useState('');
@@ -37,7 +38,7 @@ const Login = ({ onLoginSuccess }) => {
         setError('');
 
         try {
-            const response = await axios.post(`http://localhost:8081/api/v1/auth/login`, {
+            const response = await axios.post(loginRoute, {
                 username: email,
                 password: password
             });
