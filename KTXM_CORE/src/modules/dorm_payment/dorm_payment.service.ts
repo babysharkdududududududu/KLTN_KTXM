@@ -33,9 +33,9 @@ export class DormPaymentService {
       orderCode,
       amount: Number(amount),
       description: `Payment`,
-      cancelUrl: 'https://www.google.com/',
-      successUrl: 'https://www.google.com/',
-      returnUrl: 'https://www.google.com/'
+      cancelUrl: 'http://localhost:3000/success',
+      successUrl: 'http://localhost:3000/success',
+      returnUrl: 'http://localhost:3000/success'
     };
     try {
       const paymentLinkRes = await this.payos.createPaymentLink(body);

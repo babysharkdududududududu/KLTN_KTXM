@@ -93,3 +93,4 @@ export const getDisciplineRoute = `${host}/student-discipline`;
 
 // Router for payment
 export const getDormPaymentWithUserId = `${host}/dorm-payment`;
+export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;

@@ -37,6 +37,7 @@
     "@nestjs/platform-express": "10.3.10",
     "@nestjs/platform-socket.io": "^10.4.1",
     "@nestjs/schedule": "^4.1.0",
+    "@nestjs/serve-static": "^4.0.2",
     "@nestjs/websockets": "^10.4.1",
     "@payos/node": "^1.0.10",
     "api-query-params": "5.4.0",
