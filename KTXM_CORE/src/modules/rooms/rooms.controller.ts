@@ -1,30 +1,44 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException } from '@nestjs/common';
-import { RoomsService } from './rooms.service';
-import { CreateRoomDto } from './dto/create-room.dto';
+import { Public } from '@/decorator/customize';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { EquipmentService } from '../equipment/equipment.service';
 import { UpdateRoomDto } from './dto/update-room.dto';
-import { Public, ResponseMessage } from '@/decorator/customize';
+import { RoomsService } from './rooms.service';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 @Controller('rooms')
 export class RoomsController {
-  constructor(private readonly roomsService: RoomsService) { }
+  constructor(private readonly roomsService: RoomsService, private readonly equipmentService: EquipmentService) { }
 
-  @Post()
-  @Public()
-  create(@Body() createRoomDto: CreateRoomDto) {
-    return this.roomsService.create(createRoomDto);
-  }
+  // @Post()
+  // @Public()
+  // create(@Body() createRoomDto: CreateRoomDto) {
+  //   return this.roomsService.create(createRoomDto);
+  // }
 
   @Get()
   @Public()
+  @UseInterceptors(CacheInterceptor)
   async findAll() {
     return this.roomsService.findAll();
   }
-
-
+  
+  @Get('getAvailableRooms')
+  @Public()
+  async getAvailableRooms() {
+    return this.roomsService.getAvailableRooms();
+  }
+  
   @Get(':roomNumber')
   @Public()
   async findOne(@Param('roomNumber') roomNumber: string) {
-    return this.roomsService.findOne(roomNumber);
+    const room = await this.roomsService.findOne(roomNumber);
+    const equipment = await this.equipmentService.findAll(roomNumber);
+    console.log('equipment:', equipment);
+    return {
+      equipment: equipment || null,
+      room: room || null,
+    };
   }
+
 
   @Patch()
   @Public()
@@ -38,23 +52,13 @@ export class RoomsController {
     return this.roomsService.remove(id);
   }
 
-  @Get('hihihihi')
-  @Public()
-  async findAvailableRooms() {
-    console.log('findAvailableRooms called'); // Log để kiểm tra
-    return {
-      statusCode: 200,
-      message: 'Hello from rooms module',
-      data: null // Hoặc có thể là dữ liệu bạn muốn trả về
-    };
-  }
   @Post('import')
   @Public()
   async importUsers(@Body() usersData: any[]) {
-    // Kiểm tra dữ liệu trước khi nhập
     if (!Array.isArray(usersData) || usersData.length === 0) {
       throw new BadRequestException('Invalid data');
     }
     return this.roomsService.importRooms(usersData);
   }
+
 }

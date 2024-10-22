@@ -15,6 +15,7 @@ const RoomInfo = () => {
 
     const handleGetContract = async () => {
         setLoading(true);
+        setLoading(true);
         try {
             const response = await axios.get(`${getContractRoute}/${userId}`);
             const { roomNumber } = response.data.data.contract;
@@ -29,7 +30,9 @@ const RoomInfo = () => {
     const getRoomById = async (roomNumber) => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setRoomInfo(data.data);
+            setRoomInfo(data.data.room);
+            console.log("Room info:", roomInfo);
+
             setLoading(false);
         } catch (err) {
             console.error("Error fetching room by ID:", err);
@@ -45,17 +48,17 @@ const RoomInfo = () => {
     }, [userId]);
 
     return (
-        <Container>
+        <Box sx={{ npmborderRadius: '4px', height: '100%', display: 'flex', flexDirection: 'column', width: '100%' }}>
             {loading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
                     <CircularProgress />
                 </Box>
             )}
-            <Typography variant="h6" sx={{ marginBottom: 0.5 }}>Thông tin phòng</Typography>
-            <Divider sx={{ marginBottom: 1 }} />
-            {error && <Alert severity="error" sx={{ marginBottom: 2 }}>{error}</Alert>}
+            <Typography variant="h6" >Thông tin phòng</Typography>
+            <Divider />
+            {error && <Alert severity="error" >{error}</Alert>}
             {roomInfo && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', }}>
+                <Box sx={{ display: 'flex', flexDirection: 'row', marginTop: '10px' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <MeetingRoomIcon color="primary" />
                         <Typography variant="caption"><strong>Số phòng:</strong> {roomInfo.roomNumber}</Typography>
@@ -70,7 +73,7 @@ const RoomInfo = () => {
                     </Box>
                 </Box>
             )}
-        </Container>
+        </Box>
     );
 }
 

@@ -73,4 +73,9 @@ export class ContractsController {
     }
   }
 
+  @Get('latest-room/:userId')
+  @Public()
+  async getLatestRoom(@Param('userId') userId: string) {
+      return this.contractsService.getLatestRoomByUserId(userId);
+  }
 }

@@ -11,6 +11,7 @@ import { ChangePasswordAuthDto, CodeAuthDto, CreateAuthDto } from '@/auth/dto/cr
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
+import { StudentDiscipline } from '../student-discipline/entities/student-discipline.entity';
 
 @Injectable()
 export class UsersService {
@@ -18,7 +19,8 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
-
+    @InjectModel(StudentDiscipline.name)
+    private readonly studentDiscipline: Model<StudentDiscipline>,
     private readonly mailerService: MailerService
   ) { }
 
@@ -29,21 +31,21 @@ export class UsersService {
     return false;
   }
 
-  isUsserIdExist = async (userId: string) => {
+  isUserIdExist = async (userId: string) => {
     const user = await this.userModel.exists({ userId });
     if (user) return true;
     return false;
   }
 
   async create(createUserDto: CreateUserDto) {
-    const { name, email, userId, password, phone, address, image, role } = createUserDto;
+    const { name, email, userId, password, phone, address, image, role, gender } = createUserDto;
 
     //check email
     const isExist = await this.isEmailExist(email);
     if (isExist === true) {
       throw new BadRequestException(`Email đã tồn tại: ${email}. Vui lòng sử dụng email khác.`)
     }
-    const isUserIdExist = await this.isUsserIdExist(userId);
+    const isUserIdExist = await this.isUserIdExist(userId);
     if (isUserIdExist === true) {
       throw new BadRequestException(`Mã số sinh viên đã tồn tại: ${userId}. Vui lòng sử dụng mã số khác.`)
     }
@@ -51,7 +53,7 @@ export class UsersService {
     //hash password
     const hashPassword = await hashPasswordHelper(password);
     const user = await this.userModel.create({
-      name, email, userId, password: hashPassword, phone, address, image, role
+      name, email, userId, password: hashPassword, phone, address, image, role, gender
     })
     return {
       _id: user._id
@@ -82,6 +84,8 @@ export class UsersService {
           ? new Date(user.dateOfBirth)
           : null,
         gender: user.gender || '',
+        class: user.class || '',
+        faculty: user.faculty || '',
       };
     });
 
@@ -99,36 +103,23 @@ export class UsersService {
     return users.map(user => user.userId); // Trả về danh sách userId đã tồn tại
   }
 
-  async findAll(query: string, current: number, pageSize: number) {
-    const { filter, sort } = aqp(query);
-    if (filter.current) delete filter.current;
-    if (filter.pageSize) delete filter.pageSize;
+  async findAll() {
+    const rs = await this.userModel.aggregate([
+      {
+        $lookup: {
+          from: "studentdisciplines",
+          localField: "userId",
+          foreignField: "student",
+          as: "disciplines"
+        }
+      }
+    ]);
 
-    if (!current) current = 1;
-    if (!pageSize) pageSize = 10;
-
-    const totalItems = (await this.userModel.find(filter)).length;
-    const totalPages = Math.ceil(totalItems / pageSize);
-
-    const skip = (current - 1) * (pageSize);
-
-    const results = await this.userModel
-      .find(filter)
-      .limit(pageSize)
-      .skip(skip)
-      .select("-password")
-      .sort(sort as any);
-
-    return {
-      meta: {
-        current: current, //trang hiện tại
-        pageSize: pageSize, //số lượng bản ghi đã lấy
-        pages: totalPages,  //tổng số trang với điều kiện query
-        total: totalItems // tổng số phần tử (số bản ghi)
-      },
-      results //kết quả query
-    }
+    console.log(rs, "-----------------");
+    return rs;
   }
+
+
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
@@ -160,7 +151,7 @@ export class UsersService {
   async handleRegister(registerDto: CreateAuthDto) {
     const { name, password, userId } = registerDto;
 
-    const isUserIdExist = await this.isUsserIdExist(userId);
+    const isUserIdExist = await this.isUserIdExist(userId);
     if (isUserIdExist === true) {
       throw new BadRequestException(`Mã số sinh viên đã tồn tại: ${userId}. Vui lòng sử dụng mã số khác.`)
     }

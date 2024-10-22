@@ -11,13 +11,19 @@ import { use } from 'passport';
 import { UsersService } from '../users/users.service';
 import { User, UserSchema } from '../users/schemas/user.schema';
 
+import { SettingService } from '../setting/setting.service';
+import { SettingModule } from '../setting/setting.module';
+import { Setting, SettingSchema } from '../setting/entities/setting.entity';
+import { StudentDiscipline, StudentDisciplineSchema } from '../student-discipline/entities/student-discipline.entity';
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Contract.name, schema: ContractSchema }, { name: Room.name, schema: RoomSchema }, { name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Contract.name, schema: ContractSchema }, { name: Room.name, schema: RoomSchema }, { name: User.name, schema: UserSchema }, { name: Setting.name, schema: SettingSchema }, { name: StudentDiscipline.name, schema: StudentDisciplineSchema }]),
     RoomsModule,
-    UsersModule
+    UsersModule,
+    SettingModule
   ],
   controllers: [ContractsController],
-  providers: [ContractsService, RoomsService, UsersService],
+  providers: [ContractsService, RoomsService, UsersService, SettingService, SettingService],
+  exports: [ContractsService],
 })
 export class ContractsModule { }

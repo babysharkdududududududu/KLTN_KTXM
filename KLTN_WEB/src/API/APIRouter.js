@@ -21,9 +21,12 @@ export const updateRoomRoute = `${host}/rooms/`;
 //user
 export const getAllUserRoute = `${host}/users`;
 export const getUserByIdRoute = `${host}/users/id/`;
+export const updateUserRoute = `${host}/users/`;
 
 //register room
 export const registerRoomRoute = `${host}/contracts`;
+//phòng trống
+export const getEmptyRoomRoute = `${host}/rooms/getAvailableRooms`;
 
 //contract
 export const getContractRoute = `${host}/contracts`;
@@ -40,10 +43,54 @@ export const updateMaintenanceStatusRoute = `${host}/maintenance`;
 export const importUserRoute = `${host}/users/import`;
 export const checkUserRoute = `${host}/users/check-users`;
 export const importRoomRoute = `${host}/rooms/import`;
+export const importEquipmentRoute = `${host}/equipment/import`;
+
+//equipment
+export const getEquipmentRoute = `${host}/equipment`;
+export const getAllEquipmentRoute = `${host}/equipment/`;
+export const updateLocationEquipmentRoute = `${host}/equipment`;
 
 
 //seting
 export const getSettingRoute = `${host}/setting`;
 export const updateSettingRoute = `${host}/setting`;
+export const createSettingRoute = `${host}/setting`;
+
+//Room
+export const getAllRoomRoute = `${host}/rooms/?all=true`;
 
 
+//submit form dorm
+export const submitDormRoute = `${host}/dorm-submission`;
+export const getDormSubmissionRoute = `${host}/dorm-submission`;
+export const checkSubmit = `${host}/dorm-submission/exists`;
+export const getBySettingId = `${host}/dorm-submission/setting`;
+export const getDormSubmissionByUserId = `${host}/dorm-submission/user/`;
+
+// status of submit
+// Router cho trạng thái đã chấp nhận
+export const updateStatusPending = `${host}/dorm-submission/accept`;
+
+// Router cho trạng thái đã từ chối
+export const updateStatusRejected = `${host}/dorm-submission/reject`;
+
+// Router cho trạng thái đang chờ thanh toán
+export const updateStatusAwaitingPayment = `${host}/dorm-submission/awaiting-payment`;
+
+// Router cho trạng thái đã thanh toán
+export const updateStatusPaid = `${host}/dorm-submission/paid`;
+
+// Router cho trạng thái đã xếp phòng
+export const updateStatusRoomAssigned = `${host}/dorm-submission/room-assigned`;
+
+export const autoAsignRoom = `${host}/dorm-submission/auto-assign-rooms`;
+// Router disciplines
+export const createDisciplineRoute = `${host}/student-discipline`;
+
+// set accepted to waiting payment
+export const setAcceptedToWaitingPayment = `${host}/dorm-submission/awaiting-payment-all`;
+export const getDisciplineRoute = `${host}/student-discipline`;
+
+// Router for payment
+export const getDormPaymentWithUserId = `${host}/dorm-payment`;
+export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;

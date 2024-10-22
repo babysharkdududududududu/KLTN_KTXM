@@ -1,21 +1,27 @@
 import { IsNumber, IsNotEmpty, IsDate, IsString } from 'class-validator';
 
 export class CreateSettingDto {
-    @IsNumber()
+    
+    @IsString()
     @IsNotEmpty()
-    firstYearRatio: number;
+    name: string;
 
     @IsNumber()
     @IsNotEmpty()
-    upperYearRatio: number;
+    firstYearSpots: number;
 
     @IsNumber()
     @IsNotEmpty()
-    priorityRatio: number;
+    upperYearSpots: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    prioritySpots: number;
 
     @IsString()
     @IsNotEmpty()
     registrationStartDate: string;
+
     @IsString()
     @IsNotEmpty()
     registrationEndDate: string;

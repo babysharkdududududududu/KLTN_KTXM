@@ -10,54 +10,82 @@ import { Room } from '@/modules/rooms/entities/room.entity';
 export class SettingService {
   constructor(
     @InjectModel(Setting.name) private settingModel: Model<Setting>,
-    @InjectModel(Room.name) private roomModel: Model<Room>,
+    @InjectModel(Room.name) private roomModel: Model<Room>, // Sửa đổi ở đây
   ) { }
 
   async create(createSettingDto: CreateSettingDto) {
-    // Lấy số giường trống
     const totalAvailableSpots = await this.calculateAvailableSpots();
-    const setting = new this.settingModel(createSettingDto);
-
-    setting.totalAvailableSpots = totalAvailableSpots;
-
-    setting.firstYearSpots = (totalAvailableSpots * createSettingDto.firstYearRatio)/100;
-    setting.upperYearSpots = (totalAvailableSpots * createSettingDto.upperYearRatio)/100;
-    setting.prioritySpots = (totalAvailableSpots * createSettingDto.priorityRatio)/100;
-
+    const setting = new this.settingModel({
+      ...createSettingDto,
+      totalAvailableSpots,
+    });
     return setting.save();
   }
 
   async findAll() {
-    const settings = await this.settingModel.find().exec();
-    return settings;
+    return this.settingModel.find().exec();
   }
 
   async findOne(id: string) {
-    return this.settingModel.findById(id).exec();
+    const setting = await this.settingModel.findById(id).exec();
+    if (setting) {
+      setting.totalAvailableSpots = await this.calculateAvailableSpots();
+      await setting.save();
+    }
+    return setting;
   }
 
   async update(id: string, updateSettingDto: UpdateSettingDto) {
-    return this.settingModel.findByIdAndUpdate(id, updateSettingDto, { new: true }).exec();
+    try {
+      const totalSpots = updateSettingDto.firstYearSpots + updateSettingDto.upperYearSpots + updateSettingDto.prioritySpots;
+      const currentSetting = await this.settingModel.findById(id).exec();
+
+      if (!currentSetting) {
+        throw new Error('Cài đặt không tồn tại.');
+      }
+
+      if (totalSpots > currentSetting.totalAvailableSpots) {
+        throw new Error('Tổng số chỗ trống không được vượt quá tổng số chỗ trống có sẵn.');
+      }
+
+      const updatedSetting = await this.settingModel.findByIdAndUpdate(id, updateSettingDto, { new: true }).exec();
+      await this.updateAvailableSpots();
+      return updatedSetting;
+    } catch (error) {
+      console.error('Lỗi khi cập nhật cài đặt:', error);
+      throw new Error('Đã xảy ra lỗi khi cập nhật cài đặt.');
+    }
   }
 
-  async calculateAvailableSpots() {
+  private async calculateAvailableSpots() {
     const rooms = await this.roomModel.find().exec();
-    let totalAvailableSpots = 0;
-
-    rooms.forEach(room => {
-      totalAvailableSpots += room.availableSpot;
-    });
-
-    return totalAvailableSpots;
+    return rooms.reduce((total, room) => total + room.availableSpot, 0);
   }
 
-  async updateAvailableSpots() {
+  private async updateAvailableSpots() {
     const availableSpots = await this.calculateAvailableSpots();
-    const settings = await this.settingModel.find().exec();
+    const setting = await this.settingModel.findOne().exec();
 
-    settings.forEach(setting => {
+    if (setting) {
       setting.totalAvailableSpots = availableSpots;
-      setting.save();
-    });
+      await setting.save();
+    }
   }
+
+  public async submissionCount(settingId: string) {
+    const setting = await this.settingModel.findById(settingId).exec();
+  
+    if (setting) {
+      if (setting.totalAvailableSpots > 0) {
+        setting.totalAvailableSpots -= 1;
+        await setting.save();
+        return setting;
+      } else {
+        throw new Error('Total available spots cannot be negative'); // Thông báo nếu không đủ chỗ
+      }
+    }
+  
+    throw new Error('Setting not found');
+  }
+  
 }

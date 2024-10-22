@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
 import style from './Statistical.module.css';
 import axios from 'axios';
@@ -18,7 +18,7 @@ const Statistical = () => {
         }
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         fetchRooms();
     }, []);
 
@@ -34,7 +34,9 @@ const Statistical = () => {
         data.forEach(room => {
             const block = room.block;
             const status = room.status === 0 ? 'Hoạt động' : 'Bảo trì';
-            stats[block][status]++;
+            if (stats[block]) {
+                stats[block][status]++;
+            }
         });
 
         return [
@@ -44,9 +46,10 @@ const Statistical = () => {
     };
 
     const chatData = prepareChartData(listRooms);
+    console.log("Chat data:", chatData);
 
     return (
-        <div className={style['statitical-container']}>
+        <div className={style['statistical-container']}>
             <div className={style['tabs-container']}>
                 <button
                     className={activeTab === 'LineChart' ? style.active : ''}

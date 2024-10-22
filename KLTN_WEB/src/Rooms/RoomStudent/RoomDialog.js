@@ -10,21 +10,28 @@ const RoomDialog = ({ open, onClose, selectedRoom, fetchRooms }) => {
     const [openModalSuccess, setOpenModalSuccess] = useState(false);
     const [isSuccess, setIsSuccess] = useState(true);
 
+
+
     const handleRegisterRoom = async () => {
-        const block = selectedRoom.block;
-        const roomNumber = selectedRoom.roomNumber;
-        const floor = selectedRoom.floor;
-        const now = new Date();
-        const formattedDate = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
-        const contractNumber = `${block}${floor}${roomNumber}-${userId}-${formattedDate}`;
-        console.log(contractNumber, "register room");
         try {
-            const rs = await axios.post(registerRoomRoute, { contractNumber, roomNumber, userId });
-            if (rs.status === 201) {
-                console.log('Đăng ký phòng thành công!');
-                setIsSuccess(true);
-                setOpenModalSuccess(true);
-                fetchRooms();
+            if (selectedRoom && selectedRoom.room) {
+                console.log(selectedRoom.room.roomNumber, "selected room");
+                const block = selectedRoom.room.block;
+                const roomNumber = selectedRoom.room.roomNumber;
+                const floor = selectedRoom.room.floor;
+                const now = new Date();
+                const formattedDate = `${now.getFullYear()}${now.getMonth() + 1}${now.getDate()}`;
+                const contractNumber = `${block}${floor}${roomNumber}-${userId}-${formattedDate}`;
+
+                const rs = await axios.post(registerRoomRoute, { contractNumber, roomNumber, userId });
+                if (rs.status === 201) {
+                    console.log('Đăng ký phòng thành công!');
+                    setIsSuccess(true);
+                    setOpenModalSuccess(true);
+                    fetchRooms();
+                }
+            } else {
+                console.log("selectedRoom hoặc selectedRoom.room không hợp lệ");
             }
         } catch (error) {
             if (error.response) {
@@ -48,29 +55,29 @@ const RoomDialog = ({ open, onClose, selectedRoom, fetchRooms }) => {
                         <Grid container spacing={1}>
                             <Grid item xs={12}>
                                 <Typography variant="h6" style={{ textAlign: 'center', marginBottom: '8px', color: '#1976d2' }}>
-                                    {selectedRoom.roomNumber}
+                                    {selectedRoom.room.roomNumber}
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography><strong>Tầng:</strong> {selectedRoom.floor}</Typography>
+                                <Typography><strong>Tầng:</strong> {selectedRoom.room.floor}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography><strong>Khối:</strong> {selectedRoom.block}</Typography>
+                                <Typography><strong>Khối:</strong> {selectedRoom.room.block}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography><strong>Sức chứa:</strong> {selectedRoom.capacity}</Typography>
+                                <Typography><strong>Sức chứa:</strong> {selectedRoom.room.capacity}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography><strong>Số chỗ trống:</strong> {selectedRoom.availableSpot}</Typography>
+                                <Typography><strong>Số chỗ trống:</strong> {selectedRoom.room.availableSpot}</Typography>
                             </Grid>
                             <Grid item xs={12}>
-                                <Typography><strong>Mô tả:</strong> {selectedRoom.description}</Typography>
+                                <Typography><strong>Mô tả:</strong> {selectedRoom.room.description}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography><strong>Loại phòng:</strong> {selectedRoom.type}</Typography>
+                                <Typography><strong>Loại phòng:</strong> {selectedRoom.room.type}</Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <Typography><strong>Trạng thái:</strong> {selectedRoom.status === 0 ? 'Hoạt động' : 'Bảo trì'}</Typography>
+                                <Typography><strong>Trạng thái:</strong> {selectedRoom.room.status === 0 ? 'Hoạt động' : 'Bảo trì'}</Typography>
                             </Grid>
                         </Grid>
                     )}

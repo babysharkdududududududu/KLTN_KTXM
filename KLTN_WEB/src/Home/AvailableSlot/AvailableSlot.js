@@ -2,10 +2,11 @@ import { Alert, Box, CircularProgress, Container, Divider, Typography } from '@m
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Cell, Legend, Pie, PieChart, Tooltip } from 'recharts';
-import { getContractRoute, getRoomByIdRoute } from '../../API/APIRouter';
+import { getAllRoomRoute, getContractRoute, getRoomByIdRoute } from '../../API/APIRouter';
 import { useUser } from '../../Context/Context';
 
 const DoubleDoughnutChart = ({ total, used }) => {
+
     const dataUsed = [
         { name: 'Còn lại', value: total - used > 0 ? total - used : 0 },
         { name: 'Đã sử dụng', value: used },
@@ -38,12 +39,36 @@ const DoubleDoughnutChart = ({ total, used }) => {
 };
 
 const AvailableSlot = () => {
-    const { userId } = useUser();
+    const { userId, roleId } = useUser();
     const [roomInfo, setRoomInfo] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [availableSlot, setAvailableSlot] = useState(null);
     const [capacity, setCapacity] = useState(null);
+    const [totalAvailableSlot, setTotalAvailableSlot] = useState(0);
+    const [roomNumber, setRoomNumber] = useState(null);
+
+
+    // API get all room to sum available slot
+    const handleGetAllRoom = async () => {
+        try {
+            const rs = await axios.get(`${getAllRoomRoute}`);
+            const roomData = rs.data.data.results;
+            console.log("Room data:", roomData);
+            const totalAvailableSlot = roomData.reduce((acc, room) => acc + room.availableSpot, 0);
+            const totalCapacity = roomData.reduce((acc, room) => acc + room.capacity, 0);
+            setTotalAvailableSlot(totalAvailableSlot);
+            console.log("Total capacity slot:", totalCapacity);
+            console.log("Total available slot:", totalAvailableSlot);
+            console.log("Room data:");
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+    useEffect(() => {
+        handleGetAllRoom();
+    }, []);
 
     const handleGetContract = async () => {
         setLoading(true);
@@ -61,9 +86,13 @@ const AvailableSlot = () => {
     const getRoomById = async (roomNumber) => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setRoomInfo(data.data);
-            setAvailableSlot(data.data.availableSpot);
-            setCapacity(data.data.capacity);
+            setRoomInfo(data.data.room);
+            setRoomNumber(data.data.room.roomNumber);
+            console.log("Room number:", roomNumber);
+            console.log("Room info:", roomInfo);
+
+            setAvailableSlot(data.data.room.availableSpot);
+            setCapacity(data.data.room.capacity);
             setLoading(false);
         } catch (err) {
             console.error("Error fetching room by ID:", err);
@@ -79,22 +108,33 @@ const AvailableSlot = () => {
     }, [userId]);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: '260px' }}>
-            {loading && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
-                    <CircularProgress size={24} />
-                </Box>
-            )}
-            <Typography variant="h6" sx={{ marginBottom: 0.5, fontSize: '15px', textAlign: 'center', color: '#53556a' }}>Phòng trống</Typography>
-            <Divider sx={{ marginBottom: 1 }} />
-            {error && <Alert severity="error" sx={{ marginBottom: 2, fontSize: '0.8rem' }}>{error}</Alert>}
-            {roomInfo && (
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <DoubleDoughnutChart total={capacity} used={capacity - availableSlot} />
-                </Box>
+        <Container maxWidth="sm" sx={{ padding: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: '260px', minHeight: '217px' }}>
+            {roleId === 'USERS' && (
+                <>
+                    {loading && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+                            <CircularProgress size={24} />
+                        </Box>
+                    )}
+                    <Typography variant="h6" sx={{ marginBottom: 0.5, fontSize: '15px', textAlign: 'center', color: '#53556a' }}>
+                        Phòng {roomNumber}
+                    </Typography>
+                    <Divider sx={{ marginBottom: 1 }} />
+                    {error && (
+                        <Alert severity="error" sx={{ marginBottom: 2, fontSize: '0.8rem' }}>
+                            {error}
+                        </Alert>
+                    )}
+                    {roomInfo ? (
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            <DoubleDoughnutChart total={capacity} used={capacity - availableSlot} />
+                        </Box>
+                    ) : null}
+                </>
             )}
         </Container>
     );
+
 }
 
 export default AvailableSlot;
