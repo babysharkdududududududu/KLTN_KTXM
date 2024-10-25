@@ -27,7 +27,7 @@ const Login = ({ onLoginSuccess }) => {
 
     // State for logo opacity and position
     const [logoOpacity, setLogoOpacity] = useState(0);
-    const [logoPosition, setLogoPosition] = useState(100); // Start position from bottom
+    const [logoPosition, setLogoPosition] = useState(100);
 
     // API login
     const handleLogin = async (event) => {
