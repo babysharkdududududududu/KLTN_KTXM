@@ -1,4 +1,4 @@
-// export const host = "http://localhost:8081/api/v1";
+// export const host = "http://14.225.211.35:8081/api/v1";
 export const host = process.env.REACT_APP_API_HOST;
 
 console.log('API Host:', host);
@@ -96,3 +96,4 @@ export const getDormPaymentWithUserId = `${host}/dorm-payment`;
 
 //router change room
 export const changeRoomRoute = `${host}/dorm-submission/change-room`;
+export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả thanh toán</title>
+</head>
+
+<body>
+    <h1>
+        <%= data.message %>
+    </h1>
+
+    <p>Vui lòng kiểm tra thông tin dưới đây:</p>
+
+    <ul>
+        <li><a href="<%= data.successUrl %>">Đi tới trang thành công</a></li>
+        <li><a href="<%= data.cancelUrl %>">Đi tới trang hủy</a></li>
+        <li><a href="<%= data.returnUrl %>">Quay lại trang chính</a></li>
+    </ul>
+</body>
+
+</html>

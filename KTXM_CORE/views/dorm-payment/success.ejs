@@ -1,0 +1,180 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Success</title>
+</head>
+
+<body>
+  <h1>Payment Success!</h1>
+  <p>Your dorm payment was successful.</p>
+
+  <h1>Payment Result</h1>
+  <p>Order Code: <%= orderCode %>
+  </p>
+  <p>Status: <%= status %>
+  </p>
+  <p>Code: <%= code %>
+  </p>
+  <p>ID: <%= id %>
+  </p>
+  <p>Cancel: <%= cancel %>
+  </p>
+  <p>
+    <%= message %>
+  </p>
+
+  <button id="callbackBtn">Perform Payment Callback</button>
+
+  <script>
+    document.getElementById('callbackBtn').addEventListener('click', function () {
+      const orderCode = '<%= orderCode %>';
+      const status = 'SUCCESS';
+
+      // Gửi yêu cầu GET tới API payment/callback
+      fetch(`/api/v1/dorm-payment/payment/callback?orderCode=${orderCode}&status=${status}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error === 0) {
+            alert('Callback successful: ' + data.message);
+            // Chuyển hướng về trang chủ
+            window.location.href = 'http://localhost:3000/';
+          } else {
+            alert('Callback failed: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error during fetch:', error);
+          alert('An error occurred. Please try again.');
+        });
+    });
+  </script>
+
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Success</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 600px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #4CAF50;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #lottie {
+      width: 200px;
+      height: 200px;
+      margin-bottom: 20px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+</head>
+
+<body>
+  <div id="lottie"></div>
+  <div class="container">
+    <h1>Payment Success!</h1>
+    <p>Your dorm payment was successful.</p>
+
+    <h1>Payment Result</h1>
+    <p>Order Code: <%= orderCode %>
+    </p>
+    <p>Status: <%= status %>
+    </p>
+    <p>Code: <%= code %>
+    </p>
+    <p>ID: <%= id %>
+    </p>
+    <p>Cancel: <%= cancel %>
+    </p>
+    <p>
+      <%= message %>
+    </p>
+
+    <button id="callbackBtn">Perform Payment Callback</button>
+  </div>
+
+  <script>
+    // Load Lottie animation
+    const animation = lottie.loadAnimation({
+      container: document.getElementById('lottie'), // the dom element that will contain the animation
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: './comfirm.json'
+    });
+
+    document.getElementById('callbackBtn').addEventListener('click', function () {
+      const orderCode = '<%= orderCode %>';
+      const status = 'SUCCESS';
+
+      fetch(`/api/v1/dorm-payment/payment/callback?orderCode=${orderCode}&status=${status}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.error === 0) {
+            alert('Callback successful: ' + data.message);
+            // Chuyển hướng về trang chủ
+            window.location.href = 'http://localhost:3000/';
+          } else {
+            alert('Callback failed: ' + data.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error during fetch:', error);
+          alert('An error occurred. Please try again.');
+        });
+    });
+  </script>
+
+</body>
+
+</html>

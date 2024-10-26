@@ -1,4 +1,4 @@
-import { Body, Injectable, Post, Res } from '@nestjs/common';
+import { Body, Get, Injectable, Post, Query, Render, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateDormPaymentDto } from './dto/create-dorm_payment.dto';
 import { UpdateDormPaymentDto } from './dto/update-dorm_payment.dto';
@@ -33,10 +33,11 @@ export class DormPaymentService {
       orderCode,
       amount: Number(amount),
       description: `Payment`,
-      cancelUrl: 'https://www.google.com/',
-      successUrl: 'https://www.google.com/',
-      returnUrl: 'https://www.google.com/'
+      cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
+      successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
+      returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
     };
+
     try {
       const paymentLinkRes = await this.payos.createPaymentLink(body);
       const dormPayment = new this.dormPaymentRepository({
@@ -77,14 +78,45 @@ export class DormPaymentService {
     }
   }
 
-  async handlePaymentCallback(@Body() callbackData: any, @Res() res: Response) {
+  // @Post('callback')
+  // async handlePaymentCallback(@Body() callbackData: any, @Res() res: Response) {
+  //   const { orderCode, status } = callbackData;
+
+  //   try {
+  //     const dormPayment = await this.dormPaymentRepository.findOne({ orderCode });
+  //     if (!dormPayment) {
+  //       return res.status(404).json({ error: 'Payment not found' });
+  //     }
+
+  //     switch (status) {
+  //       case 'SUCCESS':
+  //       case 'PAID':  // Xử lý thêm trạng thái PAID
+  //         dormPayment.status = PaymentStatus.Paid;
+  //         break;
+  //       case 'CANCELED':
+  //         dormPayment.status = PaymentStatus.Cancelled;
+  //         break;
+  //       default:
+  //         dormPayment.status = PaymentStatus.Unpaid;
+  //         break;
+  //     }
+  //     await dormPayment.save();
+
+  //     return res.redirect(`/dorm-payment/success?orderCode=${orderCode}&status=success`);
+  //   } catch (error) {
+  //     console.error('Error handling payment callback:', error);
+  //     return res.redirect('/dorm-payment/result?status=fail');
+  //   }
+  // }
+  async handlePaymentCallback(callbackData: any) {
     const { orderCode, status } = callbackData;
 
     try {
       const dormPayment = await this.dormPaymentRepository.findOne({ orderCode });
       if (!dormPayment) {
-        return res.status(404).json({ error: 'Payment not found' });
+        throw new Error('Payment not found'); // Sử dụng throw để xử lý trong callback
       }
+
       switch (status) {
         case 'SUCCESS':
           dormPayment.status = PaymentStatus.Paid;
@@ -98,10 +130,84 @@ export class DormPaymentService {
       }
       await dormPayment.save();
 
-      return res.status(200).json({ message: 'Payment status updated successfully' });
+      return {
+        orderCode: dormPayment.orderCode,
+        status: dormPayment.status,
+      };
     } catch (error) {
       console.error('Error handling payment callback:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      throw new Error('Internal server error'); // Ném ra lỗi để xử lý ở callback
+    }
+  }
+
+
+
+
+  // @Post('callback')
+  // async handlePaymentCallback(@Body() callbackData: any, @Res() res: Response) {
+  //   const { orderCode, status } = callbackData;
+
+  //   try {
+  //     const dormPayment = await this.dormPaymentRepository.findOne({ orderCode });
+  //     if (!dormPayment) {
+  //       return res.status(404).json({ error: 'Payment not found' });
+  //     }
+
+  //     switch (status) {
+  //       case 'SUCCESS':
+  //         dormPayment.status = PaymentStatus.Paid;
+  //         break;
+  //       case 'CANCELED':
+  //         dormPayment.status = PaymentStatus.Cancelled;
+  //         break;
+  //       default:
+  //         dormPayment.status = PaymentStatus.Unpaid;
+  //         break;
+  //     }
+
+  //     await dormPayment.save();
+
+  //     // Chuyển hướng tới trang thông báo thành công
+  //     return res.redirect(`/dorm-payment/result?status=${status.toLowerCase()}`);
+  //   } catch (error) {
+  //     console.error('Error handling payment callback:', error);
+  //     return res.redirect('/dorm-payment/result?status=fail');
+  //   }
+  // }
+
+
+
+  // @Get('result')
+  // @Render('payment-result')
+  // async getPaymentResult(@Query('status') status: string) {
+  //   let message;
+  //   if (status === 'success') {
+  //     message = 'Thanh toán thành công!';
+  //   } else if (status === 'fail') {
+  //     message = 'Thanh toán thất bại hoặc đã bị hủy.';
+  //   } else {
+  //     message = 'Không rõ trạng thái thanh toán.';
+  //   }
+
+  //   return { status, message };
+  // }
+
+  async confirmWebhook(body: { webhookUrl: string }) {
+    const { webhookUrl } = body;
+    try {
+      await this.payos.confirmWebhook(webhookUrl);
+      return {
+        error: 0,
+        message: 'ok',
+        data: null,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        error: -1,
+        message: 'failed',
+        data: null,
+      };
     }
   }
 

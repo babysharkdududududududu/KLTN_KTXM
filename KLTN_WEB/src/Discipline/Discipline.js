@@ -147,7 +147,11 @@ const Discipline = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     fullWidth
-                    sx={{ mb: 1 }}
+                    sx={{
+                        mb: 1, '.MuiInputLabel-root': {
+                            fontWeight: 'bold'
+                        }
+                    }}
                 />
                 <DataGrid
                     rows={paginatedUsers}
