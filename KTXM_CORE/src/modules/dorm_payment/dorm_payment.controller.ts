@@ -53,11 +53,6 @@ export class DormPaymentController {
       };
     }
   }
-
-
-
-
-
   @Get()
   findAll() {
     return this.dormPaymentService.findAll();
