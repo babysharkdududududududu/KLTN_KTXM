@@ -293,6 +293,56 @@ export class DormSubmissionService {
     }
   }
 
+  // chuyển phòng
+  async changeRoom(id: string, roomNumber: string): Promise<DormSubmission> {
+    // Tìm đơn đăng ký
+    const submission = await this.dormSubmissionModel.findById(id);
+    if (!submission) {
+      throw new NotFoundException(`Submission with ID ${id} not found`);
+    }
+
+    // Tìm hợp đồng hiện tại
+    const contract = await this.contractModel.findOne({ userId: submission.userId });
+    if (!contract) {
+      throw new NotFoundException(`Contract for user ID ${submission.userId} not found`);
+    }
+
+    // Tìm phòng mới
+    const newRoom = await this.roomModel.findOne({ roomNumber });
+    if (!newRoom) {
+      throw new NotFoundException(`Room with number ${roomNumber} not found`);
+    }
+
+    // Cập nhật số chỗ trống của phòng cũ
+    const currentRoom = await this.roomModel.findOne({ roomNumber: contract.roomNumber });
+    if (currentRoom) {
+      // Xóa user khỏi phòng cũ
+      currentRoom.users = currentRoom.users.filter(user => user.userId.toString() !== submission.userId.toString());
+      console.log('currentRoom.users:', currentRoom.users);
+      currentRoom.availableSpot += 1; // Tăng số chỗ trống
+      currentRoom.occupied = currentRoom.availableSpot < currentRoom.capacity; // Cập nhật trạng thái
+      await currentRoom.save();
+    }
+
+    // Cập nhật hợp đồng với số phòng mới
+    contract.roomNumber = roomNumber;
+    await contract.save();
+
+    // Cập nhật đơn đăng ký
+    submission.roomNumber = roomNumber;
+    await submission.save();
+
+    // Cập nhật số chỗ trống của phòng mới
+    const user = await this.userModel.findOne({ userId: submission.userId });
+    newRoom.users.push(user);
+    newRoom.availableSpot -= 1; // Giảm số chỗ trống
+    newRoom.occupied = newRoom.availableSpot < newRoom.capacity; // Cập nhật trạng thái
+    await newRoom.save();
+
+    return submission;
+  }
+
+
 
   async autoAssignRoomsByIds(submissionIds: string[]): Promise<void> {
     // Bước 1: Lấy danh sách các phòng có chỗ trống

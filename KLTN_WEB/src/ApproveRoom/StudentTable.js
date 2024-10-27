@@ -12,7 +12,7 @@ function createData(userId, name, address, gender) {
   return { userId, name, address, gender };
 }
 
-export default function StudentTable({studentList}) {
+export default function StudentTable({ studentList, studentDataID }) {
   const rows = studentList.map((student) => {
     return createData(student.userId, student.name, student.address, student.gender);
   });
@@ -31,16 +31,30 @@ export default function StudentTable({studentList}) {
           {rows.map((row) => (
             <TableRow
               key={row.mssv}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+              sx={{
+                '&:last-child td, &:last-child th': { border: 0 },
+                backgroundColor: studentDataID === row.userId ? '#2f61e7' : 'white',
+              }}
             >
-              <TableCell component="th" scope="row">
+              <TableCell
+                component="th"
+                scope="row"
+                sx={{ color: studentDataID === row.userId ? 'white' : 'black' }}
+              >
                 {row.userId}
               </TableCell>
-              <TableCell align="left">{row.name}</TableCell>
-              <TableCell align="left">{row.address}</TableCell>
-              <TableCell align="left">{row.gender == 1 ? "Nam" : "Nữ"}</TableCell>
+              <TableCell align="left" sx={{ color: studentDataID === row.userId ? 'white' : 'black' }}>
+                {row.name}
+              </TableCell>
+              <TableCell align="left" sx={{ color: studentDataID === row.userId ? 'white' : 'black' }}>
+                {row.address}
+              </TableCell>
+              <TableCell align="left" sx={{ color: studentDataID === row.userId ? 'white' : 'black' }}>
+                {row.gender === 1 ? "Nam" : "Nữ"}
+              </TableCell>
             </TableRow>
           ))}
+
         </TableBody>
       </Table>
     </TableContainer>
