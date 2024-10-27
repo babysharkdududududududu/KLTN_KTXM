@@ -69,7 +69,6 @@
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       margin: 0;
-      padding: 20px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -79,15 +78,14 @@
 
     .container {
       max-width: 600px;
-      background: white;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
-    h1 {
-      color: #4CAF50;
+    h3 {
+      color: #05ff58;
+      margin-top: -20px;
     }
 
     p {
@@ -96,14 +94,14 @@
     }
 
     button {
-      background-color: #4CAF50;
+      background-color: #05ff58;
       color: white;
       border: none;
       padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
       font-size: 16px;
-      margin-top: 20px;
+      margin-top: 10px;
     }
 
     button:hover {
@@ -111,70 +109,122 @@
     }
 
     #lottie {
-      width: 200px;
-      height: 200px;
-      margin-bottom: 20px;
+      width: 400px;
+      height: 400px;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row;
+      display: flex;
+    }
+
+    .hihi {
+      display: none;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      padding: 20px;
+      text-align: center;
+    }
+
+    #popup-lottie {
+      width: 100px;
+      height: 100px;
+    }
+
+    .modal.show {
+      display: flex;
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.7.6/lottie.min.js"></script>
 </head>
 
 <body>
-  <div id="lottie"></div>
   <div class="container">
-    <h1>Payment Success!</h1>
-    <p>Your dorm payment was successful.</p>
+    <div id="lottie"></div>
+    <h3>Vui lòng xác nhận</h3>
+    <div class="hihi">
+      <h1>Payment Result</h1>
+      <p>Order Code: <%= orderCode %>
+      </p>
+      <p>Status: <%= status %>
+      </p>
+      <p>Code: <%= code %>
+      </p>
+      <p>ID: <%= id %>
+      </p>
+      <p>Cancel: <%= cancel %>
+      </p>
+      <p>
+        <%= message %>
+      </p>
+    </div>
 
-    <h1>Payment Result</h1>
-    <p>Order Code: <%= orderCode %>
-    </p>
-    <p>Status: <%= status %>
-    </p>
-    <p>Code: <%= code %>
-    </p>
-    <p>ID: <%= id %>
-    </p>
-    <p>Cancel: <%= cancel %>
-    </p>
-    <p>
-      <%= message %>
-    </p>
+    <button id="callbackBtn">Xác nhận</button>
+  </div>
 
-    <button id="callbackBtn">Perform Payment Callback</button>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div id="popup-lottie"></div>
+    </div>
   </div>
 
   <script>
-    // Load Lottie animation
-    const animation = lottie.loadAnimation({
-      container: document.getElementById('lottie'), // the dom element that will contain the animation
-      renderer: 'svg',
+    lottie.loadAnimation({
+      container: document.getElementById('lottie'),
       loop: true,
       autoplay: true,
-      path: './comfirm.json'
+      path: '/animations/confirm.json'
     });
 
     document.getElementById('callbackBtn').addEventListener('click', function () {
       const orderCode = '<%= orderCode %>';
       const status = 'SUCCESS';
 
+      // Hiển thị modal khi nhấn nút
+      const modal = document.getElementById('myModal');
+      modal.classList.add('show');
+
+      lottie.loadAnimation({
+        container: document.getElementById('popup-lottie'),
+        loop: true,
+        autoplay: true,
+        path: '/animations/check.json'
+      });
+
+      // Gửi yêu cầu GET tới API payment/callback
       fetch(`/api/v1/dorm-payment/payment/callback?orderCode=${orderCode}&status=${status}`)
         .then(response => response.json())
         .then(data => {
           if (data.error === 0) {
             alert('Callback successful: ' + data.message);
-            // Chuyển hướng về trang chủ
+            // Ẩn modal và chuyển về trang chủ
+            modal.classList.remove('show');
             window.location.href = 'http://localhost:3000/';
           } else {
             alert('Callback failed: ' + data.message);
+            modal.classList.remove('show'); // Ẩn modal nếu thất bại
           }
         })
         .catch(error => {
           console.error('Error during fetch:', error);
           alert('An error occurred. Please try again.');
+          modal.classList.remove('show'); // Ẩn modal khi gặp lỗi
         });
     });
   </script>
-
 </body>
 
 </html>

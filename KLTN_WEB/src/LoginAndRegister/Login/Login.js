@@ -15,6 +15,8 @@ import buildAnimation from './asset/buildingv2.json';
 import logo from './asset/iuh.png';
 import ParticlesComponent from '../../Particles/ParticlesBackground';
 import { loginRoute } from '../../API/APIRouter';
+import loadingAnimation from './asset/loading.json';
+
 
 const Login = ({ onLoginSuccess }) => {
     const [error, setError] = useState('');
@@ -24,12 +26,43 @@ const Login = ({ onLoginSuccess }) => {
     const [visibleRegister, setVisibleRegister] = useState(false);
     const { setRoleId, setUserId } = useUser();
     const [showPassword, setShowPassword] = useState(false);
+    const [loadingAnimationVisible, setLoadingAnimationVisible] = useState(false);
 
     // State for logo opacity and position
     const [logoOpacity, setLogoOpacity] = useState(0);
     const [logoPosition, setLogoPosition] = useState(100);
 
     // API login
+    // const handleLogin = async (event) => {
+    //     event.preventDefault();
+    //     const email = event.target.email.value;
+    //     const password = event.target.password.value;
+    //     setLoading(true);
+    //     setError('');
+
+    //     try {
+    //         const response = await axios.post(loginRoute, {
+    //             username: email,
+    //             password: password
+    //         });
+    //         const { role, userId } = response.data.data.user;
+    //         const token = response.data.data.access_token;
+
+    //         localStorage.setItem('email', email);
+    //         localStorage.setItem('role', role);
+    //         localStorage.setItem('userId', userId);
+    //         localStorage.setItem('token', token);
+
+    //         setRoleId(role);
+    //         setUserId(userId);
+    //         onLoginSuccess();
+    //     } catch (error) {
+    //         console.error("Đăng nhập thất bại", error);
+    //         setError('Email hoặc mật khẩu không đúng.');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
     const handleLogin = async (event) => {
         event.preventDefault();
         const email = event.target.email.value;
@@ -52,7 +85,14 @@ const Login = ({ onLoginSuccess }) => {
 
             setRoleId(role);
             setUserId(userId);
-            onLoginSuccess();
+
+            // Hiển thị hiệu ứng loading
+            setLoadingAnimationVisible(true);
+
+            // Thêm thời gian chờ trước khi chuyển trang
+            setTimeout(() => {
+                onLoginSuccess();  // Điều hướng sau 1 giây
+            }, 15000);
         } catch (error) {
             console.error("Đăng nhập thất bại", error);
             setError('Email hoặc mật khẩu không đúng.');
@@ -60,6 +100,7 @@ const Login = ({ onLoginSuccess }) => {
             setLoading(false);
         }
     };
+
 
     // Toggle visibility of forgot password
     const handleForgotPassword = () => {
@@ -120,19 +161,26 @@ const Login = ({ onLoginSuccess }) => {
 
     return (
         <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'row' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', position: 'relative', marginBottom: 0 }}>
-                <Box component="img" src={logo} alt="Logo"
-                    sx={{ width: '250px', position: 'absolute', top: `${logoPosition}px`, left: '75%', transform: 'translateX(-50%)', opacity: logoOpacity, transition: 'opacity 0.5s ease-in-out, top 0.5s ease-in-out' }}
-                />
-                <Lottie animationData={buildAnimation} loop={true} style={{ width: '450px', height: '450px', zIndex: 1 }} />
-            </Box>
+            {loadingAnimationVisible ? (
+                <Lottie animationData={loadingAnimation} loop={true} style={{ width: '550px', height: '550px', textAlign: 'center', alignSelf: 'center' }} />
+            ) : (
+                <>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', position: 'relative', marginBottom: 0 }}>
+                        <Box component="img" src={logo} alt="Logo"
+                            sx={{ width: '250px', position: 'absolute', top: `${logoPosition}px`, left: '75%', transform: 'translateX(-50%)', opacity: logoOpacity, transition: 'opacity 0.5s ease-in-out, top 0.5s ease-in-out' }}
+                        />
+                        <Lottie animationData={buildAnimation} style={{ width: '450px', height: '450px', zIndex: 1 }} />
+                    </Box>
 
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '-20px' }}>
-                <ParticlesComponent />
-                {visibleForgotPassword ? <ForgotPassword onClose={handleForgotPassword} /> : visibleRegister ? <Register onClose={handleRegister} /> : <LoginForm />}
-            </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '-20px' }}>
+                        <ParticlesComponent />
+                        {visibleForgotPassword ? <ForgotPassword onClose={handleForgotPassword} /> : visibleRegister ? <Register onClose={handleRegister} /> : <LoginForm />}
+                    </Box>
+                </>
+            )}
         </Container>
     );
+
 
 };
 

@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as express from 'express';
 
 
 async function bootstrap() {
@@ -13,8 +14,9 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1', { exclude: [''] });
   app.setGlobalPrefix('api/v1');
 
-  app.useStaticAssets(join(__dirname, '..', 'public')); // Cấu hình thư mục tĩnh (cho CSS, JS, hình ảnh)
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));  // Thư mục chứa file .ejs
+  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'views'));
+  app.use('/animations', express.static(join(__dirname, '..', 'src', 'animations')));
   app.setViewEngine('ejs');  // Sử dụng EJS làm view engine
 
 
