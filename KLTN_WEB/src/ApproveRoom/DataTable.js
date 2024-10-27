@@ -126,7 +126,7 @@ export default function DataTable({ studentData, handleRowClick, updateStudentDa
   };
 
   return (
-    <Paper sx={{ height: 550, width: '98%' }}>
+    <Paper sx={{ height: '100%', width: '98%' }}>
       <DataGrid
         rows={studentData}
         columns={columns(handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable)}

@@ -5,19 +5,21 @@ import axios from 'axios';
 import RoomDialog from './RoomDialog';
 import { CheckCircle, Warning } from '@mui/icons-material';
 import './TableData.css';
-import { Button, CircularProgress, FormControl, MenuItem, Select, Typography } from '@mui/material';
+import { CircularProgress} from '@mui/material';
 import Pagination from './Pagination/Pagination';
 
 const columns = [
-  { field: 'roomNumber', headerName: 'Tên phòng', width: 120 },
-  { field: 'floor', headerName: 'Tầng', width: 70 },
-  { field: 'block', headerName: 'Khối', width: 70 },
-  { field: 'capacity', headerName: 'Sức chứa', type: 'number', width: 100 },
-  { field: 'availableSpot', headerName: 'Chỗ trống', type: 'number', width: 100 },
-  { field: 'description', headerName: 'Mô tả', width: 250 },
-  { field: 'type', headerName: 'Loại phòng', width: 120 },
+  { field: 'roomNumber', headerName: 'Tên phòng', flex: 1 },
+  { field: 'floor', headerName: 'Tầng', flex: 1 },
+  { field: 'block', headerName: 'Khối', flex: 1 },
+  { field: 'capacity', headerName: 'Sức chứa', type: 'number', flex: 1 },
+  { field: 'availableSpot', headerName: 'Chỗ trống', type: 'number', flex: 1 },
+  { field: 'description', headerName: 'Mô tả', flex: 2 },
+  { field: 'type', headerName: 'Loại phòng', flex: 1 },
   {
-    field: 'status', headerName: 'Trạng thái', width: 120,
+    field: 'status',
+    headerName: 'Trạng thái',
+    flex: 1,
     renderCell: (params) => (
       params.value === 'Bảo trì' ? (
         <span style={{ display: 'flex', alignItems: 'center' }}>
@@ -169,7 +171,7 @@ const TableData = ({ filterBlock }) => {
   const totalPages = Math.ceil(listRooms.length / pageSize);
 
   return (
-    <div style={{ height: '81%', width: '95%', marginLeft: 20 }}>
+    <div style={{ height: '81%', width: '100%'}}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           <CircularProgress size={50} thickness={5} color="primary" />
@@ -187,13 +189,14 @@ const TableData = ({ filterBlock }) => {
             page={currentPage - 1}
             hideFooter
             onCellClick={handleCellClick}
+            rowHeight={45}
           />
-
+{/* 
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={handlePageChange}
-          />
+          /> */}
 
           <RoomDialog
             open={openDialog}
