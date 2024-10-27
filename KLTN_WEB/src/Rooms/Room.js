@@ -6,19 +6,48 @@ import TableData from './TableData';
 import BLOCKG from "./assets/BLOCK_G.png";
 import BLOCKI from "./assets/BLOCK_I.png";
 import { useUser } from '../Context/Context';
+import TextField from '@mui/material/TextField';
 import RoomStudent from './RoomStudent/RoomStudent';
 import ImportRoom from '../Home/Import-room/ImportRoom';
 import { Button } from '@mui/material';
 import EquipmentUpload from '../Home/Import-equipment/ImportEquipment';
 import ImportX from '../Home/Import-xlsx/ImportXlxs';
+import StatusRoom from './StatusRoom';
 
-const DemoPaper = styled(Paper)(({ theme }) => ({
-    width: 150,
-    height: 150,
-    padding: theme.spacing(2),
-    ...theme.typography.body2,
-    textAlign: 'center',
-}));
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
+import { Label } from 'recharts';
+
+function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+        </div>
+    );
+}
+
+CustomTabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
 
 const Room = () => {
     const [filterBlock, setFilterBlock] = useState(null);
@@ -36,17 +65,37 @@ const Room = () => {
         setShowImportRoom(!showImportRoom);
     };
 
+    const [value, setValue] = React.useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+        if (newValue === 0) {
+            handleBlockClick(''); // Tất cả phòng
+        } else if (newValue === 1) {
+            handleBlockClick('G'); // Block G
+        } else if (newValue === 2) {
+            handleBlockClick('I'); // Block I
+        }
+    };
     return (
         <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignContent: 'center', background: '#e7ecf0', width: '100%', }}>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignContent: 'center', background: '#e7ecf0', width: '100%', height: '100%' }}>
                 {
                     roleId === 'USERS' ?
                         <RoomStudent filterBlock={filterBlock} />
-                        : <div style={{ width: '80%', height: '98vh', paddingTop: '10px' }}>
+                        : <div style={{ width: '98%', height: '96vh', paddingTop: '10px', marginTop: 8, backgroundColor: "#fff", borderRadius: 10 }}>
+                            <StatusRoom />
+                            <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
+                                <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+                                    <Tab label="Tất cả phòng" {...a11yProps(0)} />
+                                    <Tab label="Block G" {...a11yProps(1)} />
+                                    <Tab label="Block I" {...a11yProps(2)} />
+                                </Tabs>
+                            </Box>
                             <TableData filterBlock={filterBlock} />
                         </div>
                 }
-
+                {/* 
                 <div style={{ display: 'flex', flexDirection: "column", alignItems: 'center', height: "80%", marginLeft: 20 }}>
                     <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('')}>
                         <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
@@ -61,7 +110,6 @@ const Room = () => {
                     {
                         roleId === 'MANAGER' ?
                             <Button variant="contained" color="primary" onClick={handleImportRoomClick} sx={{ marginTop: 2 }}>
-                                {/* {showImportRoom ? 'Ẩn Import Room' : 'Hiện Import Room'} */}
                                 {showImportRoom ? 'Ẩn Import Room' : 'Hiện Import Room'}
 
                             </Button>
@@ -71,9 +119,7 @@ const Room = () => {
                     {showImportRoom && <ImportRoom />}
                     {showImportRoom && <EquipmentUpload />}
                     {showImportRoom && <ImportX />}
-
-
-                </div>
+                </div> */}
             </div>
         </div>
     );
