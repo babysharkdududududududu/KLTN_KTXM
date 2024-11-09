@@ -92,7 +92,7 @@ const Login = ({ onLoginSuccess }) => {
             // Thêm thời gian chờ trước khi chuyển trang
             setTimeout(() => {
                 onLoginSuccess();  // Điều hướng sau 1 giây
-            }, 15000);
+            }, 5000);
         } catch (error) {
             console.error("Đăng nhập thất bại", error);
             setError('Email hoặc mật khẩu không đúng.');

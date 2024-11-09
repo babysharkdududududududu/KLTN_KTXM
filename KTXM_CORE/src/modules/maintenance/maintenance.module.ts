@@ -10,5 +10,6 @@ import { EquipmentSchema } from '../equipment/entities/equipment.entity';
   imports: [MongooseModule.forFeature([{ name: Maintenance.name, schema: MaintenanceSchema }, { name: Room.name, schema: RoomSchema }, { name: Equipment.name, schema: EquipmentSchema }])],
   providers: [MaintenanceService],
   controllers: [MaintenanceController],
+  exports: [MaintenanceService]
 })
 export class MaintenanceModule { }

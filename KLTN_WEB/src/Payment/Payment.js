@@ -129,6 +129,7 @@ const Payment = () => {
                             </tr>
                         </tbody>
                     </table>
+                    <div class="table-overlay"></div>
                     <div class="footer">
                         <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
                     </div>

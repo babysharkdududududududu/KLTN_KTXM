@@ -21,6 +21,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { SocketModule } from './socketgateway/socket.module';
 import { StudentDisciplineModule } from './modules/student-discipline/student-discipline.module';
+import { StatisticModule } from './modules/statistic/statistic.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { StudentDisciplineModule } from './modules/student-discipline/student-di
     ContractsModule,
     DormPaymentModule,
     DormSubmissionModule,
+    StatisticModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({

@@ -61,9 +61,7 @@ const RoomInfo = () => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
             setUserInfo(data.data.room.users);
-            console.log(userInfo, "userInfo");
             setEquipment(data.data.equipment || []);
-            console.log(equipment, "equipment");
         } catch (err) {
             console.error("Error fetching room by ID:", err);
         }
@@ -76,19 +74,18 @@ const RoomInfo = () => {
             </Typography>
 
             <Tabs value={tabIndex} onChange={(event, newValue) => setTabIndex(newValue)} centered>
-                <Tab label="Thông Tin Phòng" />
+                <Tab label="Danh sách sinh viên" />
+                <Tab label="Nội quy và trang thiết bị" />
                 <Tab label="Chi Phí Hàng Tháng" />
             </Tabs>
 
             {tabIndex === 0 && (
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     <RoomMembers userInfo={userInfo} />
-                    <RoomDetails />
-                    <RoomEquipment equipment={equipment} getRoomById={getRoomById} roomNumber={roomNumber} />
                 </Grid>
             )}
 
-            {tabIndex === 1 && (
+            {tabIndex === 2 && (
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     <Grid item xs={12}>
                         <Paper elevation={3} sx={{ padding: 2, borderRadius: 2 }}>
@@ -111,6 +108,12 @@ const RoomInfo = () => {
                             </Grid>
                         </Paper>
                     </Grid>
+                </Grid>
+            )}
+            {tabIndex === 1 && (
+                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                    <RoomDetails />
+                    <RoomEquipment equipment={equipment} getRoomById={getRoomById} roomNumber={roomNumber} />
                 </Grid>
             )}
         </Box>

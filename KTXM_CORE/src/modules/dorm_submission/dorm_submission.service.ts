@@ -10,6 +10,8 @@ import { Room } from '../rooms/entities/room.entity';
 import { User } from '../users/schemas/user.schema';
 import { Contract } from '../contracts/entities/contract.entity';
 import { log } from 'console';
+import { DormPayment } from '../dorm_payment/entities/dorm_payment.entity';
+import { DormPaymentService } from '../dorm_payment/dorm_payment.service';
 
 @Injectable()
 export class DormSubmissionService {
@@ -25,6 +27,7 @@ export class DormSubmissionService {
     private readonly settingService: SettingService,
     private readonly userService: UsersService,
     private readonly contractService: ContractsService,
+    private readonly dormPaymentService: DormPaymentService,
   ) { }
 
   // kiểm tra không cho đăng ký 2 lần một kỳ
@@ -135,10 +138,24 @@ export class DormSubmissionService {
   // chấp nhận đơn đăng ky
   async acceptSubmission(id: string): Promise<DormSubmission> {
     const submission = await this.dormSubmissionModel.findById(id);
+    const price = 560000;
+    const numberOfMonths = 10;
+    const amount = price * numberOfMonths;
+    const userId = submission.userId;
+    const paymentDate = new Date();
+    const roomNumber = submission.roomNumber;
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     submission.statusHistory.push(submission.status);
+    console.log(submission)
+    const dormPayment = this.dormPaymentService.create({
+      userId,
+      amount,
+      paymentDate,
+      roomNumber,
+    });
+
     submission.status = DormSubmissionStatus.ACCEPTED;
     return submission.save();
   }

@@ -1,4 +1,4 @@
-import Paper from '@mui/material/Paper';
+import DemoPaper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 import style from './Room.module.css';
@@ -83,7 +83,7 @@ const Room = () => {
                 {
                     roleId === 'USERS' ?
                         <RoomStudent filterBlock={filterBlock} />
-                        : <div style={{ width: '98%', height: '96vh', paddingTop: '10px', marginTop: 8, backgroundColor: "#fff", borderRadius: 10 }}>
+                        : <div style={{ width: '98%', height: '100%', paddingTop: '10px', marginTop: 8, backgroundColor: "#fff", borderRadius: 10, marginBottom: '20px' }}>
                             <StatusRoom />
                             <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -95,8 +95,8 @@ const Room = () => {
                             <TableData filterBlock={filterBlock} />
                         </div>
                 }
-                {/* 
-                <div style={{ display: 'flex', flexDirection: "column", alignItems: 'center', height: "80%", marginLeft: 20 }}>
+
+                {/* <div style={{ display: 'flex', flexDirection: "column", alignItems: 'center', height: "80%", marginLeft: 20 }}>
                     <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('')}>
                         <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
