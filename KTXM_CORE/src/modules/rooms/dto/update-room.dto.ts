@@ -25,6 +25,9 @@ export class UpdateRoomDto {
     waterNumber: number;
 
     @IsOptional()
+    electricityId: string;
+
+    @IsOptional()
     electricityNumber: number;
 
     @IsOptional()

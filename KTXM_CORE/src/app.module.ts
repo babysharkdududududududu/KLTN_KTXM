@@ -21,6 +21,7 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { RoomsModule } from './modules/rooms/rooms.module';
 import { SocketModule } from './socketgateway/socket.module';
 import { StudentDisciplineModule } from './modules/student-discipline/student-discipline.module';
+import { DormBillModule } from './modules/dorm_bill/dorm_bill.module';
 
 @Module({
   imports: [
@@ -76,6 +77,7 @@ import { StudentDisciplineModule } from './modules/student-discipline/student-di
     ContractsModule,
     MaintenanceModule,
     StudentDisciplineModule,
+    DormBillModule,
   ],
   controllers: [AppController],
   providers: [

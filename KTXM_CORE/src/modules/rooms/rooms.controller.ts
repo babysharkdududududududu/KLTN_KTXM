@@ -1,5 +1,5 @@
 import { Public } from '@/decorator/customize';
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put, UseInterceptors } from '@nestjs/common';
 import { EquipmentService } from '../equipment/equipment.service';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { RoomsService } from './rooms.service';
@@ -61,4 +61,14 @@ export class RoomsController {
     return this.roomsService.importRooms(usersData);
   }
 
+  @Put(':roomNumber/update-numbers')
+  @Public()
+  async updateElectricAndWaterNumber(
+    @Param('roomNumber') roomNumber: string,
+    @Body() body: { waterNumber: number; electricityNumber: number },
+  ) {
+    const { waterNumber, electricityNumber } = body;
+    const updatedRoom = await this.roomsService.updateElectricAndWaterNumber(roomNumber, waterNumber, electricityNumber);
+    return updatedRoom;
+  }
 }

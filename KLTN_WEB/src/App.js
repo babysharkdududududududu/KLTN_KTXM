@@ -22,6 +22,7 @@ import Room from './Rooms/Room';
 import Setting from './Setting/Setting';
 import Statistical from './Statistical/Statistical';
 import SuccessPage from './Payment/Success';
+import DormBill from './DormBill/DormBill';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,6 +92,7 @@ const UserConsumerWrapper = ({ isLoggedIn, handleLogout, handleLoginSuccess }) =
           <Route path="/discipline" element={isLoggedIn ? <Layout onLogout={handleLogout}><Discipline /></Layout> : <Navigate to="/" />} />
           <Route path="/success" element={isLoggedIn ? <Layout onLogout={handleLogout}><SuccessPage /></Layout> : <Navigate to="/" />} />
           <Route path="/payment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Payment /></Layout> : <Navigate to="/" />} />
+          <Route path="/dorm-bill" element={isLoggedIn ? <Layout onLogout={handleLogout}><DormBill /></Layout> : <Navigate to="/" />} />
         </Routes>
       </Router>
     </WebSocketProvider>
