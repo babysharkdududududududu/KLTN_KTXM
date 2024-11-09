@@ -147,7 +147,7 @@ const Home = () => {
                     </Box>
                 </Grid>
                 <Grid item xs={6} sm={4} md={2}>
-                    <Box sx={{ ...boxStyle, height: 100, }} onClick={() => navigate('/room')}>
+                    <Box sx={{ ...boxStyle, height: 100, }} onClick={() => navigate('/dorm-bill')}>
                         <IconButton sx={{ color: '#4da1e8' }}>
                             <AttachMoneyIcon fontSize="medium" /> {/* Hoặc ReceiptIcon */}
                         </IconButton>
