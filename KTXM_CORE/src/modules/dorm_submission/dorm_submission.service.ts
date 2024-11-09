@@ -9,6 +9,7 @@ import { ContractsService } from '../contracts/contracts.service';
 import { Room } from '../rooms/entities/room.entity';
 import { User } from '../users/schemas/user.schema';
 import { Contract } from '../contracts/entities/contract.entity';
+import { log } from 'console';
 
 @Injectable()
 export class DormSubmissionService {
@@ -69,16 +70,29 @@ export class DormSubmissionService {
     }
   }
 
-
+  // get all submission with status
   async findAll() {
     try {
       const dormSubmissions = await this.dormSubmissionModel.find().exec();
-      return dormSubmissions;
+      const statusCount = dormSubmissions.reduce((acc, submission) => {
+        const status = submission.status;
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+      const totalByStatus = dormSubmissions.length;
+      return {
+        statusCode: 200,
+        message: '',
+        data: dormSubmissions,
+        totalByStatus: statusCount,
+        total: totalByStatus,
+      };
     } catch (error) {
       console.error('Error fetching dorm submissions:', error);
       throw new Error('Failed to fetch dorm submissions');
     }
   }
+
 
   // find by settingId
   async findBySettingId(settingId: string) {

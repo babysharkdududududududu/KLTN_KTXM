@@ -15,9 +15,6 @@ const EquipmentQRCode = ({ equipment }) => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '20px' }}>
-            <Typography variant="h6" sx={{ marginBottom: '10px' }}>
-                Mã QR của thiết bị
-            </Typography>
             <QRCodeCanvas value={qrData} />
         </Box>
     );

@@ -11,21 +11,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import styles from './Maintenance.module.css';
 
-const statusColors = {
-    1: '#4caf50',
-    2: '#1976d2',
-    3: '#ff9800',
-    4: '#9c27b0',
-    5: '#4caf50',
-};
+const statusColors = { 1: '#4caf50', 2: '#1976d2', 3: '#ff9800', 4: '#9c27b0', 5: '#4caf50', };
 
-const statusText = {
-    1: 'Hoạt động',
-    2: 'Kiểm tra',
-    3: 'Xử lý',
-    4: 'Sửa chữa',
-    5: 'Hoàn thành',
-};
+const statusText = { 1: 'Hoạt động', 2: 'Kiểm tra', 3: 'Xử lý', 4: 'Sửa chữa', 5: 'Hoàn thành', };
 
 const Maintenance = () => {
     const [maintenanceData, setMaintenanceData] = useState([]);
@@ -38,6 +26,7 @@ const Maintenance = () => {
             if (Array.isArray(response.data.data)) {
                 const sortedData = response.data.data.sort((a, b) => new Date(b.reportedAt) - new Date(a.reportedAt));
                 setMaintenanceData(sortedData);
+                console.log("Maintenance data:", sortedData);
             } else {
                 console.error("Dữ liệu trả về không phải là một mảng:", response.data);
             }
@@ -80,9 +69,9 @@ const Maintenance = () => {
                     onChange={(date) => setSelectedDate(date)}
                     dateFormat="MM/yyyy"
                     showMonthYearPicker
-                    className={styles.datePicker} // Apply custom styles
-                    popperClassName={styles.datePicker__calendar} // Style for calendar popper
-                    wrapperClassName={styles.datePicker__input} // Style for input wrapper
+                    className={styles.datePicker}
+                    popperClassName={styles.datePicker__calendar}
+                    wrapperClassName={styles.datePicker__input}
                 />
             </Box>
 
@@ -90,7 +79,7 @@ const Maintenance = () => {
                 {Array.isArray(filteredData) && filteredData.map((item, index) => (
                     <Grid item xs={12} sm={6} md={3} key={index}>
                         <Paper elevation={2} sx={{ borderRadius: '8px', overflow: 'hidden', backgroundColor: '#fff' }}>
-                            <CardHeader title={<Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>{item.item}</Typography>}
+                            <CardHeader title={<Typography variant="h6" sx={{ fontWeight: 'bold', color: '#fff' }}>{item.item} { }</Typography>}
                                 subheader={`Trạng thái: ${statusText[item.status]}`}
                                 avatar={
                                     <TimelineDot sx={{ backgroundColor: statusColors[item.status] }}>
