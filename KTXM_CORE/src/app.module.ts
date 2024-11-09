@@ -22,6 +22,7 @@ import { RoomsModule } from './modules/rooms/rooms.module';
 import { SocketModule } from './socketgateway/socket.module';
 import { StudentDisciplineModule } from './modules/student-discipline/student-discipline.module';
 import { StatisticModule } from './modules/statistic/statistic.module';
+import { DormBillModule } from './modules/dorm_bill/dorm_bill.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { StatisticModule } from './modules/statistic/statistic.module';
     ContractsModule,
     MaintenanceModule,
     StudentDisciplineModule,
+    DormBillModule,
   ],
   controllers: [AppController],
   providers: [

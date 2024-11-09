@@ -62,6 +62,10 @@ export class Room {
     @Prop({ default: 0 })
     waterNumber: number;
 
+    // id thiết bị điện
+    @Prop()
+    electricityId: string;
+
     @Prop({ default: 0 })
     electricityNumber: number;
 

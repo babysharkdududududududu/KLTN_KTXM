@@ -26,6 +26,9 @@ export class CreateRoomDto {
     @IsNotEmpty({ message: 'block không được để trống' })
     block: string;
 
+    @IsOptional()
+    electricityId: string;
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => Equipment)

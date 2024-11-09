@@ -74,14 +74,10 @@ export class DormPaymentController {
     });
   }
 
-
-
   @Get('/return')
   returnPayment(@Res() res: Response) {
     res.render('return'); // Trả về trang trạng thái
   }
-
-
 
   @Get(':userId')
   @Public()
@@ -130,9 +126,5 @@ export class DormPaymentController {
   cancelPayment(@Res() res: Response) {
     res.render('cancel'); // Trả về trang hủy
   }
-
-
-
-
 
 }
