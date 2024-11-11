@@ -66,6 +66,7 @@ export const getDormSubmissionRoute = `${host}/dorm-submission`;
 export const checkSubmit = `${host}/dorm-submission/exists`;
 export const getBySettingId = `${host}/dorm-submission/setting`;
 export const getDormSubmissionByUserId = `${host}/dorm-submission/user/`;
+export const getDormSubmissionStatistical = `${host}/dorm-submission/`;
 
 // status of submit
 // Router cho trạng thái đã chấp nhận

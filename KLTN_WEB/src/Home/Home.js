@@ -14,7 +14,8 @@ import { useWebSocket } from '../Context/WebSocketContext';
 import AvailableSlot from './AvailableSlot/AvailableSlot';
 import GavelIcon from '@mui/icons-material/Gavel';
 import iuh from '../Payment/asset/iuh.png';
-
+import Lottie from 'lottie-react';
+import helloAnimation from './asset/hello.json';
 
 import { useUser } from '../Context/Context';
 import style from './Home.module.css';
@@ -23,6 +24,9 @@ import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
 import TotalStudent from './components/TotalStudent';
 import Discipline from './Discipline/Discipline';
+import { keyframes } from '@emotion/react'; // Import keyframes từ Emotion
+import { ReactTyped } from 'react-typed';
+
 
 const Home = () => {
     const navigate = useNavigate();
@@ -41,7 +45,6 @@ const Home = () => {
         }
         setPrevNoti(numberNoti);
     }, [numberNoti, prevNoti]);
-
     const handleClick = () => {
         navigate('/success');
         updateNotificationCount(0);
@@ -53,16 +56,27 @@ const Home = () => {
         <div className={style['home-container']}>
             <Grid container spacing={3} justifyContent="center" alignItems="center" style={{ marginBottom: '20px' }}>
                 <Grid item xs={12}>
-                    <Box sx={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: "#f5f5f5", borderRadius: '8px', minHeight: { xs: '30px', sm: '30px' }, padding: { xs: 1, sm: 3 }, }}>
-                        <Box component="img" src={iuh} alt="iuh" sx={{ position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', height: { xs: '30px', sm: '70px' }, marginRight: '10px', }} />
-                        <Typography variant="h6" sx={{ color: '#4da1e8', fontSize: { xs: '16px', sm: '20px' }, textAlign: 'center', marginLeft: { xs: '60px', sm: '0px' }, }}>
-                            Hệ thống quản lý ký túc xá
+                    <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', background: "#f5f5f5", borderRadius: '8px', maxHeight: { xs: '30px', sm: '30px' }, padding: { xs: 1, sm: 3 }, }}>
+                        <Box component="img" src={iuh} alt="iuh" sx={{ flex: 1, position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', height: { xs: '30px', sm: '70px' }, marginRight: '10px', }} />
+                        <Typography variant="h6" sx={{ color: '#4da1e8', fontSize: { xs: '18px', sm: '24px' }, textAlign: 'center', flexGrow: 1, fontWeight: 'bold', letterSpacing: '0.2em', background: 'linear-gradient(90deg, #4da1e8, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginLeft: { xs: '40px', sm: '0px' }, padding: '10px 20px', backgroundColor: 'rgba(255, 255, 255, 0.1)', textTransform: 'uppercase', }}>
+                            <ReactTyped
+                                strings={['Hệ thống quản lý ký túc xá']}
+                                typeSpeed={100}
+                                backSpeed={50}
+                                loop={true}
+                                cursor={'|'}
+                                showCursor={true}
+                                fadeIn={true}
+                                backDelay={10000}
+                                startDelay={500}
+                            />
                         </Typography>
+                        <Lottie sx={{ flex: 1, }} animationData={helloAnimation} loop={true} style={{ width: '180px', height: '150px', textAlign: 'center', alignSelf: 'center', marginTop: '10px' }} />
                     </Box>
                 </Grid>
             </Grid>
 
-            <Grid container spacing={3} justifyContent="center" alignItems="stretch">
+            <Grid container spacing={2} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
                     <Box sx={{ ...boxStyle, overflow: 'auto', flex: 1 }}>
                         <UserInfo />

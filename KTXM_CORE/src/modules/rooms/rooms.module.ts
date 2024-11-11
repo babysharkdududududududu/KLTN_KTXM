@@ -14,7 +14,7 @@ import { EquipmentService } from '../equipment/equipment.service';
       { name: Equipment.name, schema: EquipmentSchema },
     ]),
     CacheModule.register({
-      ttl: 10000,
+      ttl: 10,
     }), // CacheModule mới
   ],
   controllers: [RoomsController],

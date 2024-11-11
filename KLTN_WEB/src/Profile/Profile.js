@@ -34,6 +34,8 @@ const Profile = () => {
             const response = await axios.get(getUserByIdRoute + userId);
             setUser(response.data.data);
             setFormData(response.data.data);
+            console.log("User data:", response.data.data);
+
         } catch (err) {
             console.log("Error fetching user data:", err);
         }
@@ -96,15 +98,12 @@ const Profile = () => {
                     <Grid container spacing={2}>
                         <Grid item xs={6} sm={6} className={style.listItem}>
                             <label>Mã:</label>
-                            <TextField fullWidth variant="outlined" name="codeId" value={formData.codeId} disabled />
+                            <TextField fullWidth variant="outlined" name="codeId" value={formData.userId} disabled />
                         </Grid>
                         <Grid item xs={6} sm={6} className={style.listItem}>
                             <label>Số điện thoại:</label>
                             <TextField fullWidth variant="outlined" name="phone" value={formData.phone} onChange={isEditing ? handleChange : null} disabled={!isEditing} />
                         </Grid>
-
-
-
                         <Grid item xs={12} sm={6} className={style.listItem}>
                             <label>Địa chỉ:</label>
                             <TextField fullWidth variant="outlined" name="address" value={formData.address} onChange={isEditing ? handleChange : null} disabled={!isEditing} />

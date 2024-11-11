@@ -1,11 +1,12 @@
-import React from "react";
-import styles from './TotalStudent.module.css';
+import React, { useEffect, useState } from "react";
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Brightness1OutlinedIcon from '@mui/icons-material/Brightness1Outlined';
+import { getDormSubmissionStatistical } from "../../API/APIRouter";
+import axios from "axios";
+
 const DemoPaper = styled(Paper)(({ theme }) => ({
-    // width: 350,
     minHeight: 185,
     maxHeight: 200,
     alignItems: "center",
@@ -15,50 +16,115 @@ const DemoPaper = styled(Paper)(({ theme }) => ({
 }));
 
 export default function TotalStudent() {
-    const widths = ['70%', '20%', '10%'];
+    const [status, setStatus] = useState({});
+    const [total, setTotal] = useState(0);
+    const [supTotal, setSupTotal] = useState(0);
+
+    const handleDormSubmissionStatistical = async () => {
+        try {
+            const response = await axios.get(getDormSubmissionStatistical);
+            const responseData = response.data;
+
+            if (responseData.statusCode === 200) {
+                const resultData = responseData.data;
+                console.log("Dorm submission statistical:", resultData.total);
+                const filteredStatus = {
+                    PENDING: resultData.totalByStatus.PENDING || 0,
+                    PAID: resultData.totalByStatus.PAID || 0,
+                    ROOM_REQUESTED: resultData.totalByStatus.ROOM_REQUESTED || 0,
+                };
+                const calculatedTotal = Object.values(filteredStatus).reduce((acc, value) => acc + value, 0);
+                setTotal(calculatedTotal);
+                setSupTotal(resultData.total || 0); // Ensure supTotal is set properly
+                console.log("supTotal", resultData.total); // Log the value you're assigning
+                setStatus(filteredStatus);
+            } else {
+                console.warn("Unexpected response format:", responseData);
+            }
+        } catch (err) {
+            console.error("Error fetching dorm submission statistical:", err);
+        }
+    };
+
+    useEffect(() => {
+        handleDormSubmissionStatistical();
+    }, []);
+
+    const widths = Object.values(status).map(value => `${(value / total) * 100}%`);
+
     return (
         <div>
-            <DemoPaper square={false} >
+            <DemoPaper square={false}>
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
                     <GroupOutlinedIcon style={{ fontSize: 25, color: '#53556a' }} />
-                    <p style={{ fontSize: 15, marginLeft: '10px', color: '#53556a' }}>Tất cả sinh viên</p>
+                    <p style={{ fontSize: 15, marginLeft: '10px', color: '#53556a' }}>Đơn đăng ký</p>
                 </div>
                 <div style={{ borderBottom: '1px solid #ebebeb', width: '95%' }}></div>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: '100%' }}>
-                    <p style={{ fontSize: 25, color: '#53556a', margin: 0, fontWeight: "bold" }}>4390</p>
-                    <p style={{ fontSize: 15, color: 'green', margin: 0 }}>17% so với tháng trước</p>
+                    <p style={{ fontSize: 15, color: '#53556a', margin: 0, fontWeight: "bold", padding: 10 }}>Tổng đơn đăng ký: {supTotal}</p>
                 </div>
-                <ChartStudent widths={widths} />
+                <ChartStudent widths={widths} status={status} total={total} />
+                {/* <TotalChart supTotal={supTotal} /> */}
                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: '100%', marginTop: '10px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ width: '15px', height: '15px', backgroundColor: '#4d84f0', borderRadius: '5px' }} />
-                        <p style={{ fontSize: 15, color: '#53556a', margin: 0, marginLeft: '5px' }}>Có 4390 sinh viên</p>
-                    </div>
-                    <Brightness1OutlinedIcon style={{ fontSize: 10, color: '#53556a', marginRight: '5px', marginLeft: '5px' }} />
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ width: '15px', height: '15px', backgroundColor: '#41cb91', borderRadius: '5px' }} />
-                        <p style={{ fontSize: 15, color: '#53556a', margin: 0, marginLeft: '5px' }}>50 trống</p>
-                    </div>
-                    <Brightness1OutlinedIcon style={{ fontSize: 10, color: '#53556a', marginRight: '5px', marginLeft: '5px' }} />
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ width: '15px', height: '15px', backgroundColor: '#ebb426', borderRadius: '5px' }} />
-                        <p style={{ fontSize: 15, color: '#53556a', margin: 0, marginLeft: '5px' }}>30 dự bị</p>
-                    </div>
+                    {Object.entries(status).map(([key, value], index) => (
+                        <div key={key} style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                            <div style={{ width: '15px', height: '15px', backgroundColor: getColorByIndex(index), borderRadius: '5px' }} />
+                            <p style={{ fontSize: 10, color: '#53556a', margin: 0, marginLeft: '5px' }}>
+                                {`${key === 'PENDING' ? 'Chờ duyệt' : key === 'PAID' ? 'Đã thanh toán' : key === 'ROOM_REQUESTED' ? 'Chèn phòng' : ''}: ${value}`}
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </DemoPaper>
         </div>
     );
 }
 
-const ChartStudent = ({ widths }) => {
+const getColorByIndex = (index) => {
+    const colors = ['#4d84f0', '#41cb91', '#ebb426'];
+    return colors[index % colors.length];
+};
+
+const ChartStudent = ({ widths, status, total }) => {
+    const widthValues = Object.values(status).map(value => (total > 0 ? (value / total) * 100 : 0));
+
     return (
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: '100%', marginTop: '10px' }}>
-            <div className={styles.expandAnimation} style={{ width: widths[0], height: '30px', backgroundColor: '#4d84f0', borderRadius: '5px', display: 'inline-block' }} />
-            <div style={{ width: '5px', height: '25px', backgroundColor: '#d7d7d7', borderRadius: '5px', marginRight: '5px', marginLeft: '5px' }} />
-            <div className={styles.expandAnimationDelay1} style={{ width: widths[1], height: '30px', backgroundColor: '#41cb91', borderRadius: '5px', display: 'inline-block' }} />
-            <div style={{ width: '5px', height: '25px', backgroundColor: '#d7d7d7', borderRadius: '5px', marginRight: '5px', marginLeft: '5px' }} />
-            <div className={styles.expandAnimationDelay2} style={{ width: widths[2], height: '30px', backgroundColor: '#ebb426', borderRadius: '5px', display: 'inline-block' }} />
+        <div style={{ width: '100%', marginTop: '10px' }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+                {Object.keys(status).map((key, index) => (
+                    <div
+                        key={key}
+                        style={{
+                            width: `${widthValues[index]}%`,
+                            height: '30px',
+                            backgroundColor: getColorByIndex(index),
+                            borderRadius: '5px',
+                            display: 'inline-block',
+                            transition: 'width 1s ease-in-out',
+                        }}
+                    />
+                ))}
+            </div>
         </div>
     );
-};;
-
+};
+const TotalChart = ({ supTotal }) => {
+    return (
+        <div style={{ width: '100%', marginTop: '10px' }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
+                <div
+                    style={{
+                        width: '100%',
+                        height: '30px',
+                        backgroundColor: '#4d84f0',
+                        borderRadius: '5px',
+                        transition: 'width 1s ease-in-out',
+                    }}
+                />
+                <div style={{ marginLeft: '10px', fontWeight: 'bold' }}>
+                    Tổng số sinh viên: {supTotal}
+                </div>
+            </div>
+        </div>
+    );
+};

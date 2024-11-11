@@ -137,7 +137,7 @@ const MainMenu = ({ onLogout }) => {
               </Tooltip>
               <div className='border-line' />
               <Tooltip title="Trang thiết bị">
-                <IconButton onClick={() => navigate('/equiment')}>
+                <IconButton onClick={() => navigate('/equipment')}>
                   <SettingsOutlinedIcon className="menu-icon" />
                 </IconButton>
               </Tooltip>

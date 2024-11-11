@@ -50,6 +50,7 @@
     "dayjs": "1.11.12",
     "ejs": "^3.1.10",
     "handlebars": "4.7.8",
+    "lottie-node": "^2.0.0",
     "mongoose": "8.5.1",
     "multer": "^1.4.5-lts.1",
     "multer-storage-cloudinary": "^4.0.0",

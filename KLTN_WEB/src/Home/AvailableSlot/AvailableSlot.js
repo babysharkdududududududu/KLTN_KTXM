@@ -54,13 +54,9 @@ const AvailableSlot = () => {
         try {
             const rs = await axios.get(`${getAllRoomRoute}`);
             const roomData = rs.data.data.results;
-            console.log("Room data:", roomData);
             const totalAvailableSlot = roomData.reduce((acc, room) => acc + room.availableSpot, 0);
             const totalCapacity = roomData.reduce((acc, room) => acc + room.capacity, 0);
             setTotalAvailableSlot(totalAvailableSlot);
-            console.log("Total capacity slot:", totalCapacity);
-            console.log("Total available slot:", totalAvailableSlot);
-            console.log("Room data:");
         }
         catch (err) {
             console.error(err);
@@ -86,11 +82,8 @@ const AvailableSlot = () => {
     const getRoomById = async (roomNumber) => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setRoomInfo(data.data.room);
+            setRoomInfo(data.data.room, "aaaaaaaaaaa");
             setRoomNumber(data.data.room.roomNumber);
-            console.log("Room number:", roomNumber);
-            console.log("Room info:", roomInfo);
-
             setAvailableSlot(data.data.room.availableSpot);
             setCapacity(data.data.room.capacity);
             setLoading(false);

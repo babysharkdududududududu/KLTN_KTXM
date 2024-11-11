@@ -11,11 +11,17 @@
     animation: expand 1s forwards;
 }
 
+.expandAnimationDelay0 {
+    animation: expand 1s forwards 0.3s;
+}
+
 .expandAnimationDelay1 {
-    animation: expand 1s forwards 0.5s;
+    animation: expand 1s forwards 0.6s;
 }
 
 .expandAnimationDelay2 {
-    animation: expand 1s forwards 1s;
+    animation: expand 1s forwards 0.9s;
 }
-
+.expandAnimationRemaining {
+    animation: expand 1s forwards 1.5s;
+}
