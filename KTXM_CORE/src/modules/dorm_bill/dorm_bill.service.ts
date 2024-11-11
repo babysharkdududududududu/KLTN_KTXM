@@ -176,6 +176,11 @@ export class DormBillService {
     return dormBill.save();
   }
 
+  // webhook-url for payos
+  async handleWebhook(body: any) {
+    console.log('Webhook body:', body);
+    return;
+  }
 
   findAll() {
     return `This action returns all dormBill`;

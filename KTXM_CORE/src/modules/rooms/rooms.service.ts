@@ -17,7 +17,6 @@ export class RoomsService {
   private readonly LOGIN_URL = "/v1.0/token?grant_type=1";
   private readonly ATTRIBUTES_URL = "/v2.0/cloud/thing/{device_id}/shadow/properties";
 
-
   constructor(
     @InjectModel(Room.name)
     private roomModel: Model<Room>,
