@@ -6,8 +6,11 @@ import { Chart, LineElement, PointElement, LinearScale, CategoryScale, Title, To
 Chart.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
 
 const Dashboard = ({ roomByBlockAndFloor }) => {
-    const [selectedBlock, setSelectedBlock] = useState('');
-    const [selectedFloor, setSelectedFloor] = useState('');
+    const defaultBlock = 'G';
+    const defaultFloor = '2';
+
+    const [selectedBlock, setSelectedBlock] = useState(defaultBlock);
+    const [selectedFloor, setSelectedFloor] = useState(defaultFloor);
     const [chartData, setChartData] = useState({
         labels: [],
         datasets: [
@@ -18,7 +21,7 @@ const Dashboard = ({ roomByBlockAndFloor }) => {
                 borderColor: '#4caf50',
                 borderWidth: 2,
                 fill: true,
-                tension: 0.4, // Smooth curve for the line
+                tension: 0.4,
             },
             {
                 label: 'Sức chứa',
@@ -43,64 +46,72 @@ const Dashboard = ({ roomByBlockAndFloor }) => {
 
     // Update chartData when selectedBlock or selectedFloor changes
     useEffect(() => {
-        const data = roomByBlockAndFloor[selectedBlock]?.[selectedFloor] || [];
-        const labels = data.map((room) => room.roomNumber);
-        const availableSpots = data.map((room) => room.availableSpot);
-        const capacities = data.map((room) => room.capacity);
+        const blockData = roomByBlockAndFloor[selectedBlock];
+        if (blockData) {
+            const floorData = blockData[selectedFloor];
+            if (floorData && floorData.length > 0) {
+                const labels = floorData.map((room) => room.roomNumber);
+                const availableSpots = floorData.map((room) => room.availableSpot);
+                const capacities = floorData.map((room) => room.capacity);
 
-        setChartData({
-            labels,
-            datasets: [
-                {
-                    label: 'Chỗ trống',
-                    data: availableSpots,
-                    backgroundColor: 'rgba(76, 175, 80, 0.5)',
-                    borderColor: '#4caf50',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                },
-                {
-                    label: 'Sức chứa',
-                    data: capacities,
-                    backgroundColor: 'rgba(244, 67, 54, 0.5)',
-                    borderColor: '#f44336',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4,
-                }
-            ],
-        });
+                setChartData({
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Chỗ trống',
+                            data: availableSpots,
+                            backgroundColor: 'rgba(76, 175, 80, 0.5)',
+                            borderColor: '#4caf50',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                        },
+                        {
+                            label: 'Sức chứa',
+                            data: capacities,
+                            backgroundColor: 'rgba(244, 67, 54, 0.5)',
+                            borderColor: '#f44336',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                        }
+                    ],
+                });
+            }
+        }
     }, [selectedBlock, selectedFloor, roomByBlockAndFloor]);
 
     useEffect(() => {
         const updateChartData = () => {
-            const newData = roomByBlockAndFloor[selectedBlock]?.[selectedFloor] || [];
-            const availableSpots = newData.map((room) => room.availableSpot);
-            const capacities = newData.map((room) => room.capacity);
+            const blockData = roomByBlockAndFloor[selectedBlock];
+            if (blockData) {
+                const floorData = blockData[selectedFloor];
+                if (floorData && floorData.length > 0) {
+                    const availableSpots = floorData.map((room) => room.availableSpot);
+                    const capacities = floorData.map((room) => room.capacity);
 
-            // Resetting the chart data
-            setChartData(prevData => ({
-                ...prevData,
-                datasets: [
-                    {
-                        ...prevData.datasets[0],
-                        data: availableSpots,
-                    },
-                    {
-                        ...prevData.datasets[1],
-                        data: capacities,
-                    }
-                ],
-            }));
+                    // Resetting the chart data
+                    setChartData(prevData => ({
+                        ...prevData,
+                        datasets: [
+                            {
+                                ...prevData.datasets[0],
+                                data: availableSpots,
+                            },
+                            {
+                                ...prevData.datasets[1],
+                                data: capacities,
+                            }
+                        ],
+                    }));
+                }
+            }
         };
 
         const resetAndUpdateChartData = () => {
             updateChartData(); // Show the correct data first
 
-            // Pause for 3 seconds to allow users to observe
             setTimeout(() => {
-                // Resetting the chart data to random values
                 setChartData(prevData => ({
                     ...prevData,
                     datasets: [
@@ -125,7 +136,7 @@ const Dashboard = ({ roomByBlockAndFloor }) => {
         <Grid container style={{ padding: 20 }}>
             {/* Chart Section */}
             <Grid item xs={12} md={12} style={{ padding: '20px', borderRadius: '12px' }} >
-                <Card style={{ padding: '20px', borderRadius: '12px' }}>
+                <Card style={{ padding: '20px', borderRadius: '12px', background: 'transparent', boxShadow: 'none' }}>
                     <Typography variant="subtitle1" align="center" gutterBottom>
                         Biểu đồ chỗ trống và sức chứa của phòng
                     </Typography>
@@ -151,10 +162,10 @@ const Dashboard = ({ roomByBlockAndFloor }) => {
                                     ))}
                                 </Select>
                             </FormControl>
-                            <FormControl size="small" style={{ minWidth: 100, }}>
+                            <FormControl size="small" style={{ minWidth: 100 }}>
                                 <InputLabel style={{ fontSize: '0.75rem' }}>Tầng</InputLabel>
                                 <Select value={selectedFloor} onChange={handleFloorChange} disabled={!selectedBlock} style={{ height: 30, width: 70 }}>
-                                    {selectedBlock && Object.keys(roomByBlockAndFloor[selectedBlock]).map((floor) => (
+                                    {selectedBlock && roomByBlockAndFloor[selectedBlock] && Object.keys(roomByBlockAndFloor[selectedBlock]).map((floor) => (
                                         <MenuItem key={floor} value={floor}>{floor}</MenuItem>
                                     ))}
                                 </Select>

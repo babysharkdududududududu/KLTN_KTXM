@@ -47,17 +47,123 @@ export class StatisticService {
     const dormSubmission = await this.dormsubmission.findAll();
     const totalDormSubmission = dormSubmission.data.length;
     const totalByStatus = dormSubmission.totalByStatus;
+    const settingIds = dormSubmission.settingIds; // Đây là mảng settingIds
+    const nameSettingArray = dormSubmission.nameSetting; // Đây là mảng nameSettingArray
+
+    // Chuyển đổi mảng nameSetting thành đối tượng nameSetting
+    const nameSetting = {};
+
+
+    settingIds.forEach((id, index) => {
+      if (index < Number(nameSettingArray.length)) {
+        nameSetting[id] = nameSettingArray[index];
+      }
+    });
+
+    const submissionBySetting: { [key: string]: any[] } = {};
+    dormSubmission.data.forEach(submission => {
+      const settingId = submission.settingId;
+      if (!submissionBySetting[settingId]) {
+        submissionBySetting[settingId] = [];
+      }
+      submissionBySetting[settingId].push(submission);
+    });
+
+    const submissionCountsByStatus: { [key: string]: any } = {};
+
+    for (const settingId in submissionBySetting) {
+      const displayName = nameSetting[settingId];
+      if (!displayName) {
+        console.warn(`Không tìm thấy tên cho settingId: ${settingId}`);
+        continue;
+      }
+      if (!submissionCountsByStatus[displayName]) {
+        submissionCountsByStatus[displayName] = {};
+      }
+      submissionBySetting[settingId].forEach(submission => {
+        const status = submission.status;
+        if (!submissionCountsByStatus[displayName][status]) {
+          submissionCountsByStatus[displayName][status] = 0;
+        }
+        submissionCountsByStatus[displayName][status]++;
+      });
+    }
+
+    console.log(submissionCountsByStatus);
 
     return {
       totalDormSubmission,
-      totalByStatus
+      totalByStatus,
+      settingIds,
+      nameSetting,
+      submissionBySetting,
+      submissionCountsByStatus
     };
   }
 
+
+
+
+
   async getMaintenance() {
     const maintenance = await this.Maintenance.findAll();
-    return maintenance;
+    // thống kê số lượng bảo trì theo năm tháng
+    const maintenanceByYearMonth = {};
+    maintenance.forEach(maintenanceRecord => {
+      const yearMonth = maintenanceRecord.reportedAt.toISOString().substring(0, 7);  // Extract year-month (e.g., "2024-09")
+      if (!maintenanceByYearMonth[yearMonth]) {
+        maintenanceByYearMonth[yearMonth] = [];
+      }
+      maintenanceByYearMonth[yearMonth].push(maintenanceRecord);
+    });
+    const maintenanceCountsByYearMonth = {};
+    for (const yearMonth in maintenanceByYearMonth) {
+      maintenanceCountsByYearMonth[yearMonth] = maintenanceByYearMonth[yearMonth].length;
+    }
+    // thống kê số lượng bảo trì theo năm
+    const maintenanceByYear = {};
+    maintenance.forEach(maintenanceRecord => {
+      const year = maintenanceRecord.reportedAt.toISOString().substring(0, 4);
+      if (!maintenanceByYear[year]) {
+        maintenanceByYear[year] = [];
+      }
+      maintenanceByYear[year].push(maintenanceRecord);
+    });
+    const maintenanceCountsByYear = {};
+    for (const year in maintenanceByYear) {
+      maintenanceCountsByYear[year] = maintenanceByYear[year].length;
+    }
+    // thống kê số lượng bảo trì theo năm và phòng
+    const maintenanceByYearRoom = {};
+    maintenance.forEach(maintenanceRecord => {
+      const year = maintenanceRecord.reportedAt.toISOString().substring(0, 4);
+      const room = maintenanceRecord.roomNumber;
+      if (!maintenanceByYearRoom[year]) {
+        maintenanceByYearRoom[year] = {};
+      }
+      if (!maintenanceByYearRoom[year][room]) {
+        maintenanceByYearRoom[year][room] = [];
+      }
+      maintenanceByYearRoom[year][room].push(maintenanceRecord);
+    });
+    const maintenanceCountsByYearRoom = {};
+    for (const year in maintenanceByYearRoom) {
+      maintenanceCountsByYearRoom[year] = {};
+      for (const room in maintenanceByYearRoom[year]) {
+        maintenanceCountsByYearRoom[year][room] = maintenanceByYearRoom[year][room].length;
+      }
+    }
+
+    return {
+      maintenanceByYearMonth,
+      maintenanceCountsByYearMonth,
+      maintenanceByYear,
+      maintenanceCountsByYear,
+      maintenanceByYearRoom,
+      maintenanceCountsByYearRoom
+    }
   }
+
 
 
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import style from './Statistical.module.css';
 import axios from 'axios';
-import { getRoomRoute, getStatisticalRoomRoute, getStatisticalDormRoute } from '../API/APIRouter';
+import { getRoomRoute, getStatisticalRoomRoute, getStatisticalDormRoute, getSubmissionNameAndId } from '../API/APIRouter';
 import Dashboard from './RoomWithBlockAndFloor';
 import { Grid } from '@mui/material';
 import TabsComponent from './TabsComponent'; // Import the TabsComponent
@@ -19,6 +19,7 @@ const Statistical = () => {
     const [totalDorm, setTotalDorm] = useState(0);
     const [totalDormStatus, setTotalDormStatus] = useState({});
     const [roomByBlockAndFloor, setRoomByBlockAndFloor] = useState({});
+    const [pieDataBySetting, setPieDataBySetting] = useState([]);
 
     const fetchRooms = async () => {
         try {
@@ -28,6 +29,7 @@ const Statistical = () => {
             console.error("Error fetching rooms:", err);
         }
     };
+
 
     const fetchStatisticalRoom = async () => {
         try {
@@ -47,11 +49,35 @@ const Statistical = () => {
             const { data } = await axios.get(getStatisticalDormRoute);
             setTotalDorm(data.data.totalDormSubmission);
             setTotalDormStatus(data.data.totalByStatus);
+            if (data.data.submissionBySetting) {
+                setPieDataBySetting(preparePieChartData(data.data.submissionBySetting));
+            }
         } catch (err) {
             console.error("Error fetching statistical dorm data:", err);
         }
     };
 
+    const preparePieChartData = (submissionBySetting) => {
+        const statusMap = {
+            PENDING: 'Chờ xử lý',
+            ACCEPTED: 'Chấp nhận đơn đăng ký',
+            AWAITING_PAYMENT: 'Chờ thanh toán',
+            PAID: 'Đã thanh toán',
+            ASSIGNED: 'Đã xếp phòng',
+            REJECTED: 'Từ chối đơn đăng ký',
+            ROOM_REQUESTED: 'Yêu cầu phòng'
+        };
+        return Object.keys(submissionBySetting).map((settingId) => ({
+            settingId,
+            data: Object.entries(
+                submissionBySetting[settingId].reduce((counts, { status }) => {
+                    const mappedStatus = statusMap[status] || status;
+                    counts[mappedStatus] = (counts[mappedStatus] || 0) + 1;
+                    return counts;
+                }, {})
+            ).map(([name, value]) => ({ name, value }))
+        }));
+    };
     useEffect(() => {
         fetchRooms();
         fetchStatisticalRoom();
@@ -170,16 +196,14 @@ const Statistical = () => {
                         </ResponsiveContainer>
                     )}
                 </div>
-
-
             </div>
 
             <Grid container spacing={0}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={6} >
                     <Dashboard roomByBlockAndFloor={roomByBlockAndFloor} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <DormStatusPieChart data={dormStatusPieData} />
+                    <DormStatusPieChart data={pieDataBySetting} />
                 </Grid>
             </Grid>
         </div>
