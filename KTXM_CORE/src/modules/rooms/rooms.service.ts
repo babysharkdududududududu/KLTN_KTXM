@@ -16,7 +16,8 @@ export class RoomsService {
   private readonly BASE_URL = "https://openapi.tuyaus.com";
   private readonly LOGIN_URL = "/v1.0/token?grant_type=1";
   private readonly ATTRIBUTES_URL = "/v2.0/cloud/thing/{device_id}/shadow/properties";
-
+  private readonly client_id = "nguhmjjpxy75ke7qr5fa";
+  private readonly client_secret = "e8bf644b0f8e40108004fcf14fbc202a";
 
   constructor(
     @InjectModel(Room.name)
