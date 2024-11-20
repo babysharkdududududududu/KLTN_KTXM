@@ -107,7 +107,7 @@ export class StatisticService {
 
   async getMaintenance() {
     const maintenance = await this.Maintenance.findAll();
-    // thống kê số lượng bảo trì theo năm tháng
+    // Thống kê số lượng bảo trì theo năm tháng
     const maintenanceByYearMonth = {};
     maintenance.forEach(maintenanceRecord => {
       const yearMonth = maintenanceRecord.reportedAt.toISOString().substring(0, 7);  // Extract year-month (e.g., "2024-09")
@@ -116,9 +116,21 @@ export class StatisticService {
       }
       maintenanceByYearMonth[yearMonth].push(maintenanceRecord);
     });
-    const maintenanceCountsByYearMonth = {};
+
+    // Thống kê theo năm và tháng
+    const maintenanceCountsByYearr = {};
+
+    // Duyệt qua tất cả year-month để tách theo từng năm
     for (const yearMonth in maintenanceByYearMonth) {
-      maintenanceCountsByYearMonth[yearMonth] = maintenanceByYearMonth[yearMonth].length;
+      const [year, month] = yearMonth.split('-'); // Tách năm và tháng từ year-month
+      if (!maintenanceCountsByYearr[year]) {
+        maintenanceCountsByYearr[year] = {}; // Tạo một đối tượng cho năm nếu chưa có
+      }
+      if (!maintenanceCountsByYearr[year][month]) {
+        maintenanceCountsByYearr[year][month] = 0; // Khởi tạo tháng với giá trị 0 nếu chưa có
+      }
+      // Tăng số lượng bảo trì cho năm và tháng tương ứng
+      maintenanceCountsByYearr[year][month] += maintenanceByYearMonth[yearMonth].length;
     }
     // thống kê số lượng bảo trì theo năm
     const maintenanceByYear = {};
@@ -155,11 +167,11 @@ export class StatisticService {
     }
 
     return {
-      maintenanceByYearMonth,
-      maintenanceCountsByYearMonth,
-      maintenanceByYear,
+      // maintenanceByYearMonth,
+      maintenanceCountsByYearr,
+      // maintenanceByYear,
       maintenanceCountsByYear,
-      maintenanceByYearRoom,
+      // maintenanceByYearRoom,
       maintenanceCountsByYearRoom
     }
   }

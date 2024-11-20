@@ -10,6 +10,8 @@ import InfoDetail from "./InfoDetail";
 import RoomAssignment from './RoomAssignment'; // Import component mới
 import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment } from '../API/APIRouter';
 import { set } from "date-fns";
+import TimeLineStudent from "./TimeLineStudent";
+import { useUser } from "../Context/Context";
 
 const statuses = [
     { id: '', name: 'Tất cả' },
@@ -32,6 +34,7 @@ const ApproveRoom = () => {
     const navigate = useNavigate();
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [statusID, setStatusID] = useState('');
+    const { userId, roleId } = useUser();
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -201,107 +204,111 @@ const ApproveRoom = () => {
             <div style={{ display: 'flex', flexDirection: "row", alignItems: "center" }}>
                 <Typography variant="h6" style={{ flex: 1 }}></Typography>
 
-                <FormControl sx={{ minWidth: 120, marginRight: 3 }}>
-                    <Select
-                        value={setingID}
-                        onChange={handleChange}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Without label' }}
-                        sx={{ height: 35, width: 180 }}
-                    >
-                        {setting.map((item) => (
-                            <MenuItem key={item._id} value={item._id} sx={{ width: 180 }}>
-                                {item.name}
-                            </MenuItem>
-                        ))}
-                        <MenuItem value="">
-                            <em>Tạo mới</em>
-                        </MenuItem>
-                    </Select>
-                </FormControl>
+                {
+                    roleId === 'MANAGER' && (
+                        <>
+                            <FormControl sx={{ minWidth: 120, marginRight: 3 }}>
+                                <Select value={setingID} onChange={handleChange} displayEmpty inputProps={{ 'aria-label': 'Without label' }} sx={{ height: 35, width: 180 }}>
+                                    {setting.map((item) => (
+                                        <MenuItem key={item._id} value={item._id} sx={{ width: 180 }}>
+                                            {item.name}
+                                        </MenuItem>
+                                    ))}
+                                    <MenuItem value="">
+                                        <em>Tạo mới</em>
+                                    </MenuItem>
+                                </Select>
+                            </FormControl>
 
-                <FormControl sx={{ minWidth: 120 }}>
-                    <Select
-                        value={statusID}
-                        onChange={handleChangeStatus}
-                        displayEmpty
-                        inputProps={{ 'aria-label': 'Without label' }}
-                        sx={{ height: 35, width: 180 }}
-                    >
-                        {statuses.map((status) => (
-                            <MenuItem key={status.id} value={status.id} sx={{ width: 180 }}>
-                                {status.name}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+                            <FormControl sx={{ minWidth: 120 }}>
+                                <Select value={statusID} onChange={handleChangeStatus} displayEmpty inputProps={{ 'aria-label': 'Without label' }} sx={{ height: 35, width: 180 }}>
+                                    {statuses.map((status) => (
+                                        <MenuItem key={status.id} value={status.id} sx={{ width: 180 }}> {status.name}</MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+                        </>
+                    )}
 
                 <div style={{ height: "50px", alignItems: 'center', display: 'flex', marginLeft: "10px" }}>
-                    <Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} disabled={!setingID}>Đăng ký</Button>
-                    {setingID !== '' && statusID === 'PAID' && (
-                        <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={handleAutoAsignRoom}>
-                            Tự động xếp phòng
-                        </Button>
-                    )}
-                    {setingID !== '' && statusID === 'ACCEPTED' && (
-                        <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={setAllAcceptedToWaitingPayment}>
-                            Mở thanh toán
-                        </Button>
-                    )}
 
-                    <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button>
+                    {roleId === 'USERS' &&
+                        (<Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} disabled={!setingID}>Đăng ký</Button>)
+                    }
+                    {roleId === 'MANAGER' && (
+                        <>
+                            {setingID !== '' && statusID === 'PAID' && (
+                                <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={handleAutoAsignRoom}>
+                                    Tự động xếp phòng
+                                </Button>
+                            )}
+                            {setingID !== '' && statusID === 'ACCEPTED' && (
+                                <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={setAllAcceptedToWaitingPayment}>
+                                    Mở thanh toán
+                                </Button>
+                            )}
+                        </>
+                    )
+                    }
+                    {roleId === 'MANAGER' && (<> <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button></>)}
                 </div>
             </div>
-            {!openDetail && (
-                <div style={{ width: '100%', height: '65px', display: "flex", flexDirection: "row", backgroundColor: "#fff", borderRadius: 15, justifyContent: 'space-around', alignItems: 'center' }}>
-                    <div>
-                        <Typography style={{ color: '#464f43' }}>Tổng đơn đăng ký</Typography>
-                        <Typography variant="h6" style={{ fontWeight: 'bold' }}>{filteredStudentData.length}</Typography>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
-                        <div>
-                            <Typography style={{ color: '#464f43' }}>Chờ xử lý</Typography>
-                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'PENDING').length}</Typography>
+            {roleId === 'MANAGER' && (
+                <>
+                    {!openDetail && (
+                        <div style={{ width: '100%', height: '65px', display: "flex", flexDirection: "row", backgroundColor: "#fff", borderRadius: 15, justifyContent: 'space-around', alignItems: 'center' }}>
+                            <div>
+                                <Typography style={{ color: '#464f43' }}>Tổng đơn đăng ký</Typography>
+                                <Typography variant="h6" style={{ fontWeight: 'bold' }}>{filteredStudentData.length}</Typography>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                                <div>
+                                    <Typography style={{ color: '#464f43' }}>Chờ xử lý</Typography>
+                                    <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'PENDING').length}</Typography>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                                <div>
+                                    <Typography style={{ color: '#464f43' }}>Đã chấp nhận</Typography>
+                                    <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'ACCEPTED').length}</Typography>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                                <div>
+                                    <Typography style={{ color: '#464f43' }}>Chờ thanh toán</Typography>
+                                    <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'AWAITING_PAYMENT').length}</Typography>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                                <div>
+                                    <Typography style={{ color: '#464f43' }}>Đã thanh toán</Typography>
+                                    <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'PAID').length}</Typography>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                                <div>
+                                    <Typography style={{ color: '#464f43' }}>Đã xếp phòng</Typography>
+                                    <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'ASSIGNED').length}</Typography>
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
+                                <div>
+                                    <Typography style={{ color: '#464f43' }}>Từ chối</Typography>
+                                    <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'REJECTED').length}</Typography>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
-                        <div>
-                            <Typography style={{ color: '#464f43' }}>Đã chấp nhận</Typography>
-                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'ACCEPTED').length}</Typography>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
-                        <div>
-                            <Typography style={{ color: '#464f43' }}>Chờ thanh toán</Typography>
-                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'AWAITING_PAYMENT').length}</Typography>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
-                        <div>
-                            <Typography style={{ color: '#464f43' }}>Đã thanh toán</Typography>
-                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'PAID').length}</Typography>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
-                        <div>
-                            <Typography style={{ color: '#464f43' }}>Đã xếp phòng</Typography>
-                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'ASSIGNED').length}</Typography>
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                        <div style={{ borderLeft: '2px solid #e5e5e5', height: '40px', marginRight: 10 }}></div>
-                        <div>
-                            <Typography style={{ color: '#464f43' }}>Từ chối</Typography>
-                            <Typography style={{ fontSize: 18, fontWeight: 'bold' }}>{filteredStudentData.filter(student => student.status === 'REJECTED').length}</Typography>
-                        </div>
-                    </div>
-                </div>
-            )}
+                    )}
+                </>
+            )
+            }
+            {roleId === 'USERS' && (<TimeLineStudent />)}
 
             {setingID && (
                 <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", marginTop: '10px', backgroundColor: "#fff", borderRadius: 20, paddingTop: '10px' }}>
@@ -318,7 +325,6 @@ const ApproveRoom = () => {
                     )}
                 </div>
             )}
-
         </div>
     );
 };

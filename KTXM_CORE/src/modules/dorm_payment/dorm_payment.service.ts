@@ -7,8 +7,7 @@ import { DormPayment } from './entities/dorm_payment.entity';
 import { InjectModel } from '@nestjs/mongoose';
 const PayOS = require('@payos/node');
 import { PaymentStatus } from './entities/dorm_payment.entity';
-
-
+const YOUR_DOMAIN = 'http://localhost:3000';
 @Injectable()
 export class DormPaymentService {
   private payos: any;
@@ -33,9 +32,12 @@ export class DormPaymentService {
       orderCode,
       amount: Number(amount),
       description: `Payment`,
-      cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
-      successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
-      returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
+      // cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
+      // successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
+      // returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
+      cancelUrl: `${YOUR_DOMAIN}`,
+      successUrl: `${YOUR_DOMAIN}`,
+      returnUrl: `${YOUR_DOMAIN}`,
     };
 
     try {
@@ -78,131 +80,26 @@ export class DormPaymentService {
     }
   }
 
-  // @Post('callback')
-  // async handlePaymentCallback(@Body() callbackData: any, @Res() res: Response) {
-  //   const { orderCode, status } = callbackData;
-
-  //   try {
-  //     const dormPayment = await this.dormPaymentRepository.findOne({ orderCode });
-  //     if (!dormPayment) {
-  //       return res.status(404).json({ error: 'Payment not found' });
-  //     }
-
-  //     switch (status) {
-  //       case 'SUCCESS':
-  //       case 'PAID':  // Xử lý thêm trạng thái PAID
-  //         dormPayment.status = PaymentStatus.Paid;
-  //         break;
-  //       case 'CANCELED':
-  //         dormPayment.status = PaymentStatus.Cancelled;
-  //         break;
-  //       default:
-  //         dormPayment.status = PaymentStatus.Unpaid;
-  //         break;
-  //     }
-  //     await dormPayment.save();
-
-  //     return res.redirect(`/dorm-payment/success?orderCode=${orderCode}&status=success`);
-  //   } catch (error) {
-  //     console.error('Error handling payment callback:', error);
-  //     return res.redirect('/dorm-payment/result?status=fail');
-  //   }
-  // }
-  async handlePaymentCallback(callbackData: any) {
-    const { orderCode, status } = callbackData;
-
-    try {
-      const dormPayment = await this.dormPaymentRepository.findOne({ orderCode });
-      if (!dormPayment) {
-        throw new Error('Payment not found'); // Sử dụng throw để xử lý trong callback
-      }
-
-      switch (status) {
-        case 'SUCCESS':
-          dormPayment.status = PaymentStatus.Paid;
-          break;
-        case 'CANCELED':
-          dormPayment.status = PaymentStatus.Cancelled;
-          break;
-        default:
-          dormPayment.status = PaymentStatus.Unpaid;
-          break;
-      }
-      await dormPayment.save();
-
-      return {
-        orderCode: dormPayment.orderCode,
-        status: dormPayment.status,
-      };
-    } catch (error) {
-      console.error('Error handling payment callback:', error);
-      throw new Error('Internal server error'); // Ném ra lỗi để xử lý ở callback
+  async handlePaymentCallback(orderCode: string) {
+    const dormBill = await this.dormPaymentRepository.findOne({ orderCode });
+    if (!dormBill) {
+      throw new Error('Dorm bill not found');
     }
+    dormBill.status = PaymentStatus.Paid;
+    return dormBill.save();
   }
 
-
-
-
-  // @Post('callback')
-  // async handlePaymentCallback(@Body() callbackData: any, @Res() res: Response) {
-  //   const { orderCode, status } = callbackData;
-
-  //   try {
-  //     const dormPayment = await this.dormPaymentRepository.findOne({ orderCode });
-  //     if (!dormPayment) {
-  //       return res.status(404).json({ error: 'Payment not found' });
-  //     }
-
-  //     switch (status) {
-  //       case 'SUCCESS':
-  //         dormPayment.status = PaymentStatus.Paid;
-  //         break;
-  //       case 'CANCELED':
-  //         dormPayment.status = PaymentStatus.Cancelled;
-  //         break;
-  //       default:
-  //         dormPayment.status = PaymentStatus.Unpaid;
-  //         break;
-  //     }
-
-  //     await dormPayment.save();
-
-  //     // Chuyển hướng tới trang thông báo thành công
-  //     return res.redirect(`/dorm-payment/result?status=${status.toLowerCase()}`);
-  //   } catch (error) {
-  //     console.error('Error handling payment callback:', error);
-  //     return res.redirect('/dorm-payment/result?status=fail');
-  //   }
-  // }
-
-
-
-  // @Get('result')
-  // @Render('payment-result')
-  // async getPaymentResult(@Query('status') status: string) {
-  //   let message;
-  //   if (status === 'success') {
-  //     message = 'Thanh toán thành công!';
-  //   } else if (status === 'fail') {
-  //     message = 'Thanh toán thất bại hoặc đã bị hủy.';
-  //   } else {
-  //     message = 'Không rõ trạng thái thanh toán.';
-  //   }
-
-  //   return { status, message };
-  // }
-
   async confirmWebhook(body: { webhookUrl: string }) {
-    const { webhookUrl } = body;
+    console.log('Confirming webhook with URL:', body.webhookUrl); // Log URL để kiểm tra
     try {
-      await this.payos.confirmWebhook(webhookUrl);
+      await this.payos.confirmWebhook(body.webhookUrl);
       return {
         error: 0,
         message: 'ok',
         data: null,
       };
     } catch (error) {
-      console.error(error);
+      console.error('Error in confirming webhook:', error); // Log lỗi chi tiết
       return {
         error: -1,
         message: 'failed',
@@ -210,6 +107,64 @@ export class DormPaymentService {
       };
     }
   }
+
+  async handleWebhook(body: any) {
+    console.log('Handling webhook:', body);
+    if (body && body.data && body.data.orderCode) {
+      const orderCode = body.data.orderCode;
+      console.log('Handling webhook for orderCode:', orderCode);
+      try {
+        await this.handlePaymentCallback(orderCode);
+      } catch (error) {
+        console.error('Error in handling webhook:', error.message);
+      }
+    }
+    else {
+      console.error('Invalid webhook data:', body);
+    }
+  }
+  // async confirmWebhook(body: any) {
+  //   console.log('Handling and confirming webhook:', body);
+
+  //   if (body && body.data && body.data.orderCode) {
+  //     const orderCode = body.data.orderCode;
+  //     console.log('Handling webhook for orderCode:', orderCode);
+
+  //     try {
+  //       // Xử lý thông tin thanh toán từ callback
+  //       await this.handlePaymentCallback(orderCode);
+
+  //       // Sau khi xử lý thanh toán, xác nhận webhook
+  //       if (body.webhookUrl) {
+  //         console.log('Confirming webhook with URL:', body.webhookUrl);
+  //         await this.payos.confirmWebhook(body.webhookUrl);
+  //       } else {
+  //         console.error('Webhook URL is missing');
+  //       }
+
+  //       return {
+  //         error: 0,
+  //         message: 'Webhook handled and confirmed successfully',
+  //         data: null,
+  //       };
+  //     } catch (error) {
+  //       console.error('Error in handling and confirming webhook:', error);
+  //       return {
+  //         error: -1,
+  //         message: 'Failed to handle and confirm webhook',
+  //         data: null,
+  //       };
+  //     }
+  //   } else {
+  //     console.error('Invalid webhook data:', body);
+  //     return {
+  //       error: -1,
+  //       message: 'Invalid webhook data',
+  //       data: null,
+  //     };
+  //   }
+  // }
+
 
 
   async getDormPaymentsByUserId(userId: string): Promise<DormPayment[]> {
@@ -227,20 +182,4 @@ export class DormPaymentService {
   }
 
 
-
-  findAll() {
-    return `This action returns all dormPayment`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} dormPayment`;
-  }
-
-  update(id: number, updateDormPaymentDto: UpdateDormPaymentDto) {
-    return `This action updates a #${id} dormPayment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} dormPayment`;
-  }
 }

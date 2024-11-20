@@ -46,7 +46,7 @@ const Home = () => {
         setPrevNoti(numberNoti);
     }, [numberNoti, prevNoti]);
     const handleClick = () => {
-        navigate('/success');
+        navigate('/notification');
         updateNotificationCount(0);
     };
 

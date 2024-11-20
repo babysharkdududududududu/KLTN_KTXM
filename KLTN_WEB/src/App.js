@@ -24,6 +24,7 @@ import Statistical from './Statistical/Statistical';
 import SuccessPage from './Payment/Success';
 import CreateUser from './UserManagement/CreateUser'
 import DormBill from './DormBill/DormBill';
+import SpringFlowers from './AnimCursor/Spring';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -74,6 +75,7 @@ const UserConsumerWrapper = ({ isLoggedIn, handleLogout, handleLoginSuccess }) =
   return (
     <WebSocketProvider>
       <TrailingCursor />
+      {/* <SpringFlowers /> */}
       <Router>
         <Routes>
           <Route path="/" element={isLoggedIn ? <Layout onLogout={handleLogout}><Home /></Layout> : <Login onLoginSuccess={handleLoginSuccess} />} />
@@ -91,7 +93,7 @@ const UserConsumerWrapper = ({ isLoggedIn, handleLogout, handleLoginSuccess }) =
           <Route path="/equipment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Equipment /></Layout> : <Navigate to="/" />} />
           <Route path="/dorm-submit" element={isLoggedIn ? <Layout onLogout={handleLogout}><DormSubmit /></Layout> : <Navigate to="/" />} />
           <Route path="/discipline" element={isLoggedIn ? <Layout onLogout={handleLogout}><Discipline /></Layout> : <Navigate to="/" />} />
-          <Route path="/success" element={isLoggedIn ? <Layout onLogout={handleLogout}><SuccessPage /></Layout> : <Navigate to="/" />} />
+          <Route path="/notification" element={isLoggedIn ? <Layout onLogout={handleLogout}><Notification /></Layout> : <Navigate to="/" />} />
           <Route path="/payment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Payment /></Layout> : <Navigate to="/" />} />
           <Route path="/create-user" element={isLoggedIn ? <Layout onLogout={handleLogout}><CreateUser /></Layout> : <Navigate to="/" />} />
           <Route path="/dorm-bill" element={isLoggedIn ? <Layout onLogout={handleLogout}><DormBill /></Layout> : <Navigate to="/" />} />

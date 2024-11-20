@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 import { Room } from '../rooms/entities/room.entity';
 import { Cron } from '@nestjs/schedule';
 import PayOS from '@payos/node';
+const YOUR_DOMAIN = 'http://localhost:3000';
+
 
 @Injectable()
 export class DormBillService {
@@ -132,9 +134,12 @@ export class DormBillService {
       orderCode,
       amount: Number(amount),
       description: `${room.roomNumber}${billType === BillType.WATER ? 'W' : 'E'}${monthAndYear.replace('/', '')}`,
-      cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
-      successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
-      returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
+      // cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
+      // successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
+      // returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
+      cancelUrl: `${YOUR_DOMAIN}`,
+      successUrl: `${YOUR_DOMAIN}`,
+      returnUrl: `${YOUR_DOMAIN}`,
     };
 
     try {

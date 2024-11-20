@@ -28,7 +28,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
     const [roomBlockG, setRoomBlockG] = useState([]);
     const [floorBlockI, setFloorBlockI] = useState([]);
     const [roomBlockI, setRoomBlockI] = useState([]);
-    const [currentRoomNumber, setCurrentRoomNumber] = useState(studentData.roomNumber); 
+    const [currentRoomNumber, setCurrentRoomNumber] = useState(studentData.roomNumber);
     console.log(studentData);
     // Lấy danh sách phòng khi component được mount
     useEffect(() => {
@@ -179,7 +179,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
             setCurrentRoomNumber(room);
             updateStudentData({ ...studentData, status: 'ASSIGNED', roomNumber: room });
         } catch (error) {
-            console.error('Lỗi khi xếp phòng:', error); 
+            console.error('Lỗi khi xếp phòng:', error);
         }
     }
 
@@ -193,7 +193,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                 <div style={{ width: "50%" }}>
                     <label style={{ fontSize: 17, fontWeight: "bold" }}>THÔNG TIN SINH VIÊN</label>
                     <div style={{ marginTop: 10 }}>
-                        <Typography variant="body1" style={{ display: 'flex', alignItems: 'center', marginBottom: 10}}>
+                        <Typography variant="body1" style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                             <AssignmentIcon style={{ marginRight: 5 }} />
                             MSSV: {studentData.id}
                         </Typography>
@@ -250,11 +250,16 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                                                 <em>Chọn phòng</em>
                                             </MenuItem>
                                             {getRooms().map((room) => (
-                                                <MenuItem key={room.roomNumber} value={room.roomNumber}>
+                                                <MenuItem key={room.roomNumber} value={room.roomNumber} style={{ position: 'relative' }}>
                                                     {`${room.roomNumber}`}
-                                                    <CircleIcon sx={{ color: getIconColor(room.availableSpot), fontSize: 12, position: 'absolute', right: 10 }} />
+                                                    <Typography style={{ color: getIconColor(room.availableSpot), fontSize: 12, position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', fontWeight: 'bold' }}>
+                                                        {room.availableSpot === 0
+                                                            ? <span style={{ color: 'red' }}>Hết chỗ</span>
+                                                            : <span>{room.availableSpot} chỗ trống</span>}
+                                                    </Typography>
                                                 </MenuItem>
                                             ))}
+
                                         </Select>
                                     </FormControl>
                                 </div>
@@ -262,7 +267,7 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                         </>
                     )}
                     <div style={{ marginTop: "20px" }}>
-                        <StudentTable studentList={studentList} studentDataID = {studentData.id} />
+                        <StudentTable studentList={studentList} studentDataID={studentData.id} />
                     </div>
                     <div style={{ marginTop: "20px", width: "100%", display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
                         {assignSuscess && (
@@ -281,19 +286,19 @@ const RoomAssignment = ({ studentData, handleOffAssignRoom, updateStudentData })
                             </Button>
                         )}
                         {studentData.status === 'ASSIGNED' && studentData.roomNumber !== room && (
-                                <Button
-                                    variant="contained"
-                                    color="error"
-                                    disabled={!room}
-                                    onClick={() => {
-                                        changeRoom();
-                                        setAssignSuscess(true);
-                                    }}
-                                    style={{ marginLeft: "20px" }}
-                                >
-                                    Đổi phòng
-                                </Button>
-                            )
+                            <Button
+                                variant="contained"
+                                color="error"
+                                disabled={!room}
+                                onClick={() => {
+                                    changeRoom();
+                                    setAssignSuscess(true);
+                                }}
+                                style={{ marginLeft: "20px" }}
+                            >
+                                Đổi phòng
+                            </Button>
+                        )
                         }
                     </div>
 

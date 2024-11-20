@@ -35,9 +35,9 @@ export class DormSubmissionService {
     const submission = await this.dormSubmissionModel.exists({ userId, settingId });
     return !!submission;
   }
-
+  // đơn đăng ký
   async create(createDormSubmissionDto: CreateDormSubmissionDto) {
-    const { userId, settingId } = createDormSubmissionDto;
+    const { userId, settingId, email } = createDormSubmissionDto;
 
     // Kiểm tra xem userId có tồn tại không
     const userExists = await this.userService.isUserIdExist(userId);
@@ -61,6 +61,7 @@ export class DormSubmissionService {
       ...createDormSubmissionDto,
       roomNumber, // Thêm roomNumber vào create
       status: DormSubmissionStatus.PENDING,
+      email,
     });
     try {
       await this.settingService.updateSubmissionCount(userId);
@@ -104,10 +105,6 @@ export class DormSubmissionService {
         acc[item._id.toString()] = item.name; // _id có thể là ObjectId, nên cần dùng toString()
         return acc;
       }, {} as Record<string, string>);
-
-      console.log('settingIds:', settingIds);
-      console.log('nameSetting:', nameSetting);
-      console.log('setting:', setting);
 
       return {
         statusCode: 200,
@@ -171,19 +168,20 @@ export class DormSubmissionService {
     const numberOfMonths = 10;
     const amount = price * numberOfMonths;
     const userId = submission.userId;
+    const email = submission.email;
     const paymentDate = new Date();
     const roomNumber = submission.roomNumber;
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     submission.statusHistory.push(submission.status);
-    console.log(submission)
     const dormPayment = this.dormPaymentService.create({
       userId,
       amount,
       paymentDate,
       roomNumber,
     });
+    this.userService.sendMailApproveRoom(email);
 
     submission.status = DormSubmissionStatus.ACCEPTED;
     return submission.save();
@@ -195,6 +193,7 @@ export class DormSubmissionService {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     submission.statusHistory.push(submission.status);
+    this.userService.sendMailRejectRoom(submission.email);
     submission.status = DormSubmissionStatus.REJECTED;
     return submission.save();
   }
@@ -207,6 +206,7 @@ export class DormSubmissionService {
     }
     submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
+    this.userService.sendMailAwaittingPayment(submission.email);
     return submission.save();
   }
 
@@ -218,24 +218,59 @@ export class DormSubmissionService {
     }
     submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.PAID;
+    this.userService.sendMailPaymentSuccess(submission.email, submission.roomNumber);
     return submission.save();
   }
 
   // set tất cả trạng thái ACCEPTED thành AWAITING_PAYMENT
+  // async setAwaitingPaymentAll(settingId: string): Promise<DormSubmission[]> {
+  //   // Cập nhật trạng thái
+  //   await this.dormSubmissionModel.updateMany(
+  //     { status: DormSubmissionStatus.ACCEPTED, settingId: settingId },
+  //     { status: DormSubmissionStatus.AWAITING_PAYMENT },
+  //   ).exec();
+
+
+  //   // Lấy lại các tài liệu đã cập nhật
+  //   const submissions = await this.dormSubmissionModel.find(
+  //     { status: DormSubmissionStatus.AWAITING_PAYMENT, settingId: settingId }
+  //   ).exec();
+
+  //   return submissions;
+  // }
   async setAwaitingPaymentAll(settingId: string): Promise<DormSubmission[]> {
-    // Cập nhật trạng thái
-    await this.dormSubmissionModel.updateMany(
-      { status: DormSubmissionStatus.ACCEPTED, settingId: settingId },
-      { status: DormSubmissionStatus.AWAITING_PAYMENT },
-    ).exec();
-
-    // Lấy lại các tài liệu đã cập nhật
-    const submissions = await this.dormSubmissionModel.find(
-      { status: DormSubmissionStatus.AWAITING_PAYMENT, settingId: settingId }
-    ).exec();
-
-    return submissions;
+    try {
+      // Cập nhật trạng thái
+      await this.dormSubmissionModel.updateMany(
+        { status: DormSubmissionStatus.ACCEPTED, settingId: settingId },
+        { status: DormSubmissionStatus.AWAITING_PAYMENT },
+      ).exec();
+      // Lấy lại các tài liệu đã cập nhật
+      const submissions = await this.dormSubmissionModel.find(
+        { status: DormSubmissionStatus.AWAITING_PAYMENT, settingId: settingId }
+      ).exec();
+      // Gửi email cho từng sinh viên (sử dụng Promise.all để xử lý đồng thời)
+      const emailPromises = submissions.map(async (submission) => {
+        try {
+          const user = await this.userModel.findOne({ userId: submission.userId });
+          if (user) {
+            await this.userService.sendMailAwaittingPayment(submission.email);
+            console.log(`Sent email to user ${submission.userId}`);
+          }
+        } catch (error) {
+          console.error(`Error sending email to user ${submission.userId}:`, error);
+        }
+      });
+      // Đợi tất cả các Promise gửi email hoàn thành
+      await Promise.all(emailPromises);
+      return submissions;
+    } catch (error) {
+      console.error('Error updating dorm submissions or sending emails:', error);
+      throw new Error('Failed to update dorm submissions and send emails');
+    }
   }
+
+
 
 
   // render số hợp đồng gần
@@ -254,6 +289,9 @@ export class DormSubmissionService {
     }
     //G2g201-20013581-2024930
     submission.statusHistory.push(submission.status);
+    console.log('submission.email:', submission.email);
+    console.log('roomNumber:', roomNumber);
+    this.userService.sendMailAssigned(submission.email, submission.roomNumber);
     submission.status = DormSubmissionStatus.ASSIGNED; // Cập nhật trạng thái
     submission.roomNumber = roomNumber; // Cập nhật roomNumber
 

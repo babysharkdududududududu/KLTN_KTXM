@@ -33,6 +33,9 @@ export class DormSubmission {
     // Thêm mảng các trạng thái lịch sử của đơn đăng ký
     @Prop({ type: [String], enum: DormSubmissionStatus })
     statusHistory: DormSubmissionStatus[];
+
+    @Prop()
+    email: string;
 }
 
 export const DormSubmissionSchema = SchemaFactory.createForClass(DormSubmission);
