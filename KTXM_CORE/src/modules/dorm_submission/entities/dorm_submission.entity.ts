@@ -8,7 +8,7 @@ export enum DormSubmissionStatus {
     ACCEPTED = 'ACCEPTED', // Chấp nhận đơn đăng ký
     AWAITING_PAYMENT = 'AWAITING_PAYMENT', // Chờ thanh toán
     PAID = 'PAID', // Đã thanh toán
-    ASSIGNED = 'ASSIGNED', // Đã xếp phòng
+    ASSIGNED = 'ASSIGNED', // Đã xếp phòng  
     REJECTED = 'REJECTED', // Từ chối đơn đăng ký
     ROOM_REQUESTED = 'ROOM_REQUESTED', // Yêu cầu phòng
 }

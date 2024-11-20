@@ -22,6 +22,7 @@ export const updateRoomRoute = `${host}/rooms/`;
 export const getAllUserRoute = `${host}/users`;
 export const getUserByIdRoute = `${host}/users/id/`;
 export const updateUserRoute = `${host}/users/`;
+export const createUserRoute = `${host}/users/`;
 
 //register room
 export const registerRoomRoute = `${host}/contracts`;
@@ -102,3 +103,11 @@ export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;
 
 //bill
 export const getBillRoute = `${host}/dorm-bill/room`;
+// statistical
+export const getStatisticalDormRoute = `${host}/statistic/dorm-submission`;
+export const getStatisticalRoomRoute = `${host}/statistic/available-room`;
+// get name and id of submission
+export const getSubmissionNameAndId = `${host}/dorm-submission`;
+
+
+

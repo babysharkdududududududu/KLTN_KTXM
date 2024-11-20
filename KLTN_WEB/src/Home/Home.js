@@ -2,30 +2,30 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircle';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import DescriptionOutlinedIcon from '@mui/icons-material/Description';
+import GavelIcon from '@mui/icons-material/Gavel';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActive';
 import { IconButton, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Lottie from 'lottie-react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NotificationBadge from '../Context/NotificationBadge';
 import { useWebSocket } from '../Context/WebSocketContext';
-import AvailableSlot from './AvailableSlot/AvailableSlot';
-import GavelIcon from '@mui/icons-material/Gavel';
 import iuh from '../Payment/asset/iuh.png';
-import Lottie from 'lottie-react';
 import helloAnimation from './asset/hello.json';
+import AvailableSlot from './AvailableSlot/AvailableSlot';
+import CreateUser from './CreateUser/CreateUser';
 
+import { ReactTyped } from 'react-typed';
 import { useUser } from '../Context/Context';
+import TotalStudent from './components/TotalStudent';
+import Discipline from './Discipline/Discipline';
 import style from './Home.module.css';
 import Payment from './Pay/Payment';
 import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
-import TotalStudent from './components/TotalStudent';
-import Discipline from './Discipline/Discipline';
-import { keyframes } from '@emotion/react'; // Import keyframes từ Emotion
-import { ReactTyped } from 'react-typed';
 
 
 const Home = () => {
@@ -189,7 +189,7 @@ const Home = () => {
 
                 <Grid item xs={12} sm={6} md={4}>
                     <Box sx={{ marginTop: 2 }}>
-                        <AvailableSlot />
+                        <CreateUser />
                     </Box>
                 </Grid>
 

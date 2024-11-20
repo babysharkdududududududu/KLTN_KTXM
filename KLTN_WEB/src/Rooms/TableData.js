@@ -5,8 +5,9 @@ import axios from 'axios';
 import RoomDialog from './RoomDialog';
 import { CheckCircle, Warning } from '@mui/icons-material';
 import './TableData.css';
-import { CircularProgress} from '@mui/material';
-import Pagination from './Pagination/Pagination';
+import { CircularProgress } from '@mui/material';
+import { Pagination } from '@mui/material';
+
 
 const columns = [
   { field: 'roomNumber', headerName: 'Tên phòng', flex: 1 },
@@ -171,7 +172,7 @@ const TableData = ({ filterBlock }) => {
   const totalPages = Math.ceil(listRooms.length / pageSize);
 
   return (
-    <div style={{ height: '81%', width: '100%'}}>
+    <div style={{ height: '81%', width: '100%' }}>
       {loading ? (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
           <CircularProgress size={50} thickness={5} color="primary" />
@@ -191,12 +192,19 @@ const TableData = ({ filterBlock }) => {
             onCellClick={handleCellClick}
             rowHeight={45}
           />
-{/* 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          /> */}
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={(event, value) => setCurrentPage(value)}
+              color="primary"
+              variant="outlined"
+              shape="rounded"
+              siblingCount={1}
+              boundaryCount={1}
+            />
+          </div>
 
           <RoomDialog
             open={openDialog}

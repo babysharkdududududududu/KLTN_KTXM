@@ -47,9 +47,19 @@ const RoomInfo = () => {
         }
     };
 
+    // const getRoomById = async () => {
+    //     try {
+    //         const { data } = await axios.get(`${getRoomByIdRoute}G201`);
+    //         setUserInfo(data.data.room.users);
+    //         setEquipment(data.data.equipment || []);
+    //         setCurrentReading(data.data.room.electricityNumber); // Số điện tháng này
+    //     } catch (err) {
+    //         console.error("Error fetching room by ID:", err);
+    //     }
+    // };
     const getRoomById = async () => {
         try {
-            const { data } = await axios.get(`${getRoomByIdRoute}G201`);
+            const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
             setUserInfo(data.data.room.users);
             setEquipment(data.data.equipment || []);
             setCurrentReading(data.data.room.electricityNumber); // Số điện tháng này
@@ -84,6 +94,8 @@ const RoomInfo = () => {
     // Tính chi phí điện và số điện đã sử dụng
     const { usedElectricity, cost } = calculateElectricityCost(currentReading, previousReading, userInfo.length);
 
+
+
     return (
         <Box className={styles['room-info-container']} p={3}>
             <Typography variant="h4" align="center" sx={{ marginBottom: 3, fontWeight: 'bold', color: '#1976d2' }}>
@@ -91,7 +103,8 @@ const RoomInfo = () => {
             </Typography>
 
             <Tabs value={tabIndex} onChange={(event, newValue) => setTabIndex(newValue)} centered>
-                <Tab label="Thông Tin Phòng" />
+                <Tab label="Danh sách sinh viên" />
+                <Tab label="Nội quy và trang thiết bị" />
                 <Tab label="Chi Phí Hàng Tháng" />
             </Tabs>
 
@@ -103,7 +116,7 @@ const RoomInfo = () => {
                 </Grid>
             )}
 
-            {tabIndex === 1 && (
+            {tabIndex === 2 && (
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     <Grid item xs={12}>
                         <Paper elevation={3} sx={{ padding: 2, borderRadius: 2 }}>
@@ -130,6 +143,12 @@ const RoomInfo = () => {
                             </Grid>
                         </Paper>
                     </Grid>
+                </Grid>
+            )}
+            {tabIndex === 1 && (
+                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                    <RoomDetails />
+                    <RoomEquipment equipment={equipment} getRoomById={getRoomById} roomNumber={roomNumber} />
                 </Grid>
             )}
         </Box>

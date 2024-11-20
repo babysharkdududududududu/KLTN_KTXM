@@ -38,9 +38,6 @@ export class Setting {
 
     @Prop({ default: false })
     isRegistrationOpen: boolean;
-
-    @Prop({ default: false })
-    selectRoom: boolean;
 }
 
 export const SettingSchema = SchemaFactory.createForClass(Setting);

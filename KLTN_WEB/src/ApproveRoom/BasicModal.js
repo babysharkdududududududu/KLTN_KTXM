@@ -39,8 +39,6 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
     const [totalAvailable, setTotalAvailable] = React.useState(0);
     const settingId = setingID;
     const [firstYearValue, setFirstYearValue] = React.useState(0);
-    //selectRoom is true false
-    const [selectRoom, setSelectRoom] = React.useState(false);
     const [upperYearValue, setUpperYearValue] = React.useState(0);
     const [priorityValue, setPriorityValue] = React.useState(0);
     const [registrationStart, setRegistrationStart] = React.useState({ date: null, time: null });
@@ -86,8 +84,6 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                 setUpperYearValue(data.data.upperYearSpots);
                 setName(data.data.name);
                 setPriorityValue(data.data.prioritySpots);
-                setSelectRoom(data.data?.selectRoom ?? false);
-
                 setAllAvailable(
                     Number(data.data.totalAvailableSpots) -
                     (Number(data.data.firstYearSpots) +
@@ -180,8 +176,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             prioritySpots: parseInt(priorityValue, 10),
             registrationStartDate,
             registrationEndDate,
-            name,
-            selectRoom
+            name
         };
 
         console.log('Updated settings:', updatedSettings);
@@ -222,8 +217,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             prioritySpots: parseInt(priorityValue, 10),
             registrationStartDate,
             registrationEndDate,
-            name,
-            selectRoom
+            name
         };
 
         console.log('Created settings:', updatedSettings);
@@ -309,7 +303,6 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             />
                         </div>
                     </div>
-                    <RowRadioButtonsGroup selectRoom={selectRoom} setSelectRoom={setSelectRoom} />
                     <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end", marginTop: '10px', alignItems: "center" }}>
                         <div style={{ color: "red", marginRight: '20px' }}>{messageError}</div>
                         <Button variant="outlined" color="error" onClick={handleClose} sx={{ marginRight: '10px' }}>Đóng</Button>
@@ -525,20 +518,4 @@ export function DateFieldValueEnd({ settingDateEnd, onChange }) {
         </LocalizationProvider>
     );
 }
-export function RowRadioButtonsGroup({ selectRoom, setSelectRoom }) {
-    return (
-        <FormControl style={{ marginTop: "20px" }}>
-            <FormLabel id="demo-row-radio-buttons-group-label">Sinh viên được chọn phòng</FormLabel>
-            <RadioGroup
-                row
-                aria-labelledby="demo-row-radio-buttons-group-label"
-                name="row-radio-buttons-group"
-                value={selectRoom ? "true" : "false"}
-                onChange={(e) => setSelectRoom(e.target.value === "true")}
-            >
-                <FormControlLabel value="true" control={<Radio />} label="Được" />
-                <FormControlLabel value="false" control={<Radio />} label="Không" />
-            </RadioGroup>
-        </FormControl>
-    );
-}
+

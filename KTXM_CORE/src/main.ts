@@ -14,10 +14,15 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1', { exclude: [''] });
   app.setGlobalPrefix('api/v1');
 
+  // config static file
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.use('/animations', express.static(join(__dirname, '..', 'src', 'animations')));
-  app.setViewEngine('ejs');  // Sử dụng EJS làm view engine
+  app.setViewEngine('ejs');
+  // tăng kích thước import file
+  app.useGlobalPipes(new ValidationPipe());
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 
   app.useGlobalPipes(new ValidationPipe({

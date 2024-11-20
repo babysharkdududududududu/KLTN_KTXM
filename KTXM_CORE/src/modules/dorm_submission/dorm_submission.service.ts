@@ -1,15 +1,17 @@
+import { SettingService } from './../setting/setting.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDormSubmissionDto } from './dto/create-dorm_submission.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { DormSubmission, DormSubmissionStatus } from './entities/dorm_submission.entity';
 import { Model } from 'mongoose';
-import { SettingService } from '../setting/setting.service';
 import { UsersService } from '../users/users.service';
 import { ContractsService } from '../contracts/contracts.service';
 import { Room } from '../rooms/entities/room.entity';
 import { User } from '../users/schemas/user.schema';
 import { Contract } from '../contracts/entities/contract.entity';
 import { log } from 'console';
+import { DormPayment } from '../dorm_payment/entities/dorm_payment.entity';
+import { DormPaymentService } from '../dorm_payment/dorm_payment.service';
 
 @Injectable()
 export class DormSubmissionService {
@@ -25,6 +27,7 @@ export class DormSubmissionService {
     private readonly settingService: SettingService,
     private readonly userService: UsersService,
     private readonly contractService: ContractsService,
+    private readonly dormPaymentService: DormPaymentService,
   ) { }
 
   // kiểm tra không cho đăng ký 2 lần một kỳ
@@ -74,24 +77,53 @@ export class DormSubmissionService {
   async findAll() {
     try {
       const dormSubmissions = await this.dormSubmissionModel.find().exec();
+
+      // Tính tổng số submission theo status
       const statusCount = dormSubmissions.reduce((acc, submission) => {
         const status = submission.status;
         acc[status] = (acc[status] || 0) + 1;
         return acc;
       }, {});
+
+      // Tổng số submissions
       const totalByStatus = dormSubmissions.length;
+
+      // Lấy tất cả settingId
+      const settingIds = dormSubmissions.reduce((acc, submission) => {
+        if (submission.settingId && !acc.includes(submission.settingId)) {
+          acc.push(submission.settingId);
+        }
+        return acc;
+      }, [] as string[]);
+
+      // Lấy dữ liệu từ service setting
+      const setting = await this.settingService.findAll();
+
+      // Tạo một đối tượng nameSetting ánh xạ từ id -> name
+      const nameSetting = setting.reduce((acc, item) => {
+        acc[item._id.toString()] = item.name; // _id có thể là ObjectId, nên cần dùng toString()
+        return acc;
+      }, {} as Record<string, string>);
+
+      console.log('settingIds:', settingIds);
+      console.log('nameSetting:', nameSetting);
+      console.log('setting:', setting);
+
       return {
         statusCode: 200,
         message: '',
         data: dormSubmissions,
         totalByStatus: statusCount,
         total: totalByStatus,
+        settingIds,
+        nameSetting,  // Trả về đối tượng nameSetting với id -> name
       };
     } catch (error) {
       console.error('Error fetching dorm submissions:', error);
       throw new Error('Failed to fetch dorm submissions');
     }
   }
+
 
 
   // find by settingId
@@ -135,10 +167,24 @@ export class DormSubmissionService {
   // chấp nhận đơn đăng ky
   async acceptSubmission(id: string): Promise<DormSubmission> {
     const submission = await this.dormSubmissionModel.findById(id);
+    const price = 560000;
+    const numberOfMonths = 10;
+    const amount = price * numberOfMonths;
+    const userId = submission.userId;
+    const paymentDate = new Date();
+    const roomNumber = submission.roomNumber;
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     submission.statusHistory.push(submission.status);
+    console.log(submission)
+    const dormPayment = this.dormPaymentService.create({
+      userId,
+      amount,
+      paymentDate,
+      roomNumber,
+    });
+
     submission.status = DormSubmissionStatus.ACCEPTED;
     return submission.save();
   }

@@ -18,7 +18,7 @@ export class AuthController {
   @ResponseMessage("Fetch login")
   handleLogin(@Request() req) {
     return this.authService.login(req.user);
-  } 
+  }
 
   @Post('register')
   @Public()
