@@ -35,5 +35,11 @@ export class DormBillController {
     // Gọi phương thức xử lý webhook từ service và truyền body vào
     return this.dormBillService.handleWebhook(body);
   }
+
+  @Get("/room/:roomNumber")
+  @Public()
+  async findAllByRoomNumber(@Param('roomNumber') roomNumber: string) {
+    return this.dormBillService.findAllByRoomNumber(roomNumber);
+  }
   
 }

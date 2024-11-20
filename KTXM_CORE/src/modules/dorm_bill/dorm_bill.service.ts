@@ -56,7 +56,7 @@ export class DormBillService {
   //   }
   // }
 
-  @Cron('37 9 9 11 *', {
+  @Cron('3 22 12 11 *', {
     name: 'createMonthlyBills',
   })
   async handleCreateMonthlyBills() {
@@ -106,7 +106,7 @@ export class DormBillService {
 
     // Tính toán tiền nước
     const freeWater = 3; // 3 khối miễn phí
-    const waterRate = 20000; // Giả định giá tiền nước 20000 VNĐ/khối
+    const waterRate = 5000; // Giả định giá tiền nước 20000 VNĐ/khối
     const totalWater = Math.max(0, waterUsed - freeWater) * waterRate;
 
     const currentDate = new Date();
@@ -193,6 +193,10 @@ export class DormBillService {
     } else {
       console.warn('Invalid webhook body: Missing orderCode');
     }
+  }
+  // find all bill by room number
+  async findAllByRoomNumber(roomNumber: string) {
+    return this.dormBillModel.find({ roomNumber }).exec();
   }
 
   findAll() {

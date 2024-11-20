@@ -98,3 +98,7 @@ export const getDormPaymentWithUserId = `${host}/dorm-payment`;
 //router change room
 export const changeRoomRoute = `${host}/dorm-submission/change-room`;
 export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;
+
+
+//bill
+export const getBillRoute = `${host}/dorm-bill/room`;

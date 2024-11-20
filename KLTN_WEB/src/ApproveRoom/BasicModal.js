@@ -8,6 +8,9 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Alert from '@mui/material/Alert';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormLabel from '@mui/material/FormLabel';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -36,6 +39,8 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
     const [totalAvailable, setTotalAvailable] = React.useState(0);
     const settingId = setingID;
     const [firstYearValue, setFirstYearValue] = React.useState(0);
+    //selectRoom is true false
+    const [selectRoom, setSelectRoom] = React.useState(false);
     const [upperYearValue, setUpperYearValue] = React.useState(0);
     const [priorityValue, setPriorityValue] = React.useState(0);
     const [registrationStart, setRegistrationStart] = React.useState({ date: null, time: null });
@@ -81,6 +86,8 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                 setUpperYearValue(data.data.upperYearSpots);
                 setName(data.data.name);
                 setPriorityValue(data.data.prioritySpots);
+                setSelectRoom(data.data?.selectRoom ?? false);
+
                 setAllAvailable(
                     Number(data.data.totalAvailableSpots) -
                     (Number(data.data.firstYearSpots) +
@@ -174,6 +181,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             registrationStartDate,
             registrationEndDate,
             name,
+            selectRoom
         };
 
         console.log('Updated settings:', updatedSettings);
@@ -198,7 +206,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             console.error('Cập nhật thất bại:', error);
         }
     };
-//createSettingRoute
+    //createSettingRoute
     const hadleCreate = async () => {
         if (!registrationStart.date || !registrationStart.time || !registrationEnd.date || !registrationEnd.time) {
             console.error('Ngày hoặc giờ không hợp lệ.');
@@ -215,6 +223,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             registrationStartDate,
             registrationEndDate,
             name,
+            selectRoom
         };
 
         console.log('Created settings:', updatedSettings);
@@ -257,7 +266,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             Tổng số chỗ trống: {allAvailable}
                         </div>
                     </div>
-                    <TextField 
+                    <TextField
                         id="outlined-basic"
                         label="Học kỳ"
                         variant="outlined"
@@ -300,6 +309,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             />
                         </div>
                     </div>
+                    <RowRadioButtonsGroup selectRoom={selectRoom} setSelectRoom={setSelectRoom} />
                     <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-end", marginTop: '10px', alignItems: "center" }}>
                         <div style={{ color: "red", marginRight: '20px' }}>{messageError}</div>
                         <Button variant="outlined" color="error" onClick={handleClose} sx={{ marginRight: '10px' }}>Đóng</Button>
@@ -312,6 +322,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             Lưu cài đặt
                         </Button>
                     </div>
+
                 </Box>
             </Modal>
         </div>
@@ -512,5 +523,22 @@ export function DateFieldValueEnd({ settingDateEnd, onChange }) {
                 />
             </DemoContainer>
         </LocalizationProvider>
+    );
+}
+export function RowRadioButtonsGroup({ selectRoom, setSelectRoom }) {
+    return (
+        <FormControl style={{ marginTop: "20px" }}>
+            <FormLabel id="demo-row-radio-buttons-group-label">Sinh viên được chọn phòng</FormLabel>
+            <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={selectRoom ? "true" : "false"}
+                onChange={(e) => setSelectRoom(e.target.value === "true")}
+            >
+                <FormControlLabel value="true" control={<Radio />} label="Được" />
+                <FormControlLabel value="false" control={<Radio />} label="Không" />
+            </RadioGroup>
+        </FormControl>
     );
 }

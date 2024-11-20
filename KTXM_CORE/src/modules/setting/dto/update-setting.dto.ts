@@ -24,4 +24,7 @@ export class UpdateSettingDto {
     @IsString()
     @IsNotEmpty()
     registrationEndDate: string;
+    
+    @IsNotEmpty()
+    selectRoom: boolean;
 }

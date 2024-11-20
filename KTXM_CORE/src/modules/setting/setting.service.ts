@@ -18,9 +18,55 @@ export class SettingService {
     const setting = new this.settingModel({
       ...createSettingDto,
       totalAvailableSpots,
+      firstYearSubmissions: 0,
+      upperYearSubmissions: 0,
+      prioritySubmissions: 0,
     });
     return setting.save();
   }
+  
+
+  async updateSubmissionCount(userId: string) {
+    const currentYear = new Date().getFullYear();
+
+    // Lấy 2 ký tự đầu tiên từ userId
+    const userYearString = userId.substring(0, 2);
+    const userYear = parseInt(userYearString, 10); // Chuyển đổi sang số
+
+    // Tính năm nhập học
+    const entryYear = 2000 + userYear; // Thêm 2000 để có năm nhập học
+
+    // Tính toán năm học
+    const yearDifference = currentYear - entryYear;
+
+    let submissionsField: 'firstYearSubmissions' | 'upperYearSubmissions';
+    let spotsField: 'firstYearSpots' | 'upperYearSpots';
+
+    if (yearDifference === 0) {
+      submissionsField = 'firstYearSubmissions'; // Năm đầu tiên
+      spotsField = 'firstYearSpots';
+    } else if (yearDifference > 0 && yearDifference <= 3) {
+      submissionsField = 'upperYearSubmissions'; // Năm thứ 2, 3, 4
+      spotsField = 'upperYearSpots';
+    } else {
+      throw new Error('Sinh viên đã tốt nghiệp hoặc không hợp lệ');
+    }
+
+    // Lấy thông tin Setting
+    const setting = await this.settingModel.findOne();
+
+    // Kiểm tra xem có đủ chỗ trống không
+    if (setting[spotsField] <= setting[submissionsField]) {
+      throw new Error('Đăng ký thất bại: Không đủ chỗ trống');
+    }
+
+    // Cập nhật số lượng nộp đơn
+    setting[submissionsField] += 1; // Cộng thêm 1 vào trường tương ứng
+    await setting.save();
+  }
+
+
+
 
   async findAll() {
     return this.settingModel.find().exec();
@@ -74,18 +120,18 @@ export class SettingService {
 
   public async submissionCount(settingId: string) {
     const setting = await this.settingModel.findById(settingId).exec();
-  
+
     if (setting) {
       if (setting.totalAvailableSpots > 0) {
         setting.totalAvailableSpots -= 1;
         await setting.save();
         return setting;
       } else {
-        throw new Error('Total available spots cannot be negative'); // Thông báo nếu không đủ chỗ
+        throw new Error('Total available spots cannot be negative');
       }
     }
-  
+
     throw new Error('Setting not found');
   }
-  
+
 }

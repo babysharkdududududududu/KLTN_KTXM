@@ -1,13 +1,13 @@
-import { MonetizationOn } from '@mui/icons-material';
-import { Box, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { getContractRoute, getRoomByIdRoute } from '../API/APIRouter';
+import { Box, Grid, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { MonetizationOn } from '@mui/icons-material';
+import axios from 'axios';
+import { getContractRoute, getRoomByIdRoute, getBillRoute } from '../API/APIRouter';
 import { useUser } from '../Context/Context';
 import RoomDetails from './RoomDetail';
 import RoomEquipment from './RoomEquipment';
-import styles from './RoomInfo.module.css';
 import RoomMembers from './RoomMember';
+import styles from './RoomInfo.module.css';
 
 const RoomInfo = () => {
     const { userId } = useUser();
@@ -17,20 +17,23 @@ const RoomInfo = () => {
     const [equipment, setEquipment] = useState([]);
     const [tabIndex, setTabIndex] = useState(0);
 
-    const waterNumber = 10;
-    const electricityNumber = 5;
+    const [previousReading, setPreviousReading] = useState(0);
+    const [currentReading, setCurrentReading] = useState(0);
 
-    const waterCostPerCub = 5000;
-    const electricityCostPerKg = 3000;
+    const freeWater = 3; // Miễn phí 3 m3 nước
+    const freeElectric = 3; // Miễn phí 3 KWh điện
+    const waterPrice = 5000; // Giá nước
+    const electricPrice = 2500; // Giá điện
 
-    const calculateCosts = () => {
-        const waterCost = waterNumber * waterCostPerCub;
-        const electricityCost = electricityNumber * electricityCostPerKg;
-        const totalCost = waterCost + electricityCost;
-        return { waterCost, electricityCost, totalCost };
+    // Tính số điện đã sử dụng và chi phí
+    const calculateElectricityCost = (currentReading, previousReading, numUsers) => {
+        console.log(currentReading, previousReading, numUsers);
+        const usedElectricity = currentReading - previousReading;
+        const freeElectricity = freeElectric * numUsers; // Tổng số điện miễn phí cho tất cả người trong phòng
+        const exceededElectricity = usedElectricity - freeElectricity;
+        const cost = exceededElectricity > 0 ? exceededElectricity * electricPrice : 0;
+        return { usedElectricity, cost };
     };
-
-    const { waterCost, electricityCost, totalCost } = calculateCosts();
 
     const handleGetContract = async () => {
         try {
@@ -38,10 +41,32 @@ const RoomInfo = () => {
             const { contract } = response.data.data;
             setContract(contract);
             setRoomNumber(contract.roomNumber);
-            console.log(contract.roomNumber, "roomNumber");
         } catch (error) {
             console.error("Error fetching contract:", error);
             setContract(null);
+        }
+    };
+
+    const getRoomById = async () => {
+        try {
+            const { data } = await axios.get(`${getRoomByIdRoute}G201`);
+            setUserInfo(data.data.room.users);
+            setEquipment(data.data.equipment || []);
+            setCurrentReading(data.data.room.electricityNumber); // Số điện tháng này
+        } catch (err) {
+            console.error("Error fetching room by ID:", err);
+        }
+    };
+
+    const getBill = async () => {
+        try {
+            const response = await axios.get(`${getBillRoute}/G201`);
+            const bill = response.data.data.find(bill => bill.billType === 'ELECTRIC');
+            if (bill) {
+                setPreviousReading(bill.currentReading); // Lấy số điện tháng trước
+            }
+        } catch (err) {
+            console.error("Error fetching bill:", err);
         }
     };
 
@@ -52,22 +77,12 @@ const RoomInfo = () => {
     useEffect(() => {
         if (roomNumber) {
             getRoomById();
+            getBill();
         }
     }, [roomNumber]);
 
-
-
-    const getRoomById = async () => {
-        try {
-            const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
-            setUserInfo(data.data.room.users);
-            console.log(userInfo, "userInfo");
-            setEquipment(data.data.equipment || []);
-            console.log(equipment, "equipment");
-        } catch (err) {
-            console.error("Error fetching room by ID:", err);
-        }
-    };
+    // Tính chi phí điện và số điện đã sử dụng
+    const { usedElectricity, cost } = calculateElectricityCost(currentReading, previousReading, userInfo.length);
 
     return (
         <Box className={styles['room-info-container']} p={3}>
@@ -84,7 +99,7 @@ const RoomInfo = () => {
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     <RoomMembers userInfo={userInfo} />
                     <RoomDetails />
-                    <RoomEquipment equipment={equipment} getRoomById={getRoomById} roomNumber={roomNumber} />
+                    <RoomEquipment equipment={equipment} roomNumber={roomNumber} />
                 </Grid>
             )}
 
@@ -96,17 +111,21 @@ const RoomInfo = () => {
                                 <MonetizationOn sx={{ marginRight: 1 }} /> Chi Phí Hàng Tháng
                             </Typography>
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <Typography variant="h6" sx={{ marginBottom: 1 }}>Tiền Điện</Typography>
-                                    <Typography>{electricityCost.toLocaleString()} VNĐ</Typography>
+                                <Grid item xs={6}>
+                                    <Typography variant="h6" sx={{ marginBottom: 1 }}>Số Điện Đã Sử Dụng</Typography>
+                                    <Typography>{usedElectricity.toFixed(2)} KWh</Typography>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Typography variant="h6" sx={{ marginBottom: 1 }}>Chi Phí Điện</Typography>
+                                    <Typography>{cost.toLocaleString()} VNĐ</Typography>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <Typography variant="h6" sx={{ marginBottom: 1 }}>Tiền Nước</Typography>
-                                    <Typography>{waterCost.toLocaleString()} VNĐ</Typography>
+                                    <Typography variant="h6" sx={{ marginBottom: 1 }}>Lượng nước sử dụng</Typography>
+                                    <Typography>0 m3</Typography>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <Typography variant="h6" sx={{ marginBottom: 1 }}>Tổng Chi Phí</Typography>
-                                    <Typography>{totalCost.toLocaleString()} VNĐ</Typography>
+                                    <Typography> VNĐ</Typography>
                                 </Grid>
                             </Grid>
                         </Paper>
