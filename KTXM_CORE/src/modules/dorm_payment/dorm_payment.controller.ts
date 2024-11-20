@@ -97,34 +97,25 @@ export class DormPaymentController {
       };
     }
   }
-  @Get()
-  findAll() {
-    return this.dormPaymentService.findAll();
+
+  // @Post('confirm-webhook')
+  // @Public()
+  // confirmWebhook(@Body() body: any) {
+  //   console.log('Received body controller:', body);
+  //   return this.dormPaymentService.confirmWebhook(body);
+  // }
+
+  @Post('/handle-webhook')
+  @Public()
+  async handleWebhook(@Body() body: any) {
+    return this.dormPaymentService.handleWebhook(body);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.dormPaymentService.findOne(+id);
-  }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDormPaymentDto: UpdateDormPaymentDto) {
-    return this.dormPaymentService.update(+id, updateDormPaymentDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.dormPaymentService.remove(+id);
-  }
-
-  @Post('confirm-webhook')
-  confirmWebhook(@Body() body: any) {
-    return this.dormPaymentService.confirmWebhook(body);
-  }
 
   @Get('/cancel')
   cancelPayment(@Res() res: Response) {
-    res.render('cancel'); // Trả về trang hủy
+    res.render('cancel');
   }
 
 }

@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 import { Room } from '../rooms/entities/room.entity';
 import { Cron } from '@nestjs/schedule';
 import PayOS from '@payos/node';
+const YOUR_DOMAIN = 'http://localhost:3000';
+
 
 @Injectable()
 export class DormBillService {
@@ -22,39 +24,39 @@ export class DormBillService {
     );
   }
 
-// // @Cron('59 23 28-31 * *', {
-// //   name: 'createMonthlyBills',
-// // })
-// async handleCreateMonthlyBills() {
-//   const rooms = await this.roomModel.find().populate('users'); // Lấy tất cả các phòng và thông tin người dùng
-//   const currentDate = new Date();
-//   const monthAndYear = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+  // // @Cron('59 23 28-31 * *', {
+  // //   name: 'createMonthlyBills',
+  // // })
+  // async handleCreateMonthlyBills() {
+  //   const rooms = await this.roomModel.find().populate('users'); // Lấy tất cả các phòng và thông tin người dùng
+  //   const currentDate = new Date();
+  //   const monthAndYear = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
 
-//   for (const room of rooms) {
-//     // Tìm hóa đơn tháng trước
-//     const previousBill = await this.dormBillModel.findOne({
-//       roomNumber: room.roomNumber,
-//       monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`, // Tìm tháng trước
-//       billType: BillType.ELECTRIC, // Chỉ tìm hóa đơn điện
-//     });
+  //   for (const room of rooms) {
+  //     // Tìm hóa đơn tháng trước
+  //     const previousBill = await this.dormBillModel.findOne({
+  //       roomNumber: room.roomNumber,
+  //       monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`, // Tìm tháng trước
+  //       billType: BillType.ELECTRIC, // Chỉ tìm hóa đơn điện
+  //     });
 
-//     const previousReading = previousBill ? previousBill.currentReading : 0; // Nếu không có hóa đơn thì mặc định là 0
-//     const currentReading = room.electricityNumber;
+  //     const previousReading = previousBill ? previousBill.currentReading : 0; // Nếu không có hóa đơn thì mặc định là 0
+  //     const currentReading = room.electricityNumber;
 
-//     // Đếm số lượng người dùng trong phòng
-//     const userCount = room.users.length; // Số lượng người dùng
+  //     // Đếm số lượng người dùng trong phòng
+  //     const userCount = room.users.length; // Số lượng người dùng
 
-//     // Tính số KWh miễn phí dựa trên số lượng người dùng
-//     const freeElectricityPerUser = 2; // 2 KWh miễn phí cho mỗi người dùng
-//     const totalFreeElectricity = freeElectricityPerUser * userCount;
+  //     // Tính số KWh miễn phí dựa trên số lượng người dùng
+  //     const freeElectricityPerUser = 2; // 2 KWh miễn phí cho mỗi người dùng
+  //     const totalFreeElectricity = freeElectricityPerUser * userCount;
 
-//     // Tạo hóa đơn cho nước
-//     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.WATER, totalFreeElectricity);
+  //     // Tạo hóa đơn cho nước
+  //     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.WATER, totalFreeElectricity);
 
-//     // Tạo hóa đơn cho điện
-//     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.ELECTRIC, totalFreeElectricity);
-//   }
-// }
+  //     // Tạo hóa đơn cho điện
+  //     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.ELECTRIC, totalFreeElectricity);
+  //   }
+  // }
 
   @Cron('37 9 9 11 *', {
     name: 'createMonthlyBills',
@@ -62,38 +64,38 @@ export class DormBillService {
   async handleCreateMonthlyBills() {
     // Lấy thông tin phòng G201
     const room = await this.roomModel.findOne({ roomNumber: 'G201' }).populate('users'); // Lấy thông tin phòng G201 và người dùng
-  
+
     if (!room) {
       console.warn('Room G201 not found');
       return; // Nếu không tìm thấy phòng, không làm gì cả
     }
-  
+
     const currentDate = new Date();
     const monthAndYear = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-  
+
     // Tìm hóa đơn tháng trước
     const previousBill = await this.dormBillModel.findOne({
       roomNumber: room.roomNumber,
       monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`, // Thay đổi để tìm tháng trước
       billType: BillType.ELECTRIC, // Chỉ tìm hóa đơn điện
     });
-  
+
     const previousReading = previousBill ? previousBill.currentReading : 0; // Nếu không có hóa đơn thì mặc định là 0
     const currentReading = room.electricityNumber;
-  
+
     // Đếm số lượng người dùng trong phòng
     const userCount = room.users.length; // Số lượng người dùng 
-  
+
     // Tính số KWh miễn phí dựa trên số lượng người dùng
     const freeElectricityPerUser = 2; // 2 KWh miễn phí cho mỗi người dùng
     const totalFreeElectricity = freeElectricityPerUser * userCount;
-  
+
     // Tạo hóa đơn cho nước
     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.WATER, totalFreeElectricity);
-  
+
     // Tạo hóa đơn cho điện
     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.ELECTRIC, totalFreeElectricity);
-  }  
+  }
 
   private async createBill(room: Room, previousReading: number, currentReading: number, monthAndYear: string, billType: BillType, totalFreeElectricity: number) {
     // Tính toán lượng điện và nước đã sử dụng
@@ -113,10 +115,10 @@ export class DormBillService {
     const hours = String(currentDate.getHours()).padStart(2, '0'); // Giờ (00-23)
     const minutes = String(currentDate.getMinutes()).padStart(2, '0'); // Phút (00-59)
     const seconds = String(currentDate.getSeconds()).padStart(2, '0'); // Giây (00-59)
-    
+
     // Tạo một số ngẫu nhiên từ 1000 đến 9999
     const randomNumber = Math.floor(1000 + Math.random() * 9000); // Số ngẫu nhiên 4 chữ số
-    
+
     // Tạo orderCode bằng cách kết hợp số ngẫu nhiên với giờ, phút, giây
     const orderCodeString = `${randomNumber}${hours}${minutes}${seconds}`; // Kết hợp tất cả
     const orderCode = Number(orderCodeString.slice(0, 10)); // Chỉ lấy 10 ký tự đầu tiên và chuyển thành số
@@ -132,9 +134,12 @@ export class DormBillService {
       orderCode,
       amount: Number(amount),
       description: `${room.roomNumber}${billType === BillType.WATER ? 'W' : 'E'}${monthAndYear.replace('/', '')}`,
-      cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
-      successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
-      returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
+      // cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
+      // successUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=success`,
+      // returnUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=return`
+      cancelUrl: `${YOUR_DOMAIN}`,
+      successUrl: `${YOUR_DOMAIN}`,
+      returnUrl: `${YOUR_DOMAIN}`,
     };
 
     try {

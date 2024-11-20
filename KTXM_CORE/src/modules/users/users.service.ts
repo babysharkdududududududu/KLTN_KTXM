@@ -194,23 +194,19 @@ export class UsersService {
   async retryActive(email: string) {
     //check email
     const user = await this.userModel.findOne({ email });
-
     if (!user) {
       throw new BadRequestException("Tài khoản không tồn tại")
     }
     if (user.isActive) {
       throw new BadRequestException("Tài khoản đã được kích hoạt")
     }
-
     //send Email
     const codeId = uuidv4();
-
     //update user
     await user.updateOne({
       codeId: codeId,
       codeExpired: dayjs().add(5, 'minutes')
     })
-
     //send email
     this.mailerService.sendMail({
       to: user.email, // list of receivers
@@ -223,6 +219,114 @@ export class UsersService {
     })
     return { _id: user._id }
   }
+
+  // send mail with approve room
+  async sendMailApproveRoom(email: string) {
+    //check email
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new BadRequestException("Không tìm thấy tài khoản")
+    }
+    //send email
+    this.mailerService.sendMail({
+      to: user.email, // list of receivers
+      subject: 'Duyệt phòng thành công', // Subject line
+      template: "register",
+      context: {
+        name: user?.name ?? user.email,
+      }
+    })
+    return { _id: user._id }
+  }
+  // send mail with reject room
+  async sendMailRejectRoom(email: string) {
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new BadRequestException("Không tìm thấy tài khoản")
+    }
+    //send email
+    this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Từ chối đơn đăng ký phòng',
+      template: "rejected",
+      context: {
+        name: user?.name ?? user.email,
+      }
+    })
+    return { _id: user._id }
+  }
+  // send mail with approve room
+  async sendMailAssigned(email: string, roomNumber: string) {
+    //check email
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new BadRequestException("Không tìm thấy tài khoản")
+    }
+    //send email
+    this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Xếp phòng thành công', // Subject line
+      template: "assigned",
+      context: {
+        name: user?.name ?? user.email,
+        roomNumber: roomNumber,
+        block: roomNumber.slice(0, 1),
+        floor: roomNumber.slice(1, 2),
+      }
+    })
+  }
+  // send mail with awaitting room
+  async sendMailAwaittingPayment(email: string) {
+    console.log(email);
+    try {
+      // Kiểm tra email
+      const user = await this.userModel.findOne({ email });
+      if (!user) {
+        throw new BadRequestException("Không tìm thấy tài khoản");
+      }
+      // Gửi email
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: 'Chờ thanh toán', // Tiêu đề
+        template: "awaitting_payment",
+        context: {
+          name: user?.name ?? user.email,
+        },
+      });
+
+      console.log(`Email sent to: ${user.email}`);
+    } catch (error) {
+      console.error(`Error sending email to ${email}:`, error);
+      throw new Error(`Failed to send email to ${email}`);
+    }
+  }
+  // send mail with payment success
+  async sendMailPaymentSuccess(email: string, roomNumber: string) {
+    console.log(email);
+    try {
+      // Kiểm tra email
+      const user = await this.userModel.findOne({ email });
+      if (!user) {
+        throw new BadRequestException("Không tìm thấy tài khoản");
+      }
+      // Gửi email
+      await this.mailerService.sendMail({
+        to: user.email,
+        subject: 'Thanh toán thành công', // Tiêu đề
+        template: "success_payment",
+        context: {
+          name: user?.name ?? user.email,
+          roomNumber: roomNumber,
+        },
+      });
+      console.log(`Email sent to: ${user.email}`);
+    } catch (error) {
+      console.error(`Error sending email to ${email}:`, error);
+      throw new Error(`Failed to send email to ${email}`);
+    }
+  }
+
+
 
   async retryPassword(email: string) {
     //check email

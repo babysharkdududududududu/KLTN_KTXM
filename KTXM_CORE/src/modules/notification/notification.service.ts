@@ -44,7 +44,6 @@ export class NotificationService {
 
     const results = await this.notificationModel
       .find(filter)
-      .limit(pageSize)
       .skip(skip)
       .sort(sort as any);
 
