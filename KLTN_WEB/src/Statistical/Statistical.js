@@ -8,7 +8,10 @@ import Dashboard from './RoomWithBlockAndFloor';
 import { Grid } from '@mui/material';
 import TabsComponent from './TabsComponent'; // Import the TabsComponent
 import DormStatusPieChart from './DormSubmitWithStatus'
-
+import MaintenanceCountsByYearMonth from './MaintenaceWithYear';
+import BarChartStatis from './BarCharMaintence';
+import LineChartStatis from './LineChartMaintence';
+import ScatterChartStatis from './ScatterMaintence';
 const Statistical = () => {
     const [listRooms, setListRooms] = useState([]);
     const [totalRooms, setTotalRooms] = useState(0);
@@ -139,9 +142,9 @@ const Statistical = () => {
 
     return (
         <div className={style['statistical-container']}>
-            <TabsComponent activeTab={activeTab} setActiveTab={setActiveTab} /> {/* Use TabsComponent here */}
+            {/* <TabsComponent activeTab={activeTab} setActiveTab={setActiveTab} /> */}
 
-            <div className={style['chart-container']}>
+            {/* <div className={style['chart-container']}>
                 <div className={style['chart-row']}>
                     {activeTab === 'BarChartRooms' && (
                         <ResponsiveContainer width="100%" height={400}>
@@ -196,14 +199,26 @@ const Statistical = () => {
                         </ResponsiveContainer>
                     )}
                 </div>
-            </div>
+            </div> */}
 
             <Grid container spacing={0}>
                 <Grid item xs={12} md={6} >
                     <Dashboard roomByBlockAndFloor={roomByBlockAndFloor} />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <DormStatusPieChart data={pieDataBySetting} />
+                    <DormStatusPieChart data={pieDataBySetting} initialSettingId="W2024" />
+                </Grid>
+                {/* <Grid item xs={12} md={6}>
+                    <MaintenanceCountsByYearMonth />
+                </Grid> */}
+                <Grid item xs={12} md={4}>
+                    <BarChartStatis />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <LineChartStatis />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <ScatterChartStatis />
                 </Grid>
             </Grid>
         </div>

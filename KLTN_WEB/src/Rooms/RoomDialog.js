@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, FormControl, Select, MenuItem, TextField, InputLabel, Grid } from '@mui/material';
 import { CheckCircle, Build } from '@mui/icons-material'; // Import icons
+
 const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipment, onNewEquipmentChange, onAddEquipment }) => {
     const [block, setBlock] = useState('');
     const [roomNumber, setRoomNumber] = useState('');
@@ -17,11 +18,19 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
     }, [selectedRoom]);
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-            <DialogTitle style={{ fontSize: 28, fontWeight: 'bold', textAlign: 'center', backgroundColor: '#f5f5f5', padding: '16px' }}>
+        <Dialog open={open} onClose={onClose} maxWidth={false} fullWidth style={{ height: '100vh', margin: 0 }}>
+            <DialogTitle style={{
+                fontSize: 28,
+                fontWeight: 'bold',
+                textAlign: 'center',
+                backgroundColor: '#f5f5f5',
+                padding: '16px',
+                position: 'sticky',
+                top: 0
+            }}>
                 Thông tin phòng
             </DialogTitle>
-            <DialogContent>
+            <DialogContent style={{ overflowY: 'auto', padding: '16px' }}>
                 {selectedRoom && selectedRoom.room && (
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
@@ -42,17 +51,6 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
                                 <Select labelId="status-label" name="status" value={status} onChange={(e) => { setStatus(e.target.value); onChange(e); }}>
                                     <MenuItem value={0}>Hoạt động</MenuItem>
                                     <MenuItem value={1}>Bảo trì</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        <Grid item xs={6}>
-                            <FormControl fullWidth margin="normal">
-                                <InputLabel id="type-label">Loại phòng</InputLabel>
-                                <Select labelId="type-label" name="type" value={selectedRoom.room.type} onChange={onChange}>
-                                    <MenuItem value="VIP">VIP</MenuItem>
-                                    <MenuItem value="Normal">Normal</MenuItem>
-                                    <MenuItem value="Customer">Customer</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -113,9 +111,6 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                {/* <Grid item xs={4}>
-                                    <TextField margin="dense" label="Số lượng" name="quantity" type="number" value={newEquipment.quantity} onChange={onNewEquipmentChange} />
-                                </Grid> */}
                                 <Grid item xs={2}>
                                     <Button onClick={onAddEquipment} color="primary" fullWidth variant="contained">Thêm</Button>
                                 </Grid>
@@ -124,9 +119,9 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
                     </Grid>
                 )}
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="secondary">Hủy</Button>
-                <Button onClick={onSave} color="primary">Lưu</Button>
+            <DialogActions style={{ position: 'sticky', bottom: 0, padding: '16px' }}>
+                <Button onClick={onClose} color="secondary" style={{ flex: 1 }}>Hủy</Button>
+                <Button onClick={onSave} color="primary" style={{ flex: 1 }}>Lưu</Button>
             </DialogActions>
         </Dialog>
     );

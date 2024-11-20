@@ -16,6 +16,13 @@ import logo from './asset/iuh.png';
 import ParticlesComponent from '../../Particles/ParticlesBackground';
 import { loginRoute } from '../../API/APIRouter';
 import loadingAnimation from './asset/loading.json';
+import { useContext } from 'react';
+
+import ReactDOM from 'react-dom'
+import Snowfall from 'react-snowfall'
+import SpringFlowers from '../../AnimCursor/Spring';
+
+
 
 
 const Login = ({ onLoginSuccess }) => {
@@ -113,30 +120,36 @@ const Login = ({ onLoginSuccess }) => {
     };
 
     const LoginForm = () => (
-        <Box component="form" onSubmit={handleLogin} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2, padding: 2, width: '280px' }}>
-            <Typography variant="h6" gutterBottom color="primary">Đăng Nhập</Typography>
-            <TextField label="Mã số sinh viên" focused type="" fullWidth margin="normal" name="email" InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập email của bạn" required />
-            <TextField label="Mật khẩu" type={showPassword ? 'text' : 'password'} variant="outlined" fullWidth margin="normal" name="password"
-                InputProps={{
-                    startAdornment: <LockIcon sx={{ marginRight: 1 }} />,
-                    endAdornment: (
-                        <Button onClick={() => setShowPassword(!showPassword)} sx={{ padding: 0 }}>
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                        </Button>
-                    ),
-                }}
-                placeholder="Nhập mật khẩu của bạn"
-                required
-            />
-            {error && <Alert severity="error" sx={{ marginTop: 2 }}>{error}</Alert>}
-            <FormControlLabel control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />} label="Nhớ mật khẩu" />
-            <Link onClick={handleForgotPassword} variant="body2" sx={{ display: 'flex', marginTop: 1, justifyContent: "flex-end" }}>Quên mật khẩu?</Link>
-            <Divider sx={{ margin: '16px 0' }} />
-            <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading} className={`${styles.button} ${styles.hoverEffect}`}>
-                {loading ? <CircularProgress size={24} color="inherit" /> : 'Đăng Nhập'}
-            </Button>
-            <Link onClick={handleRegister} variant="body2" sx={{ display: 'block', marginTop: 2, textAlign: 'center' }}>Chưa có tài khoản? Đăng ký</Link>
-        </Box>
+        <>
+
+            <Box component="form" onSubmit={handleLogin} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2, padding: 2, width: '280px' }}>
+                {/* <Snowfall /> */}
+                <Typography variant="h6" gutterBottom color="primary">Đăng Nhập</Typography>
+                <TextField label="Mã số sinh viên" focused type="" fullWidth margin="normal" name="email" InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập email của bạn" required />
+                <TextField label="Mật khẩu" type={showPassword ? 'text' : 'password'} variant="outlined" fullWidth margin="normal" name="password"
+                    InputProps={{
+                        startAdornment: <LockIcon sx={{ marginRight: 1 }} />,
+                        endAdornment: (
+                            <Button onClick={() => setShowPassword(!showPassword)} sx={{ padding: 0 }}>
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </Button>
+                        ),
+                    }}
+                    placeholder="Nhập mật khẩu của bạn"
+                    required
+                />
+                {error && <Alert severity="error" sx={{ marginTop: 2 }}>{error}</Alert>}
+                <FormControlLabel control={<Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />} label="Nhớ mật khẩu" />
+                <Link onClick={handleForgotPassword} variant="body2" sx={{ display: 'flex', marginTop: 1, justifyContent: "flex-end" }}>Quên mật khẩu?</Link>
+                <Divider sx={{ margin: '16px 0' }} />
+                <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading} className={`${styles.button} ${styles.hoverEffect}`}>
+                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Đăng Nhập'}
+                </Button>
+                <Link onClick={handleRegister} variant="body2" sx={{ display: 'block', marginTop: 2, textAlign: 'center' }}>Chưa có tài khoản? Đăng ký</Link>
+            </Box>
+        </>
+
+        // </StyledComponent>
     );
 
     useEffect(() => {
@@ -152,7 +165,7 @@ const Login = ({ onLoginSuccess }) => {
                 } else {
                     clearInterval(interval);
                 }
-            }, 20);  // Giảm thời gian giữa mỗi lần tăng giá trị
+            }, 20);
         };
 
         fadeInLogo();
@@ -161,6 +174,7 @@ const Login = ({ onLoginSuccess }) => {
 
     return (
         <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'row' }}>
+            <SpringFlowers />
             {loadingAnimationVisible ? (
                 <Lottie animationData={loadingAnimation} loop={true} style={{ width: '550px', height: '550px', textAlign: 'center', alignSelf: 'center' }} />
             ) : (

@@ -26,37 +26,22 @@ const Discipline = () => {
         try {
             const { data } = await axios.get(getRoomRoute, { params: { all: true } });
             const rooms = data.data.results;
-            const userResponse = await axios.get(getAllUserRoute);
-            if (!userResponse.data || !userResponse.data.data) {
-                throw new Error('Không có dữ liệu người dùng');
-            }
-            const usersWithViolations = userResponse.data.data.map(user => {
-                const totalViolationCount = user.disciplines.reduce((acc, discipline) => { return acc + discipline.violationCount; }, 0);
-                return {
-                    ...user,
-                    violationCount: totalViolationCount
-                };
-            });
 
             const groupedStudents = rooms.reduce((acc, room) => {
                 if (room.users && room.users.length > 0) {
-                    acc[room.roomNumber] = room.users.map(user => {
-                        const violationData = usersWithViolations.find(u => u._id === user._id);
-                        console.log("Checking match for:", { userId: user._id, found: violationData });
-                        return {
-                            ...user,
-                            roomNumber: room.roomNumber,
-                            violationCount: violationData ? violationData.violationCount : 0,
-                            disciplines: violationData ? violationData.disciplines : user.disciplines || []
-                        };
-                    });
+                    acc[room.roomNumber] = room.users.map(user => ({
+                        ...user,
+                        roomNumber: room.roomNumber
+                    }));
                 }
                 return acc;
             }, {});
+
             setListRooms(rooms);
+            console.log("Grouped students:", listRooms);
             setListStudents(groupedStudents);
         } catch (err) {
-            console.error("Error fetching rooms and users:", err);
+            console.error("Error fetching rooms:", err);
         }
     };
 
@@ -64,7 +49,7 @@ const Discipline = () => {
         fetchRooms();
     }, []);
 
-    // Fetch all users and update violation counts
+    // Fetch all users
     const handleGetAllUser = async () => {
         try {
             const response = await axios.get(getAllUserRoute);
@@ -96,6 +81,7 @@ const Discipline = () => {
         user.userId.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     const paginatedUsers = filteredUsers.slice((currentPage - 1) * pageSize, currentPage * pageSize);
     const totalPages = Math.ceil(filteredUsers.length / pageSize);
 
@@ -141,7 +127,6 @@ const Discipline = () => {
         setOpenEditModal(false);
     };
 
-    // Update violation count and save the violation
     const handleSaveViolation = async () => {
         if (!newDescription || !newViolationDate) {
             alert("Vui lòng nhập đầy đủ thông tin.");
@@ -158,34 +143,9 @@ const Discipline = () => {
             penalty: "Cảnh cáo",
             descriptions: [descriptionData]
         };
-
         try {
-            // Save violation
             const response = await axios.post(createDisciplineRoute, createDisciplineData);
             console.log("Vi phạm đã được lưu:", response.data);
-
-            // Update violation count in userData
-            const updatedUserData = userData.map(user => {
-                if (user.userId === selectedUser.userId) {
-                    user.violationCount += 1;  // Increment violation count
-                }
-                return user;
-            });
-
-            // Update listStudents with the new violation count
-            const updatedListStudents = { ...listStudents };
-            Object.keys(updatedListStudents).forEach(roomNumber => {
-                updatedListStudents[roomNumber] = updatedListStudents[roomNumber].map(student => {
-                    if (student.userId === selectedUser.userId) {
-                        student.violationCount += 1;  // Increment violation count for this student in the room
-                    }
-                    return student;
-                });
-            });
-
-            setUserData(updatedUserData);
-            setListStudents(updatedListStudents);  // Update listStudents to trigger re-render
-
             handleGetAllUser();
             handleCloseModal();
         } catch (error) {
@@ -193,15 +153,14 @@ const Discipline = () => {
         }
     };
 
-
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '90vh', padding: 4, justifyContent: 'center', alignItems: 'center' }}>
-            {/* <Tabs value={tabValue} onChange={handleChangeTab} sx={{ mb: 2 }}>
+            <Tabs value={tabValue} onChange={handleChangeTab} sx={{ mb: 2 }}>
                 <Tab label="Danh sách sinh viên" />
                 <Tab label="Sinh viên theo phòng" />
-            </Tabs> */}
+            </Tabs>
 
-            {/* {tabValue === 0 && (
+            {tabValue === 0 && (
                 <StudentList
                     paginatedUsers={paginatedUsers}
                     columns={columns}
@@ -212,15 +171,16 @@ const Discipline = () => {
                     setSearchTerm={setSearchTerm}
                     setSelectedUser={setSelectedUser}
                 />
-            )} */}
+            )}
 
-            {/* {tabValue === 1 && ( */}
-            <RoomStudents
-                listStudents={listStudents}
-                columns={columns}
-                setSelectedUser={setSelectedUser}
-            />
-            {/* )} */}
+            {tabValue === 1 && (
+                <RoomStudents
+                    listStudents={listStudents}
+                    columns={columns}
+                    setSelectedUser={setSelectedUser}
+                />
+            )}
+
 
             <ViolationModal
                 selectedUser={selectedUser}

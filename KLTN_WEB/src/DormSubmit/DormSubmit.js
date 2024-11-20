@@ -24,6 +24,7 @@ export default function DormSubmit() {
     const [userInfo, setUserInfo] = useState(null);
     const [note, setNote] = useState("");
     const [isRegistered, setIsRegistered] = useState(false);
+    const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -58,7 +59,10 @@ export default function DormSubmit() {
             try {
                 const response = await axios.get(`${getUserByIdRoute}${userId}`);
                 if (response.data && response.data.data) {
-                    setUserInfo(response.data.data);
+                    const user = response.data.data;
+                    setUserInfo(user);
+                    setEmail(user.email);
+                    console.log("Thông tin người dùng:", user.email);
                 } else {
                     console.error("Không tìm thấy thông tin người dùng.");
                 }
@@ -81,6 +85,7 @@ export default function DormSubmit() {
                 userId,
                 note,
                 settingId,
+                email,
             }),
         });
 
@@ -134,6 +139,11 @@ export default function DormSubmit() {
                                     <AccountCircle style={{ marginRight: 5 }} />
                                     <label>Họ tên:</label>
                                     <label>{userInfo.name}</label>
+                                </div>
+                                <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
+                                    <AccountCircle style={{ marginRight: 5 }} />
+                                    <label>Email:</label>
+                                    <label>{userInfo.email}</label>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "row", alignItems: "center" }}>
                                     <Class style={{ marginRight: 5 }} />

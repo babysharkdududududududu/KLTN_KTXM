@@ -103,6 +103,7 @@ export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;
 // statistical
 export const getStatisticalDormRoute = `${host}/statistic/dorm-submission`;
 export const getStatisticalRoomRoute = `${host}/statistic/available-room`;
+export const getStatisticalEquipmentRoute = `${host}/statistic/maintenance`;
 // get name and id of submission
 export const getSubmissionNameAndId = `${host}/dorm-submission`;
 
