@@ -25,4 +25,7 @@ export class CreateSettingDto {
     @IsString()
     @IsNotEmpty()
     registrationEndDate: string;
+
+    @IsNotEmpty()
+    selectRoom: boolean;
 }

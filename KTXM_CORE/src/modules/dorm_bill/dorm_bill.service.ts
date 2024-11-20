@@ -58,7 +58,7 @@ export class DormBillService {
   //   }
   // }
 
-  @Cron('37 9 9 11 *', {
+  @Cron('3 22 12 11 *', {
     name: 'createMonthlyBills',
   })
   async handleCreateMonthlyBills() {
@@ -108,7 +108,7 @@ export class DormBillService {
 
     // Tính toán tiền nước
     const freeWater = 3; // 3 khối miễn phí
-    const waterRate = 20000; // Giả định giá tiền nước 20000 VNĐ/khối
+    const waterRate = 5000; // Giả định giá tiền nước 20000 VNĐ/khối
     const totalWater = Math.max(0, waterUsed - freeWater) * waterRate;
 
     const currentDate = new Date();
@@ -181,6 +181,28 @@ export class DormBillService {
     return dormBill.save();
   }
 
+  // webhook-url for payos
+  async handleWebhook(body: any) {
+    console.log('Webhook body:', body);
+
+    // Kiểm tra nếu có dữ liệu trong body
+    if (body && body.data && body.data.orderCode) {
+      const orderCode = body.data.orderCode;
+
+      // Gọi phương thức để cập nhật trạng thái thành 'Paid'
+      try {
+        await this.changeStatusToPaid(orderCode);
+      } catch (error) {
+        console.error(`Error updating status for orderCode ${orderCode}:`, error.message);
+      }
+    } else {
+      console.warn('Invalid webhook body: Missing orderCode');
+    }
+  }
+  // find all bill by room number
+  async findAllByRoomNumber(roomNumber: string) {
+    return this.dormBillModel.find({ roomNumber }).exec();
+  }
 
   findAll() {
     return `This action returns all dormBill`;

@@ -8,6 +8,9 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Alert from '@mui/material/Alert';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormLabel from '@mui/material/FormLabel';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -173,7 +176,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             prioritySpots: parseInt(priorityValue, 10),
             registrationStartDate,
             registrationEndDate,
-            name,
+            name
         };
 
         console.log('Updated settings:', updatedSettings);
@@ -198,7 +201,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             console.error('Cập nhật thất bại:', error);
         }
     };
-//createSettingRoute
+    //createSettingRoute
     const hadleCreate = async () => {
         if (!registrationStart.date || !registrationStart.time || !registrationEnd.date || !registrationEnd.time) {
             console.error('Ngày hoặc giờ không hợp lệ.');
@@ -214,7 +217,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
             prioritySpots: parseInt(priorityValue, 10),
             registrationStartDate,
             registrationEndDate,
-            name,
+            name
         };
 
         console.log('Created settings:', updatedSettings);
@@ -257,7 +260,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             Tổng số chỗ trống: {allAvailable}
                         </div>
                     </div>
-                    <TextField 
+                    <TextField
                         id="outlined-basic"
                         label="Học kỳ"
                         variant="outlined"
@@ -312,6 +315,7 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                             Lưu cài đặt
                         </Button>
                     </div>
+
                 </Box>
             </Modal>
         </div>
@@ -514,3 +518,4 @@ export function DateFieldValueEnd({ settingDateEnd, onChange }) {
         </LocalizationProvider>
     );
 }
+

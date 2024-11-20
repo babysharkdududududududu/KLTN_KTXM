@@ -63,10 +63,10 @@ export class DormSubmissionService {
       status: DormSubmissionStatus.PENDING,
       email,
     });
-
     try {
-      await dormSubmission.save();
+      await this.settingService.updateSubmissionCount(userId);
       await this.settingService.submissionCount(settingId);
+      await dormSubmission.save();
       return dormSubmission;
     } catch (error) {
       console.error('Error creating dorm submission:', error);

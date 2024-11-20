@@ -16,10 +16,19 @@ export class Setting {
     firstYearSpots: number;
 
     @Prop({ default: 0 })
+    firstYearSubmissions: number;
+
+    @Prop({ default: 0 })
     upperYearSpots: number;
 
     @Prop({ default: 0 })
+    upperYearSubmissions: number;
+
+    @Prop({ default: 0 })
     prioritySpots: number;
+
+    @Prop({ default: 0 })
+    prioritySubmissions: number;
 
     @Prop({ type: Date, required: true })
     registrationStartDate: Date;
