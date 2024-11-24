@@ -215,6 +215,8 @@ export class SettingService {
     console.log(`Đăng ký cho ${setting.name} đã dừng.`);
     return setting;
   }
-
-
+  async isAnySettingOpen(): Promise<boolean> {
+    const setting = await this.settingModel.findOne({ registrationStatus: 'open' });
+    return !!setting; // Trả về true nếu có setting nào đó đang mở, ngược lại trả về false
+}
 }
