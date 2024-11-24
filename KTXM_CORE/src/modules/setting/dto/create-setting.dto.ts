@@ -1,7 +1,6 @@
 import { IsNumber, IsNotEmpty, IsDate, IsString } from 'class-validator';
 
 export class CreateSettingDto {
-    
     @IsString()
     @IsNotEmpty()
     name: string;
@@ -25,7 +24,4 @@ export class CreateSettingDto {
     @IsString()
     @IsNotEmpty()
     registrationEndDate: string;
-
-    @IsNotEmpty()
-    selectRoom: boolean;
 }

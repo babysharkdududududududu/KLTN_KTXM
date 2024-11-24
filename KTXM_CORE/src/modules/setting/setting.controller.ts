@@ -32,4 +32,18 @@ export class SettingController {
     return this.settingService.update(id, updateSettingDto);
   }
 
+  // openRegistration
+  @Patch('openRegistration/:id')
+  @Public()
+  async openRegistration(@Param('id') id: string): Promise<Setting> {
+    return this.settingService.openRegistration(id);
+  }
+
+  // pauseRegistration
+  @Patch('pauseRegistration/:id')
+  @Public()
+  async pauseRegistration(@Param('id') id: string): Promise<Setting> {
+    return this.settingService.pauseRegistration(id);
+  }
+
 }

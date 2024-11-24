@@ -36,8 +36,13 @@ export class Setting {
     @Prop({ type: Date, required: true })
     registrationEndDate: Date;
 
+  // Trạng thái mặc định là 'closed'
+  @Prop({ default: 'closed' }) // Các trạng thái: 'open', 'paused', 'stopped', 'closed'
+  registrationStatus: string;
+
+
     @Prop({ default: false })
-    isRegistrationOpen: boolean;
+    openPayment: boolean;
 }
 
 export const SettingSchema = SchemaFactory.createForClass(Setting);

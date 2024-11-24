@@ -1,23 +1,30 @@
-import { Controller, Get, Post, Patch, Param, Delete, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Delete, Body, Query } from '@nestjs/common';
 import { DormBillService } from './dorm_bill.service';
-import { BillType } from './entities/dorm_bill.entity';
+import { BillType, PaymentStatus, DormBill } from './entities/dorm_bill.entity';
 import { Public } from '@/decorator/customize';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 @Controller('dorm-bill')
 export class DormBillController {
   constructor(private readonly dormBillService: DormBillService) {}
+
+  @Get('search')
+  @Public()
+  async findAll(
+    @Query('season') season: string,
+    @Query('roomNumber') roomNumber: string,
+    @Query('monthAndYear') monthAndYear: string,
+    @Query('status') status: PaymentStatus,
+    @Query('billType') billType: BillType,
+  ): Promise<DormBill[]> {
+    return this.dormBillService.findAll({ roomNumber, monthAndYear, status, billType, season });
+  }
 
   @Post()
   async create() {
     // Gọi phương thức tạo hóa đơn tự động từ service
     return this.dormBillService.handleCreateMonthlyBills();
   }
-
-  @Get()
-  findAll() {
-    return this.dormBillService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.dormBillService.findOne(+id);
@@ -41,5 +48,8 @@ export class DormBillController {
   async findAllByRoomNumber(@Param('roomNumber') roomNumber: string) {
     return this.dormBillService.findAllByRoomNumber(roomNumber);
   }
-  
+
+
 }
+
+

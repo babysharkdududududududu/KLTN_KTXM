@@ -56,6 +56,8 @@ export const updateLocationEquipmentRoute = `${host}/equipment`;
 export const getSettingRoute = `${host}/setting`;
 export const updateSettingRoute = `${host}/setting`;
 export const createSettingRoute = `${host}/setting`;
+export const pauseSettingRoute = `${host}/setting/pauseRegistration/`;
+export const openSettingRoute = `${host}/setting/openRegistration/`;
 
 //Room
 export const getAllRoomRoute = `${host}/rooms/?all=true`;
@@ -63,6 +65,7 @@ export const getAllRoomRoute = `${host}/rooms/?all=true`;
 
 //submit form dorm
 export const submitDormRoute = `${host}/dorm-submission`;
+
 export const getDormSubmissionRoute = `${host}/dorm-submission`;
 export const checkSubmit = `${host}/dorm-submission/exists`;
 export const getBySettingId = `${host}/dorm-submission/setting`;
