@@ -11,7 +11,7 @@ import {
     TimelineDot,
     TimelineOppositeContent
 } from '@mui/lab';
-import { Typography } from '@mui/material';
+import { Typography, Box, CircularProgress } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
@@ -30,13 +30,13 @@ const statusIcons = {
 };
 
 const statusColors = {
-    PENDING: "#FFCC00",
-    ACCEPTED: "#4CAF50",
-    AWAITING_PAYMENT: "#FF9800",
-    PAID: "#4CAF50",
-    ASSIGNED: "#2196F3",
-    REJECTED: "#F44336",
-    ROOM_REQUESTED: "#9C27B0",
+    PENDING: "#FFD700",
+    ACCEPTED: "#28a745",
+    AWAITING_PAYMENT: "#FF8C00",
+    PAID: "#28a745",
+    ASSIGNED: "#007BFF",
+    REJECTED: "#DC3545",
+    ROOM_REQUESTED: "#6A1B9A",
 };
 
 const statusTranslations = {
@@ -77,46 +77,79 @@ const TimeLineStudent = () => {
     }, []);
 
     if (!dormSubmission) {
-        return <div style={{ textAlign: 'center', marginTop: '50px' }}>Đang tải...</div>;
+        return (
+            <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (
-        <div style={{ padding: '30px', borderRadius: '16px', maxWidth: '900px', margin: '40px auto', }}>
-            <Typography variant="h4" align="center" gutterBottom>
-                Quá trình xử lý đơn đăng ký
+        <Box
+            sx={{
+                p: 4,
+                borderRadius: 2,
+                maxWidth: 700,
+                margin: '20px auto',
+                backgroundColor: '#FFFFFF',
+                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
+            }}
+        >
+            <Typography
+                variant="h5"
+                align="center"
+                gutterBottom
+                sx={{ fontWeight: 600, color: '#333', marginBottom: 2 }}
+            >
+                Quá trình xử lý đơn
             </Typography>
             <Timeline position="alternate">
-                {
-                    dormSubmission.statusHistory.map((status, index) => (
-                        <TimelineItem key={index}>
-                            <TimelineOppositeContent
-                                sx={{ m: 'auto 0' }}
-                                align={index % 2 === 0 ? "right" : "left"}
-                                variant="body2"
-                                color="text.secondary"
+                {dormSubmission.statusHistory.map((status, index) => (
+                    <TimelineItem key={index}>
+                        <TimelineOppositeContent
+                            sx={{ m: 'auto 0', color: '#757575', fontSize: '0.875rem' }}
+                            align="right"
+                        >
+                            {new Date(dormSubmission.updatedAt).toLocaleDateString()}
+                        </TimelineOppositeContent>
+                        <TimelineSeparator>
+                            {index !== 0 && <TimelineConnector />}
+                            <TimelineDot
+                                sx={{
+                                    backgroundColor: statusColors[status],
+                                    boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)',
+                                }}
                             >
-                                {new Date(dormSubmission.updatedAt).toLocaleDateString()}
-                            </TimelineOppositeContent>
-                            <TimelineSeparator>
+                                {statusIcons[status]}
+                            </TimelineDot>
+                            {index !== dormSubmission.statusHistory.length - 1 && (
                                 <TimelineConnector />
-                                <TimelineDot color="primary" style={{ backgroundColor: statusColors[status] }}>
-                                    {statusIcons[status]}
-                                </TimelineDot>
-                                <TimelineConnector />
-                            </TimelineSeparator>
-                            <TimelineContent sx={{ py: '12px', px: 2 }}>
-                                <Typography variant="h6" component="span">
-                                    {statusTranslations[status]}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary">
-                                    {statusMessages[status]}
-                                </Typography>
-                            </TimelineContent>
-                        </TimelineItem>
-                    ))
-                }
+                            )}
+                        </TimelineSeparator>
+                        <TimelineContent sx={{ py: '8px', px: 2 }}>
+                            <Typography
+                                variant="subtitle1"
+                                sx={{
+                                    fontWeight: 600,
+                                    color: statusColors[status],
+                                }}
+                            >
+                                {statusTranslations[status]}
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: '#616161',
+                                    marginTop: 0.5,
+                                }}
+                            >
+                                {statusMessages[status]}
+                            </Typography>
+                        </TimelineContent>
+                    </TimelineItem>
+                ))}
             </Timeline>
-        </div>
+        </Box>
     );
 };
 

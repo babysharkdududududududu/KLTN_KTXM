@@ -2,10 +2,23 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { importEquipmentRoute, getEquipmentRoute, getRoomRoute } from '../../API/APIRouter';
+import {
+    Button,
+    Card,
+    CardContent,
+    Typography,
+    Snackbar,
+    Alert,
+    Box,
+    LinearProgress,
+    TextField,
+} from '@mui/material';
 
 const EquipmentUpload = () => {
     const [file, setFile] = useState(null);
-    const [message, setMessage] = useState('');
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [snackbarSeverity, setSnackbarSeverity] = useState('success');
     const [isUploading, setIsUploading] = useState(false);
     const [uploadProgress, setUploadProgress] = useState(0);
     const [equipmentData, setEquipmentData] = useState([]);
@@ -82,7 +95,7 @@ const EquipmentUpload = () => {
 
     const handleUpload = async () => {
         if (!file) {
-            setMessage('Vui lòng chọn một file trước.');
+            showSnackbar('Vui lòng chọn một file trước.', 'error');
             return;
         }
 
@@ -95,7 +108,7 @@ const EquipmentUpload = () => {
 
             const isValid = jsonData.every(equip => equip.equipNumber && equip.name && equip.status && equip.startDate);
             if (!isValid) {
-                setMessage('Dữ liệu không hợp lệ!');
+                showSnackbar('Dữ liệu không hợp lệ!', 'error');
                 return;
             }
 
@@ -121,7 +134,7 @@ const EquipmentUpload = () => {
                     .filter(roomNumber => !checkRoomExist(roomNumber));
 
                 if (invalidRoomNumbers.length > 0) {
-                    setMessage(`Các mã phòng không tồn tại: ${invalidRoomNumbers.join(', ')}`);
+                    showSnackbar(`Các mã phòng không tồn tại: ${invalidRoomNumbers.join(', ')}`, 'error');
                     return;
                 }
 
@@ -133,7 +146,7 @@ const EquipmentUpload = () => {
                 console.log('Thiết bị hợp lệ:', validEquipment);
 
                 if (validEquipment.length === 0) {
-                    setMessage('Không có thiết bị hợp lệ để nhập!');
+                    showSnackbar('Không có thiết bị hợp lệ để nhập!', 'warning');
                     return;
                 }
 
@@ -146,31 +159,67 @@ const EquipmentUpload = () => {
                         }
                     });
                     console.log('Phản hồi từ server:', response.data);
-                    setMessage('Import thiết bị thành công!');
+                    showSnackbar('Import thiết bị thành công!', 'success');
                     fetchEquipment(); // Cập nhật danh sách thiết bị
                 } catch (error) {
                     console.error('Lỗi khi import thiết bị:', error.response?.data || error.message);
-                    setMessage(`Lỗi khi import thiết bị: ${error.response?.data?.message || error.message}`);
+                    showSnackbar(`Lỗi khi import thiết bị: ${error.response?.data?.message || error.message}`, 'error');
                 } finally {
                     setIsUploading(false);
                 }
             } catch (error) {
                 console.error('Lỗi khi xử lý dữ liệu:', error);
-                setMessage('Lỗi khi xử lý dữ liệu!');
+                showSnackbar('Lỗi khi xử lý dữ liệu!', 'error');
             }
         };
 
         reader.readAsArrayBuffer(file);
     };
 
+    const showSnackbar = (message, severity) => {
+        setSnackbarMessage(message);
+        setSnackbarSeverity(severity);
+        setSnackbarOpen(true);
+    };
+
+    const handleSnackbarClose = () => {
+        setSnackbarOpen(false);
+    };
+
     return (
-        <div>
-            <h2>Upload Equipment Data</h2>
-            <input type="file" accept=".xlsx" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
-            <p>{message}</p>
-            {isUploading && <p>Đang tải lên... {uploadProgress}%</p>}
-        </div>
+        <Box display="flex" justifyContent="center" alignItems="center" >
+            <CardContent>
+                <TextField
+                    type="file"
+                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
+                    onChange={handleFileChange}
+                    fullWidth
+                    margin="normal"
+                    variant="outlined"
+                />
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    fullWidth
+                >
+                    {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
+                </Button>
+                <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 2 }}>
+                    Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu thiết bị.
+                </Typography>
+                {isUploading && (
+                    <LinearProgress variant="determinate" value={uploadProgress} sx={{ marginTop: 2 }} />
+                )}
+            </CardContent>
+
+            <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+        </Box>
     );
 };
 

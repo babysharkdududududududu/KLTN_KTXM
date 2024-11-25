@@ -2,7 +2,18 @@ import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 import { getAllUserRoute, importUserRoute } from '../../API/APIRouter';
-import { Button, Typography, LinearProgress, TextField, Box, Snackbar, Alert, Divider, Paper } from '@mui/material';
+import {
+    Button,
+    Typography,
+    LinearProgress,
+    TextField,
+    Box,
+    Snackbar,
+    Alert,
+    Divider,
+    Paper,
+    CardContent
+} from '@mui/material';
 
 const UploadXLSX = () => {
     const [file, setFile] = useState(null);
@@ -16,7 +27,8 @@ const UploadXLSX = () => {
     const handleGetAllUser = async () => {
         try {
             const response = await axios.get(getAllUserRoute);
-            setUserData(response.data.data.results);
+            setUserData(response.data.data);
+            console.log('Dữ liệu người dùng:', response.data.data);
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu người dùng:', error);
         }
@@ -55,7 +67,6 @@ const UploadXLSX = () => {
             .map(user => user.userId);
     };
 
-
     const handleUpload = async () => {
         if (!file) {
             showSnackbar('Vui lòng chọn một file trước.', 'error');
@@ -68,10 +79,17 @@ const UploadXLSX = () => {
             const workbook = XLSX.read(data, { type: 'array' });
             const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
 
-            const isValid = jsonData.every(user => user.name && user.email && user.userId && user.password && (user.isActive === true || user.isActive === false));
+            const errors = [];
 
-            if (!isValid) {
-                showSnackbar('Dữ liệu không hợp lệ!', 'error');
+            // Kiểm tra tính hợp lệ của dữ liệu
+            jsonData.forEach((user, index) => {
+                if (!user.name || !user.email || !user.userId || !user.password || typeof user.isActive !== 'boolean') {
+                    errors.push(`Dòng ${index + 1}: Thiếu trường bắt buộc hoặc giá trị không hợp lệ.`);
+                }
+            });
+
+            if (errors.length > 0) {
+                showSnackbar(`Lỗi dữ liệu:\n${errors.join('\n')}`, 'error');
                 return;
             }
 
@@ -83,10 +101,23 @@ const UploadXLSX = () => {
             const existingUserIds = checkForExistingUserIds(normalizedUserData);
             const duplicateUserIdsInFile = findDuplicateUserIds(normalizedUserData);
 
+            if (existingUserIds.length > 0) {
+                errors.push(`Các userId đã tồn tại: ${existingUserIds.join(', ')}`);
+            }
+            if (duplicateUserIdsInFile.length > 0) {
+                errors.push(`Các userId trùng lặp trong file: ${duplicateUserIdsInFile.join(', ')}`);
+            }
+
+            // Lọc user hợp lệ
             const validUsers = normalizedUserData.filter(user =>
                 !existingUserIds.includes(user.userId) &&
                 !duplicateUserIdsInFile.includes(user.userId)
             );
+
+            if (errors.length > 0) {
+                showSnackbar(`Lỗi dữ liệu:\n${errors.join('\n')}`, 'error');
+                return;
+            }
 
             if (validUsers.length === 0) {
                 showSnackbar('Không có người dùng hợp lệ để nhập!', 'warning');
@@ -102,7 +133,12 @@ const UploadXLSX = () => {
                     }
                 });
                 showSnackbar('Import thành công!', 'success');
+
+                // Làm mới danh sách user
                 handleGetAllUser();
+
+                // Đặt lại trạng thái file
+                setFile(null);
             } catch (error) {
                 console.error('Lỗi khi import:', error.response?.data || error.message);
                 showSnackbar('Có lỗi xảy ra khi import dữ liệu.', 'error');
@@ -110,9 +146,11 @@ const UploadXLSX = () => {
                 setIsUploading(false);
                 setUploadProgress(0);
             }
+
         };
         reader.readAsArrayBuffer(file);
     };
+
 
     const showSnackbar = (message, severity) => {
         setSnackbarMessage(message);
@@ -125,27 +163,28 @@ const UploadXLSX = () => {
     };
 
     return (
-        <Box display="flex" >
-            <Box elevation={3} sx={{ padding: 2, borderRadius: 2, maxWidth: 400, minHeight: 150, background: '#f5f5f5' }}>
-                <Typography gutterBottom sx={{ fontFamily: 'Tahoma', textAlign: 'center', fontSize: 16 }}>Tải lên dữ liệu sinh viên</Typography>
-                <Divider sx={{ marginBottom: 2 }} />
+        <Box display="flex" justifyContent="center" alignItems="center" >
+            <CardContent >
 
-                <TextField type="file" inputProps={{ accept: '.xlsx, .xls, .csv' }} onChange={handleFileChange} variant="outlined" fullWidth
-                    sx={{ marginBottom: 2, '& input': { padding: '4px 8px', }, '& .MuiOutlinedInput-root': { borderRadius: 1, fontSize: 14, }, '& .MuiInputLabel-root': { fontSize: 14, }, '& .MuiSvgIcon-root': { fontSize: 18, } }}
-                />
+                <TextField type="file" inputProps={{ accept: '.xlsx, .xls, .csv' }} margin="normal" onChange={handleFileChange} variant="outlined" />
 
-                <Button variant="contained" color="primary" fullWidth onClick={handleUpload} disabled={isUploading}
-                    sx={{ padding: '4px 8px', fontSize: 12, minHeight: '36px' }}>
+                <Button variant="contained" color="primary" fullWidth onClick={handleUpload} disabled={isUploading} >
                     {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
                 </Button>
 
-                <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 1, fontSize: 12 }}> Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu sinh viên.</Typography>
+                <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 2 }}>
+                    Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu sinh viên.
+                </Typography>
 
-                {isUploading && (<LinearProgress variant="determinate" value={uploadProgress} sx={{ marginTop: 2 }} />)}
-            </Box>
+                {isUploading && (
+                    <LinearProgress variant="determinate" value={uploadProgress} sx={{ marginTop: 2 }} />
+                )}
+            </CardContent>
 
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>{snackbarMessage}</Alert>
+                <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
             </Snackbar>
         </Box>
     );

@@ -17,6 +17,7 @@ import iuh from '../Payment/asset/iuh.png';
 import helloAnimation from './asset/hello.json';
 import AvailableSlot from './AvailableSlot/AvailableSlot';
 import CreateUser from './CreateUser/CreateUser';
+import ManagementImport from './Import/ManagementImport';
 
 import { ReactTyped } from 'react-typed';
 import { useUser } from '../Context/Context';
@@ -82,14 +83,25 @@ const Home = () => {
                         <UserInfo />
                     </Box>
                 </Grid>
-                <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
-                    <Box sx={{ ...boxStyle, overflow: 'hidden', minHeight: '100px', marginBottom: 2, flex: 1, }}>
-                        <Discipline />
-                    </Box>
-                    <Box sx={{ ...boxStyle, minHeight: '50px', flex: 1, marginTop: '-10px' }}>
-                        <RoomInfo />
-                    </Box>
-                </Grid>
+                {
+                    roleId === 'MANAGER' ? (
+                        <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex', flexDirection: 'column' }} onClick={() => navigate('/management-import')} >
+                            <Box sx={{ ...boxStyle, overflow: 'auto', flex: 1 }}>
+                                <ManagementImport />
+                            </Box>
+                        </Grid>
+                    ) : (
+                        <Grid item xs={12} sm={6} md={4} sx={{ display: 'flex', flexDirection: 'column' }}>
+                            <Box sx={{ ...boxStyle, overflow: 'hidden', minHeight: '100px', marginBottom: 2, flex: 1, }}>
+                                <Discipline />
+                            </Box>
+                            <Box sx={{ ...boxStyle, minHeight: '50px', flex: 1, marginTop: '-10px' }}>
+                                <RoomInfo />
+                            </Box>
+                        </Grid>
+                    )
+                }
+
             </Grid>
 
             <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: '0px' }} >

@@ -130,24 +130,21 @@ const UploadRoom = () => {
 
     return (
         <Box display="flex" justifyContent="center" alignItems="center" >
-            <Card sx={{ maxWidth: 400, padding: 2 }}>
-                <CardContent>
-                    <Typography variant="h5" gutterBottom align="center">Nhập dữ liệu phòng</Typography>
 
-                    <TextField type="file" inputProps={{ accept: '.xlsx, .xls, .csv' }} onChange={handleFileChange} margin="normal" variant="outlined" />
+            <CardContent>
+                <TextField type="file" inputProps={{ accept: '.xlsx, .xls, .csv' }} onChange={handleFileChange} margin="normal" variant="outlined" />
 
-                    <Button variant="contained" color="primary" fullWidth onClick={handleUpload} disabled={isUploading}>
-                        {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
-                    </Button>
-                    <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 2 }}>
-                        Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu sinh viên.
-                    </Typography>
+                <Button variant="contained" color="primary" fullWidth onClick={handleUpload} disabled={isUploading}>
+                    {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
+                </Button>
+                <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 2 }}>
+                    Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu phòng.
+                </Typography>
 
-                    {isUploading && (
-                        <LinearProgress variant="determinate" value={uploadProgress} sx={{ marginTop: 2 }} />
-                    )}
-                </CardContent>
-            </Card>
+                {isUploading && (
+                    <LinearProgress variant="determinate" value={uploadProgress} sx={{ marginTop: 2 }} />
+                )}
+            </CardContent>
 
             <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>

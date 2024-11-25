@@ -25,6 +25,7 @@ import SuccessPage from './Payment/Success';
 import CreateUser from './UserManagement/CreateUser'
 import DormBill from './DormBill/DormBill';
 import SpringFlowers from './AnimCursor/Spring';
+import ManagementImport from './Home/Import/Import';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -97,6 +98,7 @@ const UserConsumerWrapper = ({ isLoggedIn, handleLogout, handleLoginSuccess }) =
           <Route path="/payment" element={isLoggedIn ? <Layout onLogout={handleLogout}><Payment /></Layout> : <Navigate to="/" />} />
           <Route path="/create-user" element={isLoggedIn ? <Layout onLogout={handleLogout}><CreateUser /></Layout> : <Navigate to="/" />} />
           <Route path="/dorm-bill" element={isLoggedIn ? <Layout onLogout={handleLogout}><DormBill /></Layout> : <Navigate to="/" />} />
+          <Route path="/management-import" element={isLoggedIn ? <Layout onLogout={handleLogout}><ManagementImport /></Layout> : <Navigate to="/" />} />
         </Routes>
       </Router>
     </WebSocketProvider>
