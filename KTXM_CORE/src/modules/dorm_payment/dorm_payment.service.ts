@@ -164,6 +164,19 @@ export class DormPaymentService {
   //     };
   //   }
   // }
+  async getAllPayments(): Promise<{ paid: DormPayment[], unpaid: DormPayment[] }> {
+    try {
+      const payments = await this.dormPaymentRepository.find().exec();
+      if (!payments || payments.length === 0) { throw new Error('No payments found'); }
+      const paid = payments.filter((payment) => payment.status === 'Đã thanh toán');
+      const unpaid = payments.filter((payment) => payment.status === 'Chưa thanh toán');
+      return { paid, unpaid };
+    } catch (error) {
+      console.error('Error fetching all payments:', error);
+      throw new Error('Unable to retrieve all payments');
+    }
+  }
+
 
 
 
@@ -180,6 +193,7 @@ export class DormPaymentService {
       throw new Error('Unable to retrieve payments for the user');
     }
   }
+
 
 
 }

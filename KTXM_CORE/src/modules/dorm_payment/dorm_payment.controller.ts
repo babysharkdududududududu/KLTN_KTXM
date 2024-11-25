@@ -79,6 +79,13 @@ export class DormPaymentController {
     res.render('return'); // Trả về trang trạng thái
   }
 
+  @Get("/all-payment")
+  @Public()
+  async getAllPayment() {
+    return this.dormPaymentService.getAllPayments();
+  }
+
+
   @Get(':userId')
   @Public()
   async getPaymentsByUser(@Param('userId') userId: string) {
