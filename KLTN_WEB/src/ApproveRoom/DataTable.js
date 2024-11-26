@@ -6,16 +6,16 @@ import Button from '@mui/material/Button';
 import { updateStatusPending, updateStatusRejected, updateStatusPaid } from '../API/APIRouter';
 
 const columns = (handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable) => [
-  { field: 'id', headerName: 'MSSV', flex: 1 },
-  { field: 'fullName', headerName: 'Họ và tên', flex: 2 },
-  { field: 'phoneNumber', headerName: 'Số điện thoại', flex: 1 },
+  { field: 'id', headerName: 'MSSV', flex: 0.5 },
+  { field: 'fullName', headerName: 'Họ và tên', flex: 1 },
+  { field: 'phoneNumber', headerName: 'Số điện thoại', flex: 0.7 },
   { field: 'address', headerName: 'Địa chỉ', flex: 2 },
-  { field: 'roomNumber', headerName: 'Phòng', flex: 1 },
+  { field: 'roomNumber', headerName: 'Phòng', flex: 0.5 },
   { field: 'status', headerName: 'Trạng thái', flex: 1 },
   {
     field: 'action',
     headerName: 'Hành động',
-    flex: 1,
+    flex: 1.3,
     renderCell: (params) => {
       return (
         <>
@@ -34,23 +34,22 @@ const columns = (handleApprove, handleReject, handleConfirmPayment, handleAssign
               XẾP PHÒNG
             </Button>
           )}
-          {
-            params.row.status === 'ASSIGNED' && (
-              <Button variant="contained" color="primary" onClick={() => handleAssignRoomTable(params.row)}>
-                CHUYỂN PHÒNG
-              </Button>
-            )
-          }
+          {params.row.status === 'ASSIGNED' && (
+            <Button variant="contained" color="primary" onClick={() => handleAssignRoomTable(params.row)}>
+              CHUYỂN PHÒNG
+            </Button>
+          )}
           {params.row.status === 'REJECTED' ? (
             <Button variant="outlined" color="error" onClick={() => handleApprove(params.row)}>
               DUYỆT LẠI
             </Button>
           ) : (
-            <Button variant="outlined" color="error" onClick={() => handleReject(params.row)}>
-              TỪ CHỐI
-            </Button>
+            (params.row.status === 'PENDING' || params.row.status === 'WAITING_PAYMENT' || params.row.status === 'ACCEPTED') && (
+              <Button sx={{ ml: 1 }} variant="outlined" color="error" onClick={() => handleReject(params.row)}>
+                TỪ CHỐI
+              </Button>
+            )
           )}
-
         </>
       );
     },
@@ -73,7 +72,6 @@ export default function DataTable({ studentData, handleRowClick, updateStudentDa
       }
 
       const data = await response.json();
-      console.log('Đơn đã được duyệt:', data);
       updateStudentData({ ...student, status: 'ACCEPTED' });
     } catch (error) {
       console.error('Lỗi khi duyệt đơn:', error);
@@ -95,6 +93,7 @@ export default function DataTable({ studentData, handleRowClick, updateStudentDa
 
       const data = await response.json();
       console.log('Đơn đã bị từ chối:', data);
+      updateStudentData({ ...student, status: 'REJECTED' });
     } catch (error) {
       console.error('Lỗi khi từ chối đơn:', error);
     }
@@ -130,12 +129,10 @@ export default function DataTable({ studentData, handleRowClick, updateStudentDa
       <DataGrid
         rows={studentData}
         columns={columns(handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable)}
-        pageSizeOptions={[5, 10]}
+        pageSizeOptions={[5, 10, 20, 50, 100]}
         checkboxSelection
         sx={{ border: 0 }}
-        onRowClick={(params) => {
-          handleRowClick(params.row);
-        }}
+        onRowClick={(params) => handleRowClick(params.row)}
       />
     </Paper>
   );

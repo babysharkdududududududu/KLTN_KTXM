@@ -12,7 +12,7 @@ export class CreateDormSubmissionDto {
     note?: string
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     settingId: string;
 
     @IsString()

@@ -5,10 +5,12 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Grid } from '@mui/material';
 import { getBillRoute } from '../API/APIRouter';
+import TableOfBill from './TableOfBill';
 
 export default function DormBill() {
     const [bills, setBills] = useState([]);
-
+    const [roleId, setRoleId] = useState(localStorage.getItem('role'));
+    console.log(roleId);
     useEffect(() => {
         const fetchBills = async () => {
             try {
@@ -16,7 +18,6 @@ export default function DormBill() {
                 if (response.ok) { // Kiểm tra nếu request thành công
                     const data = await response.json(); // Chuyển response thành JSON
                     setBills(data.data); // Cập nhật dữ liệu hóa đơn vào state
-                    console.log('Bills:', data); // In dữ liệu để kiểm tra
                 } else {
                     console.error('Error fetching bills:', response.statusText); // In lỗi nếu có
                 }
@@ -29,27 +30,37 @@ export default function DormBill() {
     }, []); // Chỉ chạy một lần khi component mount
 
     return (
-        <div style={{ paddingLeft: 40, justifyContent: 'center', display: 'flex' }}>
+        <div style={{ paddingLeft: 40, justifyContent: 'center', display: 'flex', backgroundColor: "#fff" }}>
             <div style={{
                 width: '90%',
                 height: '100vh',
                 display: 'flex',
-                justifyContent: 'center',
                 alignItems: 'center',
                 flexDirection: 'column',
-                overflowY: 'auto' // để có thanh cuộn khi có nhiều hóa đơn
+                overflowY: 'auto', // để có thanh cuộn khi có nhiều hóa đơn
+                
             }}>
                 <div style={{
+                    width: '100%',
                     display: 'flex',
                     flexWrap: 'wrap', // cho phép các item xuống dòng khi không đủ chỗ
                     justifyContent: 'space-between', // phân bổ đều các hóa đơn
                     gap: '20px', // khoảng cách giữa các hóa đơn
                 }}>
-                    {bills.map(bill => (
-                        <div style={{ width: '48%' }} key={bill.orderCode}> {/* Mỗi hóa đơn chiếm 48% chiều rộng của container */}
-                            <BillCard bill={bill} />
+                    {roleId === 'MANAGER' ? (
+                        <div style={{ width: '100%' }}>
+                            <TableOfBill />
                         </div>
-                    ))}
+                    ) : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+                            {bills.map(bill => (
+                                <div style={{ width: '48%', marginBottom: '16px' }} key={bill.orderCode}>
+                                    <BillCard bill={bill} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
                 </div>
             </div>
         </div>

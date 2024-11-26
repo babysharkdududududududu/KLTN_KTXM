@@ -24,14 +24,13 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 export default function DormSubmit() {
-    const settingId = "67428938405f93734ed214a0";
+    const settingId = "66e1a156ec541f415d9dc2be";
     const { userId } = useUser();
     const [userInfo, setUserInfo] = useState(null);
     const [note, setNote] = useState("");
     const [isRegistered, setIsRegistered] = useState(false);
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(true);
-    const [errorMessage, setErrorMessage] = useState(""); // Thêm trạng thái để lưu thông báo lỗi
 
     useEffect(() => {
         const checkRegistration = async () => {
@@ -81,7 +80,6 @@ export default function DormSubmit() {
     }, [userId, settingId]);
 
     const handleSubmit = async () => {
-        setErrorMessage(""); // Đặt lại thông báo lỗi khi gửi đăng ký
         const response = await fetch(submitDormRoute, {
             method: 'POST',
             headers: {
@@ -99,8 +97,6 @@ export default function DormSubmit() {
             const data = await response.json();
             setIsRegistered(true);
         } else {
-            const errorData = await response.json(); // Lấy dữ liệu lỗi từ phản hồi
-            setErrorMessage("Bạn không đủ điều kiện để đăng ký."); // Cập nhật thông báo lỗi
             console.error('Đăng ký không thành công:', response.statusText);
         }
     };
@@ -158,9 +154,6 @@ export default function DormSubmit() {
                             </>
                         ) : (
                             <Typography>Không tìm thấy thông tin người dùng.</Typography>
-                        )}
-                        {errorMessage && ( // Hiển thị thông báo lỗi nếu có
-                            <Typography color="error">{errorMessage}</Typography>
                         )}
                         <StyledButton variant="contained" color="primary" onClick={handleSubmit} disabled={isRegistered}>
                             Đăng ký

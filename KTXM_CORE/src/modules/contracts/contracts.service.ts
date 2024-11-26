@@ -10,7 +10,7 @@ import { User } from '../users/schemas/user.schema';
 import { UsersService } from '../users/users.service';
 import { DeleteContractDto } from './dto/delete-contract.dto';
 import { SettingService } from '../setting/setting.service';
-import { Cron, CronExpression } from '@nestjs/schedule';
+
 import { Setting } from '../setting/entities/setting.entity';
 
 @Injectable()
@@ -28,31 +28,6 @@ export class ContractsService {
 
     private readonly settingService: SettingService
   ) { }
-  private settingId = '66e1a156ec541f415d9dc2be';
-
-  @Cron(CronExpression.EVERY_MINUTE)
-  async handleCron() {
-    const setting: Setting = await this.settingService.findOne(this.settingId);
-
-    if (setting) {
-      const now = new Date();
-      const nowVietnam = new Date(now.getTime() + 7 * 60 * 60 * 1000);
-      const startDate = new Date(setting.registrationStartDate);
-      const endDate = new Date(setting.registrationEndDate);
-
-      const startDateVietnam = new Date(startDate.getTime() + 7 * 60 * 60 * 1000);
-      const endDateVietnam = new Date(endDate.getTime() + 7 * 60 * 60 * 1000);
-
-      if (nowVietnam >= startDateVietnam && nowVietnam <= endDateVietnam) {
-        console.log('Thời gian hiện tại nằm trong khoảng thời gian đăng ký.');
-      } else {
-        console.log('Thời gian hiện tại không nằm trong khoảng thời gian đăng ký.');
-      }
-    } else {
-      console.error('Không tìm thấy setting với ID:', this.settingId);
-    }
-  }
-
 
   checkUserRoomExist = async (userId: string, roomNumber: string): Promise<boolean> => {
     const currentDateTime = new Date();

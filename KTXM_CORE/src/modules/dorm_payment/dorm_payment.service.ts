@@ -193,7 +193,4 @@ export class DormPaymentService {
       throw new Error('Unable to retrieve payments for the user');
     }
   }
-
-
-
 }

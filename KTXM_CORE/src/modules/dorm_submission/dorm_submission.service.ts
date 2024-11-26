@@ -12,6 +12,7 @@ import { Contract } from '../contracts/entities/contract.entity';
 import { log } from 'console';
 import { DormPayment } from '../dorm_payment/entities/dorm_payment.entity';
 import { DormPaymentService } from '../dorm_payment/dorm_payment.service';
+import { Setting } from '../setting/entities/setting.entity';
 
 @Injectable()
 export class DormSubmissionService {
@@ -24,6 +25,7 @@ export class DormSubmissionService {
     private userModel: Model<User>,
     @InjectModel(Contract.name)
     private contractModel: Model<Contract>,
+    @InjectModel(Setting.name) private settingModel: Model<Setting>,
     private readonly settingService: SettingService,
     private readonly userService: UsersService,
     private readonly contractService: ContractsService,
@@ -38,34 +40,48 @@ export class DormSubmissionService {
   // đơn đăng ký
   async create(createDormSubmissionDto: CreateDormSubmissionDto) {
     const { userId, settingId, email } = createDormSubmissionDto;
-
+  
     // Kiểm tra xem userId có tồn tại không
     const userExists = await this.userService.isUserIdExist(userId);
     if (!userExists) {
       throw new Error(`User with ID ${userId} does not exist`);
     }
-
-    // Kiểm tra xem đã có bản ghi nào tồn tại với cùng userId và semester không
-    const submissionExists = await this.isSubmissionExists(userId, settingId);
-    if (submissionExists) {
-      throw new Error(`Submission already exists for user ID ${userId} with setting ID ${settingId}`);
+  
+    // Nếu settingId không được cung cấp, tìm setting có registrationStatus là "open"
+    let actualSettingId = settingId;
+    if (!settingId) {
+      const openSetting = await this.settingModel.findOne({ registrationStatus: 'open' });
+      if (openSetting) {
+        actualSettingId = openSetting._id.toString();
+      } else {
+        throw new Error('No open registration settings found');
+      }
     }
+  
+    // Kiểm tra xem đã có bản ghi nào tồn tại với cùng userId và settingId không
+    const submissionExists = await this.isSubmissionExists(userId, actualSettingId);
+    if (submissionExists) {
+      throw new Error(`Submission already exists for user ID ${userId} with setting ID ${actualSettingId}`);
+    }
+  
     // Lấy hợp đồng gần nhất của người dùng
     const latestContract = await this.contractService.getLatestRoomByUserId(userId);
-
+  
     // Gán roomNumber là NaN nếu không tìm thấy hợp đồng
     const roomNumber = latestContract ? latestContract.roomNumber : NaN;
-
+  
     // Tạo bản ghi dormSubmission
     const dormSubmission = new this.dormSubmissionModel({
       ...createDormSubmissionDto,
       roomNumber, // Thêm roomNumber vào create
       status: DormSubmissionStatus.PENDING,
       email,
+      settingId: actualSettingId, // Gán settingId đã xác định
     });
+  
     try {
       await this.settingService.updateSubmissionCount(userId);
-      await this.settingService.submissionCount(settingId);
+      await this.settingService.submissionCount(actualSettingId);
       await dormSubmission.save();
       return dormSubmission;
     } catch (error) {
@@ -73,6 +89,7 @@ export class DormSubmissionService {
       throw new Error(`Failed to create dorm submission: ${error.message}`);
     }
   }
+  
 
   // get all submission with status
   async findAll() {

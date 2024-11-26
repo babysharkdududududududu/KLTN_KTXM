@@ -62,7 +62,6 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
                 setFirstYearValue(0);
                 setUpperYearValue(0);
                 setPriorityValue(0);
-                console.log('Tổng số chỗ trống:', data.data);
             } catch (error) {
                 console.error('Failed to fetch settings:', error);
             }

@@ -6,10 +6,8 @@ import { Button, FormControl, Select, MenuItem, Typography } from '@mui/material
 import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
-import InfoDetail from "./InfoDetail";
 import RoomAssignment from './RoomAssignment'; // Import component mới
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment } from '../API/APIRouter';
-import { set } from "date-fns";
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute } from '../API/APIRouter';
 import TimeLineStudent from "./TimeLineStudent";
 import { useUser } from "../Context/Context";
 
@@ -29,6 +27,7 @@ const ApproveRoom = () => {
     const [setting, setSetting] = useState([]);
     const [openSucessfull, setOpenSucessfull] = useState(false);
     const [dormSubmitList, setDormSubmitList] = useState([]);
+    const [registrationStatus, setRegistrationStatus] = useState(false);
     const [studentData, setStudentData] = useState([]);
     const [filteredStudentData, setFilteredStudentData] = useState([]);
     const navigate = useNavigate();
@@ -50,10 +49,43 @@ const ApproveRoom = () => {
         setSetingID(event.target.value);
         setSelectedStudent(null);
         setStatusID('');
+        // set registrationStatus 
+        const selectedSetting = setting.find((item) => item._id === event.target.value);
+        if (selectedSetting) {
+            setRegistrationStatus(selectedSetting.registrationStatus);
+        }
+    };
+
+    const handlePauseRegistration = async () => {
+        try {
+            const response = await axios.patch(`${pauseSettingRoute}${setingID}`);
+            if (response.data && response.data.data) {
+                setRegistrationStatus('paused');
+            } else {
+                console.error("Lỗi tạm dừng đăng ký:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi tạm dừng đăng ký:", error);
+        }
+    };
+
+    const handleOpenRegistration = async () => {
+        try {
+            const response = await axios.patch(`${openSettingRoute}${setingID}`);
+            if (response.data && response.data.data) {
+                setRegistrationStatus('open');
+            } else {
+                console.error("Lỗi mở đăng ký:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi mở đăng ký:", error);
+        }
+
     };
 
     const handleChangeStatus = (event) => {
         setStatusID(event.target.value);
+
     };
 
     // Fetch API data
@@ -170,7 +202,6 @@ const ApproveRoom = () => {
             });
 
             if (response.data && response.data.data) {
-                console.log("Chuyển tất cả sang chờ thanh toán thành công:", response.data.data);
 
                 // Cập nhật lại bảng
                 const updatedStudentData = studentData.map(student => {
@@ -233,10 +264,20 @@ const ApproveRoom = () => {
                 <div style={{ height: "50px", alignItems: 'center', display: 'flex', marginLeft: "10px" }}>
 
                     {roleId === 'USERS' &&
-                        (<Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} disabled={!setingID}>Đăng ký</Button>)
+                        (<Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} >Đăng ký</Button>)
                     }
                     {roleId === 'MANAGER' && (
                         <>
+                            {setingID !== '' && registrationStatus === 'open' && (
+                                <Button variant="contained" color="primary" style={{ marginRight: '10px' }} onClick={handlePauseRegistration}>
+                                    Tạm dừng đăng ký
+                                </Button>
+                            )}
+                            {setingID !== '' && registrationStatus === 'paused' && (
+                                <Button variant="contained" color="primary" style={{ marginRight: '10px' }} onClick={handleOpenRegistration}>
+                                    Mở đăng ký
+                                </Button>
+                            )}
                             {setingID !== '' && statusID === 'PAID' && (
                                 <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={handleAutoAsignRoom}>
                                     Tự động xếp phòng

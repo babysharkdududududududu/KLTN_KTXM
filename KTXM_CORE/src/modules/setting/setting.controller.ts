@@ -14,6 +14,13 @@ export class SettingController {
     return this.settingService.create(createSettingDto);
   }
 
+  
+  @Get('is-open')
+  @Public()
+  async checkIfSettingIsOpen(): Promise<boolean> {
+      return this.settingService.isAnySettingOpen();
+  }
+
   @Get()
   @Public()
   async findAll(): Promise<Setting[]> {
@@ -31,5 +38,20 @@ export class SettingController {
   async update(@Param('id') id: string, @Body() updateSettingDto: UpdateSettingDto): Promise<Setting> {
     return this.settingService.update(id, updateSettingDto);
   }
+
+  // openRegistration
+  @Patch('openRegistration/:id')
+  @Public()
+  async openRegistration(@Param('id') id: string): Promise<Setting> {
+    return this.settingService.openRegistration(id);
+  }
+
+  // pauseRegistration
+  @Patch('pauseRegistration/:id')
+  @Public()
+  async pauseRegistration(@Param('id') id: string): Promise<Setting> {
+    return this.settingService.pauseRegistration(id);
+  }
+
 
 }
