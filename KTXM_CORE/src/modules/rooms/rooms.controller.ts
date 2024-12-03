@@ -14,19 +14,27 @@ export class RoomsController {
   //   return this.roomsService.create(createRoomDto);
   // }
 
+
+
   @Get()
   @Public()
   @UseInterceptors(CacheInterceptor)
   async findAll() {
     return this.roomsService.findAll();
   }
-  
+
+  @Get('/statistics')
+  @Public()
+  async getRoomStatistics() {
+    return await this.roomsService.getRoomStatistics();
+  }
+
   @Get('getAvailableRooms')
   @Public()
   async getAvailableRooms() {
     return this.roomsService.getAvailableRooms();
   }
-  
+
   @Get(':roomNumber')
   @Public()
   async findOne(@Param('roomNumber') roomNumber: string) {
@@ -71,4 +79,6 @@ export class RoomsController {
     const updatedRoom = await this.roomsService.updateElectricAndWaterNumber(roomNumber, waterNumber, electricityNumber);
     return updatedRoom;
   }
+
+
 }

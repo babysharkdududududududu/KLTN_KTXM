@@ -218,5 +218,7 @@ export class SettingService {
   async isAnySettingOpen(): Promise<boolean> {
     const setting = await this.settingModel.findOne({ registrationStatus: 'open' });
     return !!setting; // Trả về true nếu có setting nào đó đang mở, ngược lại trả về false
-}
+  }
+
+  
 }
