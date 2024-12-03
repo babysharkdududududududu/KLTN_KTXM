@@ -305,4 +305,20 @@ export class RoomsService {
       this.fetchAndUpdateElectricityNumber();
     }, 30 * 60 * 1000); // 30 phút
   }
+
+  async getRoomStatistics() {
+    const rooms = await this.roomModel.find().exec();
+
+    const totalRooms = rooms.length;
+    const totalAvailableSpots = rooms.reduce((total, room) => total + room.availableSpot, 0);
+    const totalCapacity = rooms.reduce((total, room) => total + room.capacity, 0);
+    const totalOccupiedSpots = totalCapacity - totalAvailableSpots;
+
+    return {
+        totalRooms,
+        totalAvailableSpots,
+        totalCapacity,
+        totalOccupiedSpots,
+    };
+}
 }

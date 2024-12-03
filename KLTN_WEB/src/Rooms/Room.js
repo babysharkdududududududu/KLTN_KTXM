@@ -97,7 +97,7 @@ const Room = () => {
                         </div>
                 }
 
-                <div style={{ display: 'flex', flexDirection: "column", alignItems: 'center', height: "80%", marginLeft: 20 }}>
+                {/* <div style={{ display: 'flex', flexDirection: "column", alignItems: 'center', height: "80%", marginLeft: 20 }}>
                     <DemoPaper square={false} sx={{ marginTop: '10px', backgroundColor: "#eae9e3", marginBottom: '20px' }} onClick={() => handleBlockClick('')}>
                         <img src={BLOCKI} alt="BLOCKI" style={{ width: '140px', height: '140px' }} />
                     </DemoPaper>
@@ -120,7 +120,7 @@ const Room = () => {
                     {showImportRoom && <ImportRoom />}
                     {showImportRoom && <EquipmentUpload />}
                     {showImportRoom && <ImportX />}
-                </div>
+                </div> */}
             </div>
         </div>
     );
