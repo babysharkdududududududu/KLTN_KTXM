@@ -199,11 +199,22 @@ const Home = () => {
                     </Box>
                 </Grid> */}
 
-                <Grid item xs={12} sm={6} md={4}>
-                    <Box sx={{ marginTop: 2 }}>
-                        <CreateUser />
-                    </Box>
-                </Grid>
+                {
+                    roleId === 'MANAGER' ? (
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Box sx={{ marginTop: 2 }}>
+                                <CreateUser />
+                            </Box>
+                        </Grid>
+                    ) : (
+                        <Grid item xs={12} sm={6} md={4}>
+                            <Box sx={{ marginTop: 2 }}>
+                                <AvailableSlot />
+                            </Box>
+                        </Grid>
+
+                    )
+                }
 
                 <Grid item xs={12} sm={6} md={4} style={{ marginBottom: '50px' }}>
                     <Box sx={{ marginTop: 2 }}>

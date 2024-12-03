@@ -7,7 +7,7 @@ import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import RoomAssignment from './RoomAssignment'; // Import component mới
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute } from '../API/APIRouter';
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute } from '../API/APIRouter';
 import TimeLineStudent from "./TimeLineStudent";
 import { useUser } from "../Context/Context";
 
@@ -34,6 +34,7 @@ const ApproveRoom = () => {
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [statusID, setStatusID] = useState('');
     const { userId, roleId } = useUser();
+    const [settingValue, setSettingValue] = useState('');
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -85,8 +86,27 @@ const ApproveRoom = () => {
 
     const handleChangeStatus = (event) => {
         setStatusID(event.target.value);
-
     };
+
+    useEffect(() => {
+        const handleGetSettingID = async () => {
+            try {
+                const response = await axios.get(getSettingIdRoute);
+                if (response.data && response.data) {
+                    setSettingValue(response.data.data);
+                    console.log("Setting ID:", settingValue);
+                } else {
+                    console.error("Lỗi lấy setting ID:", response.data.message);
+                }
+            } catch (error) {
+                console.error("Có lỗi xảy ra khi lấy setting ID:", error);
+            }
+        };
+        handleGetSettingID();
+    }, [settingValue]);
+
+
+
 
     // Fetch API data
     useEffect(() => {
@@ -264,7 +284,7 @@ const ApproveRoom = () => {
                 <div style={{ height: "50px", alignItems: 'center', display: 'flex', marginLeft: "10px" }}>
 
                     {roleId === 'USERS' &&
-                        (<Button variant="contained" color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} >Đăng ký</Button>)
+                        (<Button variant="contained" disabled={!settingValue} color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} >Đăng ký</Button>)
                     }
                     {roleId === 'MANAGER' && (
                         <>

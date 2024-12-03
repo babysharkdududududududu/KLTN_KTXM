@@ -161,59 +161,68 @@ const Payment = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '90vh', padding: 4, backgroundColor: '#f5f5f5' }}>
-            {paymentDetails.map((payment) => (
-                <Card key={payment._id} sx={{ width: '100%', maxWidth: 800, marginBottom: 2, borderRadius: 2, boxShadow: 3 }}>
-                    <CardContent sx={{ padding: 2 }} id={payment.orderCode}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-                            <img src={iuh} alt="Logo" style={{ width: '100px', height: 'auto', marginRight: 16 }} />
-                            <Box>
-                                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>TRƯỜNG ĐẠI HỌC CÔNG NGHIỆP TP. HỒ CHÍ MINH</Typography>
-                                <Typography variant="body2">Mã số thuế: 0303237311</Typography>
-                                <Typography variant="body2">Địa chỉ: 12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, TP. Hồ Chí Minh</Typography>
-                                <Typography variant="body2">Điện thoại: (028) 38940390</Typography>
-                            </Box>
-                        </Box>
-                        <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>HÓA ĐƠN BÁN HÀNG (THU TIỀN KÝ TÚC XÁ)</Typography>
-                        <Typography variant="body2" sx={{ textAlign: 'center' }}>
-                            Ngày {new Date(payment.paymentDate).getDate()} tháng {new Date(payment.paymentDate).getMonth() + 1} năm {new Date(payment.paymentDate).getFullYear()}
-                        </Typography>
+            {
+                paymentDetails.length === 0 ? (
+                    <Typography variant="h6" sx={{ textAlign: 'center', marginBottom: 2 }}>Không có hóa đơn nào.</Typography>
+                ) :
+                    (
+                        paymentDetails.map((payment) => (
+                            <Card key={payment._id} sx={{ width: '100%', maxWidth: 800, marginBottom: 2, borderRadius: 2, boxShadow: 3 }}>
+                                <CardContent sx={{ padding: 2 }} id={payment.orderCode}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                                        <img src={iuh} alt="Logo" style={{ width: '100px', height: 'auto', marginRight: 16 }} />
+                                        <Box>
+                                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>TRƯỜNG ĐẠI HỌC CÔNG NGHIỆP TP. HỒ CHÍ MINH</Typography>
+                                            <Typography variant="body2">Mã số thuế: 0303237311</Typography>
+                                            <Typography variant="body2">Địa chỉ: 12 Nguyễn Văn Bảo, Phường 4, Quận Gò Vấp, TP. Hồ Chí Minh</Typography>
+                                            <Typography variant="body2">Điện thoại: (028) 38940390</Typography>
+                                        </Box>
+                                    </Box>
+                                    <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>HÓA ĐƠN BÁN HÀNG (THU TIỀN KÝ TÚC XÁ)</Typography>
+                                    <Typography variant="body2" sx={{ textAlign: 'center' }}>
+                                        Ngày {new Date(payment.paymentDate).getDate()} tháng {new Date(payment.paymentDate).getMonth() + 1} năm {new Date(payment.paymentDate).getFullYear()}
+                                    </Typography>
 
-                        <Box sx={{ marginTop: 2, borderRadius: 2 }}>
-                            <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>Thông tin khoản thu - Hóa đơn {payment.orderCode}</Typography>
-                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>STT</th>
-                                        <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Mã khoản thu</th>
-                                        <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Tên khoản thu</th>
-                                        <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Phòng</th>
-                                        <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Thành tiền</th>
-                                        <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Trạng thái</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>1</td>
-                                        <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.orderCode}</td>
-                                        <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.description || 'N/A'}</td>
-                                        <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.roomNumber}</td>
-                                        <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.amount ? `${payment.amount} VND` : 'N/A'}</td>
-                                        <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.status}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-                                {
-                                    payment.status === PaymentStatus.PENDING && (
-                                        <Button variant="contained" color="primary" onClick={() => handlePayment(payment.checkoutUrl)}>Thanh toán</Button>
-                                    )
-                                }
-                                <Button variant="outlined" color="secondary" onClick={() => handlePrint(payment, userInfo)}>In</Button>
-                            </Box>
-                        </Box>
-                    </CardContent>
-                </Card>
-            ))}
+                                    <Box sx={{ marginTop: 2, borderRadius: 2 }}>
+                                        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', fontWeight: 'bold' }}>Thông tin khoản thu - Hóa đơn {payment.orderCode}</Typography>
+                                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                            <thead>
+                                                <tr>
+                                                    <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>STT</th>
+                                                    <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Mã khoản thu</th>
+                                                    <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Tên khoản thu</th>
+                                                    <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Phòng</th>
+                                                    <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Thành tiền</th>
+                                                    <th style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>Trạng thái</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>1</td>
+                                                    <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.orderCode}</td>
+                                                    <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.description || 'N/A'}</td>
+                                                    <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.roomNumber}</td>
+                                                    <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.amount ? `${payment.amount} VND` : 'N/A'}</td>
+                                                    <td style={{ border: '1px solid black', padding: '8px', textAlign: 'center' }}>{payment.status}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+                                            {
+                                                payment.status === PaymentStatus.PENDING && (
+                                                    <Button variant="contained" color="primary" onClick={() => handlePayment(payment.checkoutUrl)}>Thanh toán</Button>
+                                                )
+                                            }
+                                            <Button variant="outlined" color="secondary" onClick={() => handlePrint(payment, userInfo)}>In</Button>
+                                        </Box>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))
+                    )
+            }
+
+
         </Box>
     );
 };

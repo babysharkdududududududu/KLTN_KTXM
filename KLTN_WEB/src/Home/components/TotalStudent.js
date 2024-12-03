@@ -5,6 +5,8 @@ import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import Brightness1OutlinedIcon from '@mui/icons-material/Brightness1Outlined';
 import { getDormSubmissionStatistical } from "../../API/APIRouter";
 import axios from "axios";
+import { useUser } from '../../Context/Context';
+
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
     minHeight: 185,
@@ -19,6 +21,7 @@ export default function TotalStudent() {
     const [status, setStatus] = useState({});
     const [total, setTotal] = useState(0);
     const [supTotal, setSupTotal] = useState(0);
+    const { userId, roleId } = useUser();
 
     const handleDormSubmissionStatistical = async () => {
         try {
@@ -54,28 +57,40 @@ export default function TotalStudent() {
 
     return (
         <div>
-            <DemoPaper square={false}>
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
-                    <GroupOutlinedIcon style={{ fontSize: 25, color: '#53556a' }} />
-                    <p style={{ fontSize: 15, marginLeft: '10px', color: '#53556a' }}>Đơn đăng ký</p>
-                </div>
-                <div style={{ borderBottom: '1px solid #ebebeb', width: '95%' }}></div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: '100%' }}>
-                    <p style={{ fontSize: 15, color: '#53556a', margin: 0, fontWeight: "bold", padding: 10 }}>Tổng đơn đăng ký: {supTotal}</p>
-                </div>
-                <ChartStudent widths={widths} status={status} total={total} />
-                {/* <TotalChart supTotal={supTotal} /> */}
-                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: '100%', marginTop: '10px' }}>
-                    {Object.entries(status).map(([key, value], index) => (
-                        <div key={key} style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
-                            <div style={{ width: '15px', height: '15px', backgroundColor: getColorByIndex(index), borderRadius: '5px' }} />
-                            <p style={{ fontSize: 10, color: '#53556a', margin: 0, marginLeft: '5px' }}>
-                                {`${key === 'PENDING' ? 'Chờ duyệt' : key === 'PAID' ? 'Đã thanh toán' : key === 'ROOM_REQUESTED' ? 'Chèn phòng' : ''}: ${value}`}
-                            </p>
+            {
+                roleId === 'MANAGER' ? (
+                    <DemoPaper square={false}>
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
+                            <GroupOutlinedIcon style={{ fontSize: 25, color: '#53556a' }} />
+                            <p style={{ fontSize: 15, marginLeft: '10px', color: '#53556a' }}>Đơn đăng ký</p>
                         </div>
-                    ))}
-                </div>
-            </DemoPaper>
+                        <div style={{ borderBottom: '1px solid #ebebeb', width: '95%' }}></div>
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: '100%' }}>
+                            <p style={{ fontSize: 15, color: '#53556a', margin: 0, fontWeight: "bold", padding: 10 }}>Tổng đơn đăng ký: {supTotal}</p>
+                        </div>
+                        <ChartStudent widths={widths} status={status} total={total} />
+                        {/* <TotalChart supTotal={supTotal} /> */}
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: '100%', marginTop: '10px' }}>
+                            {Object.entries(status).map(([key, value], index) => (
+                                <div key={key} style={{ display: 'flex', flexDirection: 'row', alignItems: "center" }}>
+                                    <div style={{ width: '15px', height: '15px', backgroundColor: getColorByIndex(index), borderRadius: '5px' }} />
+                                    <p style={{ fontSize: 10, color: '#53556a', margin: 0, marginLeft: '5px' }}>
+                                        {`${key === 'PENDING' ? 'Chờ duyệt' : key === 'PAID' ? 'Đã thanh toán' : key === 'ROOM_REQUESTED' ? 'Chèn phòng' : ''}: ${value}`}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </DemoPaper>
+                ) : (
+                    <DemoPaper sx={{ background: '#f5f5f5' }} square={false}>
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
+
+                        </div>
+
+                    </DemoPaper>
+                )
+            }
+
         </div>
     );
 }
