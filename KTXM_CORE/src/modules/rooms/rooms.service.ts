@@ -113,30 +113,15 @@ export class RoomsService {
       if (!room) {
         throw new Error("Phòng không tồn tại");
       }
-      if (updateRoomDto.description) {
-        room.description = updateRoomDto.description;
-      }
-      if (updateRoomDto.type) {
-        room.type = updateRoomDto.type;
-      }
-      if (updateRoomDto.price) {
-        room.price = updateRoomDto.price;
-      }
-      if (updateRoomDto.waterNumber) {
-        room.waterNumber = updateRoomDto.waterNumber;
-      }
-      if (updateRoomDto.electricityNumber) {
-        room.electricityNumber = updateRoomDto.electricityNumber;
-      }
-      if (updateRoomDto.status !== null && updateRoomDto.status !== undefined) {
-        room.status = updateRoomDto.status;
-      }
-      if (updateRoomDto.availableSpot !== null && updateRoomDto.availableSpot !== undefined) {
-        room.availableSpot = updateRoomDto.availableSpot;
-      }
+      if (updateRoomDto.description) { room.description = updateRoomDto.description; }
+      if (updateRoomDto.type) { room.type = updateRoomDto.type; }
+      if (updateRoomDto.price) { room.price = updateRoomDto.price; }
+      if (updateRoomDto.waterNumber) { room.waterNumber = updateRoomDto.waterNumber; }
+      if (updateRoomDto.electricityNumber) { room.electricityNumber = updateRoomDto.electricityNumber; }
+      if (updateRoomDto.status !== null && updateRoomDto.status !== undefined) { room.status = updateRoomDto.status; }
+      if (updateRoomDto.availableSpot !== null && updateRoomDto.availableSpot !== undefined) { room.availableSpot = updateRoomDto.availableSpot; }
       if (updateRoomDto.equipment) {
         const equipmentMap = new Map();
-
         room.equipment.forEach(e => {
           equipmentMap.set(e.name, Number(e.quantity));
         });
@@ -159,6 +144,8 @@ export class RoomsService {
       throw new Error("Cập nhật phòng thất bại");
     }
   }
+
+
 
 
   async importRooms(roomsData: any[]) {

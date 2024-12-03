@@ -8,13 +8,15 @@ import { MaintenanceService } from '../maintenance/maintenance.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Room } from '../rooms/entities/room.entity';
 import { DormSubmission } from '../dorm_submission/entities/dorm_submission.entity';
+import { DormPaymentService } from '../dorm_payment/dorm_payment.service';
 
 @Injectable()
 export class StatisticService {
   constructor(
     private readonly roomService: RoomsService,
     private readonly dormsubmission: DormSubmissionService,
-    private readonly Maintenance: MaintenanceService
+    private readonly Maintenance: MaintenanceService,
+    private readonly payment: DormPaymentService,
   ) { }
 
   async getAvailableRoom() {
@@ -101,10 +103,6 @@ export class StatisticService {
     };
   }
 
-
-
-
-
   async getMaintenance() {
     const maintenance = await this.Maintenance.findAll();
     // Thống kê số lượng bảo trì theo năm tháng
@@ -175,6 +173,14 @@ export class StatisticService {
       maintenanceCountsByYearRoom
     }
   }
+
+  async getPayment() {
+    const payment = await this.payment.getAllPayments();
+    return payment;
+  }
+
+
+
 
 
 

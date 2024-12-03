@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { StudentDiscipline } from '../student-discipline/entities/student-discipline.entity';
+import { Room } from '../rooms/entities/room.entity';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,8 @@ export class UsersService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<User>,
+    @InjectModel(Room.name)
+    private roomModel: Model<Room>,
     @InjectModel(StudentDiscipline.name)
     private readonly studentDiscipline: Model<StudentDiscipline>,
     private readonly mailerService: MailerService
@@ -133,10 +136,64 @@ export class UsersService {
     return await this.userModel.findOne({ userId })
   }
 
+  // async update(updateUserDto: UpdateUserDto) {
+  //   return await this.userModel.updateOne(
+  //     { _id: updateUserDto._id }, { ...updateUserDto });
+  // }
+  // Cập nhật user trong Schema User và cả phòng mà user đó đang ở
   async update(updateUserDto: UpdateUserDto) {
-    return await this.userModel.updateOne(
-      { _id: updateUserDto._id }, { ...updateUserDto });
+    // Lọc các trường được phép cập nhật
+    const allowedUpdates = {
+      phone: updateUserDto.phone,
+      address: updateUserDto.address,
+      dateOfBirth: updateUserDto.dateOfBirth,
+      email: updateUserDto.email,
+    };
+    console.log(allowedUpdates, "allowedUpdates");
+
+    const fieldsToUpdate = Object.fromEntries(
+      Object.entries(allowedUpdates).filter(([_, value]) => value !== undefined)
+    );
+    console.log(fieldsToUpdate, "fieldsToUpdate");
+
+    // Bước 1: Cập nhật thông tin user
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { _id: updateUserDto._id },
+      { $set: fieldsToUpdate }, // Cập nhật chỉ các trường cụ thể
+      { new: true }             // Trả về bản ghi đã cập nhật
+    );
+    console.log(updatedUser, "updatedUser");
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    // Bước 2: Cập nhật user trong phòng mà user đó đang ở
+    const room = await this.roomModel.findOne(
+      { "users._id": updatedUser._id }
+    );
+    console.log(room, "room");
+
+    if (room) {
+      // Tìm chỉ số của người dùng trong mảng users
+      const userIndex = room.users.findIndex((user: any) => user._id.equals(updatedUser._id));
+
+      if (userIndex !== -1) {
+        // Cập nhật thông tin người dùng trong phòng đó
+        room.users[userIndex] = updatedUser; // Cập nhật thông tin người dùng
+        await room.save(); // Lưu lại thay đổi
+      }
+    } else {
+      throw new Error('User is not found in any room');
+    }
+
+    return updatedUser;
   }
+
+
+
+
+
 
   async remove(_id: string) {
     //check id
