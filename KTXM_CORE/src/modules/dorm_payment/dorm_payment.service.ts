@@ -23,13 +23,14 @@ export class DormPaymentService {
     );
   }
   async create(createDormPaymentDto: CreateDormPaymentDto) {
-    const { userId, amount, roomNumber, paymentDate } = createDormPaymentDto;
-    if (!amount || !roomNumber || !paymentDate) {
-      throw new Error('Missing required fields: amount, roomNumber, or paymentDate');
+    const { userId, amount, roomNumber, paymentDate, submissionId  } = createDormPaymentDto;
+    if (!amount || !roomNumber || !paymentDate || !submissionId) {
+      throw new Error('Missing required fields: amount, roomNumber, or paymentDate, or submissionId');
     }
     const orderCode = Number(userId.toString() + Math.floor(Math.random() * 10000).toString());
     const body = {
       orderCode,
+      submissionId,
       amount: Number(amount),
       description: `Payment`,
       // cancelUrl: `${process.env.BASE_URL}/dorm-payment/success?orderCode=${orderCode}&status=cancelled`,
@@ -45,6 +46,7 @@ export class DormPaymentService {
       const dormPayment = new this.dormPaymentRepository({
         userId,
         amount,
+        submissionId,
         roomNumber,
         paymentDate,
         status: PaymentStatus.Unpaid,

@@ -181,6 +181,8 @@ export class DormSubmissionService {
   // chấp nhận đơn đăng ky
   async acceptSubmission(id: string): Promise<DormSubmission> {
     const submission = await this.dormSubmissionModel.findById(id);
+    console.log('submission:', id);
+    console.log('submission:', submission);
     const price = 560000;
     const numberOfMonths = 10;
     const amount = price * numberOfMonths;
@@ -197,7 +199,9 @@ export class DormSubmissionService {
       amount,
       paymentDate,
       roomNumber,
+      submissionId: id,
     });
+
     this.userService.sendMailApproveRoom(email);
 
     submission.status = DormSubmissionStatus.ACCEPTED;

@@ -58,9 +58,9 @@ export class DormBillService {
   //   }
   // }
 
-  @Cron('3 22 12 11 *', {
+  @Cron('44 21 4 12 *', {
     name: 'createMonthlyBills',
-  })
+  })  
   async handleCreateMonthlyBills() {
     // Lấy thông tin phòng G201
     const room = await this.roomModel.findOne({ roomNumber: 'G201' }).populate('users'); // Lấy thông tin phòng G201 và người dùng
@@ -118,7 +118,7 @@ export class DormBillService {
     await this.createBill(room, previousElectricReading, currentElectricReading, monthAndYear, BillType.ELECTRIC, totalElectricity);
   
     // Tạo hóa đơn cho nước
-    await this.createBill(room, previousWaterReading, currentWaterReading, monthAndYear, BillType.WATER, totalWater);
+   // await this.createBill(room, previousWaterReading, currentWaterReading, monthAndYear, BillType.WATER, totalWater);
   }
   
   
@@ -140,15 +140,16 @@ export class DormBillService {
     const status = PaymentStatus.Unpaid;
   
     // Tạo body cho yêu cầu thanh toán
+    const roundedAmount = Math.round(amount); // Làm tròn số tiền
+
     const body = {
       orderCode,
-      amount: Number(amount),
+      amount: roundedAmount,
       description: `${room.roomNumber}${billType === BillType.WATER ? 'W' : 'E'}${monthAndYear.replace('/', '')}`,
       cancelUrl: `${YOUR_DOMAIN}`,
       successUrl: `${YOUR_DOMAIN}`,
       returnUrl: `${YOUR_DOMAIN}`,
     };
-  
     try {
       // Tạo liên kết thanh toán
       const paymentLinkRes = await this.payos.createPaymentLink(body);

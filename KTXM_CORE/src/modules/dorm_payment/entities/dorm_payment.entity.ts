@@ -42,6 +42,9 @@ export class DormPayment extends Document {
 
     @Prop()
     checkoutUrl: string;
+
+    @Prop()
+    submissionId: string;
 }
 
 export const DormPaymentSchema = SchemaFactory.createForClass(DormPayment);
