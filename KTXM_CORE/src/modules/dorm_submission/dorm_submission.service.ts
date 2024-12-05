@@ -40,13 +40,13 @@ export class DormSubmissionService {
   // đơn đăng ký
   async create(createDormSubmissionDto: CreateDormSubmissionDto) {
     const { userId, settingId, email } = createDormSubmissionDto;
-  
+
     // Kiểm tra xem userId có tồn tại không
     const userExists = await this.userService.isUserIdExist(userId);
     if (!userExists) {
       throw new Error(`User with ID ${userId} does not exist`);
     }
-  
+
     // Nếu settingId không được cung cấp, tìm setting có registrationStatus là "open"
     let actualSettingId = settingId;
     if (!settingId) {
@@ -57,19 +57,19 @@ export class DormSubmissionService {
         throw new Error('No open registration settings found');
       }
     }
-  
+
     // Kiểm tra xem đã có bản ghi nào tồn tại với cùng userId và settingId không
     const submissionExists = await this.isSubmissionExists(userId, actualSettingId);
     if (submissionExists) {
       throw new Error(`Submission already exists for user ID ${userId} with setting ID ${actualSettingId}`);
     }
-  
+
     // Lấy hợp đồng gần nhất của người dùng
     const latestContract = await this.contractService.getLatestRoomByUserId(userId);
-  
+
     // Gán roomNumber là NaN nếu không tìm thấy hợp đồng
     const roomNumber = latestContract ? latestContract.roomNumber : NaN;
-  
+
     // Tạo bản ghi dormSubmission
     const dormSubmission = new this.dormSubmissionModel({
       ...createDormSubmissionDto,
@@ -78,7 +78,7 @@ export class DormSubmissionService {
       email,
       settingId: actualSettingId, // Gán settingId đã xác định
     });
-  
+
     try {
       await this.settingService.updateSubmissionCount(userId);
       await this.settingService.submissionCount(actualSettingId);
@@ -89,7 +89,7 @@ export class DormSubmissionService {
       throw new Error(`Failed to create dorm submission: ${error.message}`);
     }
   }
-  
+
 
   // get all submission with status
   async findAll() {
@@ -183,7 +183,8 @@ export class DormSubmissionService {
     const submission = await this.dormSubmissionModel.findById(id);
     console.log('submission:', id);
     console.log('submission:', submission);
-    const price = 560000;
+    //const price = 560000;
+    const price = 200;
     const numberOfMonths = 10;
     const amount = price * numberOfMonths;
     const userId = submission.userId;

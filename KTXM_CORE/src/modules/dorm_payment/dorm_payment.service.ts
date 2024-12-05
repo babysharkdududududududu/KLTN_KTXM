@@ -179,9 +179,6 @@ export class DormPaymentService {
     }
   }
 
-
-
-
   async getDormPaymentsByUserId(userId: string): Promise<DormPayment[]> {
     console.log('Fetching payments for userId:', userId); // Thêm log để kiểm tra
     try {
@@ -194,5 +191,9 @@ export class DormPaymentService {
       console.error('Error fetching payments by userId:', error);
       throw new Error('Unable to retrieve payments for the user');
     }
+  }
+
+  async getAllPayment(): Promise<DormPayment[]> {
+    return this.dormPaymentRepository.find().exec();
   }
 }

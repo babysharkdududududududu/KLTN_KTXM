@@ -59,6 +59,7 @@ export const updateSettingRoute = `${host}/setting`;
 export const createSettingRoute = `${host}/setting`;
 export const pauseSettingRoute = `${host}/setting/pauseRegistration/`;
 export const openSettingRoute = `${host}/setting/openRegistration/`;
+export const getSettingIdRoute = `${host}/setting/is-open/`;
 
 //Room
 export const getAllRoomRoute = `${host}/rooms/?all=true`;

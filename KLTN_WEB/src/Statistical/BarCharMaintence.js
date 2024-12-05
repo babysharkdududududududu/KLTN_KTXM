@@ -92,7 +92,6 @@ const BarChartStatis = () => {
         <Grid container style={{ padding: 20 }}>
             <Grid item xs={12} md={12} style={{ padding: '20px', borderRadius: '12px' }}>
                 <Card style={{ padding: '20px', borderRadius: '12px', background: 'transparent', boxShadow: 'none' }}>
-                    <Typography variant="h6">Số lượng thiết bị bảo trì qua từng năm</Typography>
                     <Box display="flex" alignItems="center" style={{ marginBottom: '10px' }}>
                         <Typography variant="body2" style={{ marginRight: '10px' }}>
                             {yearRange[0]}
@@ -122,6 +121,7 @@ const BarChartStatis = () => {
                         </Typography>
                     </Box>
                     <Bar data={barChartData} options={{ responsive: true }} />
+                    <Typography variant="body1" sx={{ textAlign: 'center' }}>Số thiết bị bảo trì qua từng năm</Typography>
                 </Card>
             </Grid>
         </Grid>

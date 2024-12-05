@@ -182,9 +182,11 @@ const UserManagementTemplate = () => {
 
     return (
         <Container maxWidth="lg" sx={{ marginTop: 4, display: 'flex', flexDirection: { xs: 'column', md: 'column' }, gap: 2, paddingBottom: 10 }}>
-            <div id="myDiagramDiv"></div>
-            <div style={{ marginTop: -100, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
-                <Paper elevation={3} sx={{ padding: 2, borderRadius: 2, flex: 1, maxWidth: '500px' }}>
+            {/* <div id="myDiagramDiv"></div> */}
+            <div></div>
+
+            <div style={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
+                <Paper elevation={3} sx={{ padding: 2, borderRadius: 2, flex: 1, maxWidth: '1500px' }}>
                     <Typography variant="h5" align="center" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 2 }}>
                         Quản lý Người dùng
                     </Typography>

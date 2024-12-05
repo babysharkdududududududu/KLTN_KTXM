@@ -8,6 +8,7 @@ import { StatisticService } from './statistic.service';
 import { MaintenanceModule } from '../maintenance/maintenance.module';
 import { MaintenanceSchema } from '../maintenance/entities/maintenance.entity';
 import { MongooseModule } from '@nestjs/mongoose';
+import { DormPaymentModule } from '../dorm_payment/dorm_payment.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { MongooseModule } from '@nestjs/mongoose';
     }),
     DormSubmissionModule,
     MaintenanceModule,
+    DormPaymentModule,
   ],
   controllers: [StatisticController],
   providers: [StatisticService],

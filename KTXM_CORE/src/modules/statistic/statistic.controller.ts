@@ -25,5 +25,10 @@ export class StatisticController {
   getMaintenance() {
     return this.statisticService.getMaintenance();
   }
+  @Get('payment')
+  @Public()
+  getPayment() {
+    return this.statisticService.getPayment();
+  }
 
 }

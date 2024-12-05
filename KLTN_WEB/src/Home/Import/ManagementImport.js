@@ -22,6 +22,9 @@ const Management = () => {
                 <Typography container spacing={2} alignItems="center" sx={{ marginTop: 1, color: 'red' }}>
                     Bạn chỉ nên thực hiện chức năng này khi có việc thay đổi dữ liệu lớn.
                 </Typography>
+                <Button sx={{ marginTop: 2 }} variant="contained" color="primary">
+                    Nhập dữ liệu
+                </Button>
             </Box>
         </Container>
     );
