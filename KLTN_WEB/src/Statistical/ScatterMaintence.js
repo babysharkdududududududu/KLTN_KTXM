@@ -60,7 +60,7 @@ const ScatterChartStatis = () => {
     const scatterChartData = {
         datasets: [
             {
-                label: `Số bảo trì của phòng (${selectedYearScatter})`,
+                label: `Số thiết bị bảo trì của phòng (${selectedYearScatter})`,
                 data: Object.entries(countByYearRoom[selectedYearScatter] || {}).map(([room, count]) => ({
                     x: room,
                     y: count,
@@ -77,7 +77,6 @@ const ScatterChartStatis = () => {
         <Grid container style={{ padding: 20 }}>
             <Grid item xs={12} md={12} style={{ padding: '20px', borderRadius: '12px' }} >
                 <Card style={{ padding: '20px', borderRadius: '12px', background: 'transparent', boxShadow: 'none', position: 'relative' }}>
-                    <Typography variant="h6">Các phòng bảo trì theo năm</Typography>
                     <FormControl style={{ position: 'absolute', top: 30, right: 10, maxWidth: 150, width: 'auto', height: '20px' }}>
                         <Select
                             value={selectedYearScatter}
@@ -101,6 +100,8 @@ const ScatterChartStatis = () => {
                             y: { type: 'linear', title: { display: true, text: 'Số lượng' }, min: 0 }
                         }
                     }} />
+                    <Typography sx={{ textAlign: 'center' }} variant="body1">Danh sách phòng có thiết bị bảo trì theo năm</Typography>
+
                 </Card>
             </Grid>
         </Grid>

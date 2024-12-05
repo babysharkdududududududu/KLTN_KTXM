@@ -75,7 +75,7 @@ const LineChartStatis = () => {
         ),
         datasets: [
             {
-                label: `Số lượng bảo trì theo năm ${selectedYearLine} qua từng tháng`, // Cập nhật label theo năm đã chọn
+                label: `Số thiết bị bảo trì năm ${selectedYearLine} qua từng tháng`, // Cập nhật label theo năm đã chọn
                 data: Object.values(filteredLineData).flatMap(monthData => Object.values(monthData)),
                 borderColor: '#006400', // Màu xanh lá đậm
                 backgroundColor: 'rgba(0,100,0,0.2)', // Màu xanh lá đậm mờ
@@ -91,12 +91,12 @@ const LineChartStatis = () => {
         <Grid container style={{ padding: 20 }}>
             <Grid item xs={12} md={12} style={{ padding: '20px', borderRadius: '12px', position: 'relative' }} >
                 <Card style={{ padding: '20px', borderRadius: '12px', background: 'transparent', boxShadow: 'none' }}>
-                    <Typography variant="h6" style={{ color: '#006400', textAlign: 'center' }}>Biểu đồ bảo trì</Typography>
+                    <div></div>
                     <FormControl fullWidth style={{ position: 'absolute', top: '40px', height: '30px', right: '20px', width: '100px', padding: '5px' }}>
                         <Select
                             value={selectedYearLine}
                             onChange={handleYearChange}
-                            style={{ color: '#006400', fontSize: '14px', padding: '5px', height: '30px', textAlign: 'center', alignItems: 'center' }}
+                            style={{ color: '#006400', fontSize: '14px', padding: '5px', height: '30px', textAlign: 'center', alignItems: 'center', marginTop: '-30px' }}
                             MenuProps={{ PaperProps: { style: { maxHeight: 100, fontSize: '14px' } } }}
                         >
                             {availableYears.map((year) => (
@@ -109,6 +109,8 @@ const LineChartStatis = () => {
 
                     {/* Biểu đồ */}
                     <Line data={lineChartData} options={{ responsive: true }} />
+                    <Typography variant="body1" style={{ color: '#000', textAlign: 'center' }}>Số thiết bị bảo trì theo từng tháng của năm</Typography>
+
                 </Card>
             </Grid>
         </Grid>
