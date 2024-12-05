@@ -9,4 +9,6 @@ export class CreateDormPaymentDto {
     roomNumber: string;
     @IsNotEmpty({ message: "paymentDate không được để trống" })
     paymentDate: Date;
+    @IsNotEmpty({ message: "submissionId không được để trống" })
+    submissionId: string;
 }
