@@ -61,7 +61,8 @@ const TabBar = ({ state, descriptors, navigation }) => {
 
 const styles = StyleSheet.create({
     tabbar: {
-        position: 'absolute', 
+        position: 'absolute',
+        width: '89%', 
         bottom: 7,
         flexDirection: 'row',
         justifyContent: 'space-between',

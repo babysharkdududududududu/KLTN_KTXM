@@ -4,11 +4,10 @@ import ColorList from '../components/ColorList'
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import NfcScanner from './profiles/images/NfcScanner';
 const Home = () => {
   return (
     <View>
-      {/* <View style={{ width: '100%' }}>
+      <View style={{ width: '100%' }}>
         <Header />
         <View style={{ width: '100%', justifyContent: 'center', flexDirection: "row", marginTop: 5 }}>
 
@@ -17,8 +16,7 @@ const Home = () => {
         </View>
         <ElectricNumber />
         <WaterNumber />
-      </View> */}
-      <NfcScanner />
+      </View>
     </View>
   )
 }

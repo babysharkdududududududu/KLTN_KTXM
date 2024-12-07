@@ -29,7 +29,9 @@ import ManagementImport from './Home/Import/Import';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  useEffect(() => {
+    document.title = "Dorm IUH Management";
+  }, []);
   useEffect(() => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
