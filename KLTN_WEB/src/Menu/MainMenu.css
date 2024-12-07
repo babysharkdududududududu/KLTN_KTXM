@@ -4,15 +4,15 @@
   align-items: center;
   gap: 20px;
   position: fixed;
-  left: 0;
-  top: 0;
+  /* left: 0;
+  top: 0; */
   height: 97vh;
   width: 80px;
   background-color: #fff;
-  box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2);
+  /* box-shadow: 1px 0 5px rgba(0, 0, 0, 0.2); */
   transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
   margin: 8px;
-  border-radius: 20px;
+  /* border-radius: 20px; */
 }
 
 .main-menu-container.open {

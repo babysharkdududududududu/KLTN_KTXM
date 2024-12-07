@@ -6,6 +6,7 @@ import Brightness1OutlinedIcon from '@mui/icons-material/Brightness1Outlined';
 import { getDormSubmissionStatistical } from "../../API/APIRouter";
 import axios from "axios";
 import { useUser } from '../../Context/Context';
+import { Background } from "react-flow-renderer";
 
 
 const DemoPaper = styled(Paper)(({ theme }) => ({
@@ -56,10 +57,10 @@ export default function TotalStudent() {
     const widths = Object.values(status).map(value => `${(value / total) * 100}%`);
 
     return (
-        <div>
+        <div >
             {
                 roleId === 'MANAGER' ? (
-                    <DemoPaper square={false}>
+                    <DemoPaper style={{ boxShadow: 'none', borderRadius: '15px' }} square={false}>
                         <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
                             <GroupOutlinedIcon style={{ fontSize: 25, color: '#53556a' }} />
                             <p style={{ fontSize: 15, marginLeft: '10px', color: '#53556a' }}>Đơn đăng ký</p>
@@ -82,7 +83,7 @@ export default function TotalStudent() {
                         </div>
                     </DemoPaper>
                 ) : (
-                    <DemoPaper sx={{ background: '#f5f5f5' }} square={false}>
+                    <DemoPaper sx={{ background: '#fff' }} square={false}>
                         <div style={{ display: "flex", flexDirection: "row", alignItems: "center", height: '30px' }}>
 
                         </div>

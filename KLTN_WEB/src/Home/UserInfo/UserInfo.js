@@ -32,7 +32,7 @@ const UserInfo = () => {
                 </Box>
             ) : (
                 userInfo && (
-                    <Box elevation={3} sx={{ padding: 2, borderRadius: 2, maxWidth: 800, minHeight: 150, background: '#f5f5f5' }}>
+                    <Box elevation={3} sx={{ borderRadius: 2, maxWidth: 800, minHeight: 150, }}>
                         <Typography gutterBottom sx={{ fontFamily: 'Tahoma', textAlign: 'center', }} variant="h6">
                             Thông tin cá nhân
                         </Typography>

@@ -101,7 +101,7 @@ const AvailableSlot = () => {
     }, [userId]);
 
     return (
-        <Container maxWidth="sm" sx={{ padding: 2, background: '#f5f5f5', borderRadius: '12px', maxHeight: '260px', minHeight: '217px' }}>
+        <Container maxWidth="sm" sx={{ padding: 2, background: '#fff', borderRadius: '12px', maxHeight: '260px', minHeight: '217px' }}>
             {roleId === 'USERS' && (
                 <>
                     {loading && (

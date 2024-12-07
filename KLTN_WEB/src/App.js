@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import TrailingCursor from './AnimCursor/TrailingCursor';
+// import TrailingCursor from './AnimCursor/TrailingCursor';
 import './App.css';
 import ApproveRoom from './ApproveRoom/ApproveRoom';
 import { UserProvider, useUser } from './Context/Context';
@@ -75,7 +75,7 @@ const UserConsumerWrapper = ({ isLoggedIn, handleLogout, handleLoginSuccess }) =
 
   return (
     <WebSocketProvider>
-      <TrailingCursor />
+      {/* <TrailingCursor /> */}
       {/* <SpringFlowers /> */}
       <Router>
         <Routes>

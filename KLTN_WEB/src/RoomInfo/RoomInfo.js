@@ -111,8 +111,8 @@ const RoomInfo = () => {
             {tabIndex === 0 && (
                 <Grid container spacing={2} sx={{ marginTop: 2 }}>
                     <RoomMembers userInfo={userInfo} />
-                    <RoomDetails />
-                    <RoomEquipment equipment={equipment} roomNumber={roomNumber} />
+                    {/* <RoomDetails />
+                    <RoomEquipment equipment={equipment} roomNumber={roomNumber} /> */}
                 </Grid>
             )}
 
