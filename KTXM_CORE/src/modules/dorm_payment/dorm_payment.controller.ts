@@ -37,7 +37,7 @@ export class DormPaymentController {
   @Public()
   async callback(@Query() query: any, @Res() res: Response) {
     try {
-      const paymentResponse = await this.dormPaymentService.handlePaymentCallback(query);
+      const paymentResponse = await this.dormPaymentService.handlePaymentCallback(query.orderCode, query.submissionId);
       return res.status(200).json({
         error: 0,
         message: 'Success',

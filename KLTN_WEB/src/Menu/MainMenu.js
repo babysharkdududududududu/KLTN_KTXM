@@ -102,7 +102,7 @@ const MainMenu = ({ onLogout }) => {
         </div> */}
         {menuOpen && (
           <div className="menu-content">
-            {/* <img src={logo} alt="User Avatar" className="logo-iuh" /> */}
+            <img src={logo} alt="User Avatar" className="logo-iuh" />
             <div className='action-management'>
               <Tooltip title="Trang chủ">
                 <IconButton onClick={() => navigate('/')}>

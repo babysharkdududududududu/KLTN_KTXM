@@ -73,9 +73,9 @@ const Home = () => {
                 <Grid item xs={12}>
                     <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', background: "#fff", borderRadius: '8px', maxHeight: { xs: '30px', sm: '30px' }, padding: { xs: 1, sm: 3 }, }}>
                         <Box component="img" src={iuh} alt="iuh" sx={{ flex: 1, position: 'absolute', top: '50%', left: '10px', transform: 'translateY(-50%)', height: { xs: '30px', sm: '70px' }, marginRight: '10px', }} />
-                        <Typography variant="h6" sx={{ color: '#4da1e8', fontSize: { xs: '18px', sm: '24px' }, textAlign: 'center', flexGrow: 1, fontWeight: 'bold', letterSpacing: '0.2em', background: 'linear-gradient(90deg, #4da1e8, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginLeft: { xs: '40px', sm: '0px' }, padding: '10px 20px', backgroundColor: 'rgba(255, 255, 255, 0.1)', textTransform: 'uppercase', }}>
+                        <Typography variant="caption" sx={{ color: '#4da1e8', fontSize: { xs: '10px', sm: '20px' }, textAlign: 'center', flexGrow: 1, fontWeight: 'bold', letterSpacing: '0.2em', background: 'linear-gradient(90deg, #4da1e8, #3b82f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', marginLeft: { xs: '40px', sm: '0px' }, padding: '10px 20px', backgroundColor: 'rgba(255, 255, 255, 0.1)', textTransform: 'uppercase', }}>
                             <ReactTyped
-                                strings={['Hệ thống quản lý ký túc xá']}
+                                strings={['Hệ thống quản lý ký túc xá ']}
                                 typeSpeed={100}
                                 backSpeed={50}
                                 loop={true}
@@ -90,6 +90,7 @@ const Home = () => {
                     </Box>
                 </Grid>
             </Grid>
+
 
             <Grid container spacing={2} justifyContent="center" alignItems="stretch">
                 <Grid item xs={12} sm={6} md={8} sx={{ display: 'flex', flexDirection: 'column' }}>
