@@ -39,9 +39,8 @@ export class DormSubmissionService {
     const submission = await this.dormSubmissionModel.exists({ userId, settingId });
     return !!submission;
   }
-  // đơn đăng ký
   async create(createDormSubmissionDto: CreateDormSubmissionDto) {
-    const { userId, settingId, email } = createDormSubmissionDto;
+    const { userId, email } = createDormSubmissionDto;
 
     // Kiểm tra xem userId có tồn tại không
     const userExists = await this.userService.isUserIdExist(userId);
@@ -49,16 +48,13 @@ export class DormSubmissionService {
       throw new Error(`User with ID ${userId} does not exist`);
     }
 
-    // Nếu settingId không được cung cấp, tìm setting có registrationStatus là "open"
-    let actualSettingId = settingId;
-    if (!settingId) {
-      const openSetting = await this.settingModel.findOne({ registrationStatus: 'open' });
-      if (openSetting) {
-        actualSettingId = openSetting._id.toString();
-      } else {
-        throw new Error('No open registration settings found');
-      }
+    // Tìm setting có registrationStatus là "open"
+    const openSetting = await this.settingModel.findOne({ registrationStatus: 'open' });
+    if (!openSetting) {
+      throw new Error('No open registration settings found');
     }
+
+    const actualSettingId = openSetting._id.toString();
 
     // Kiểm tra xem đã có bản ghi nào tồn tại với cùng userId và settingId không
     const submissionExists = await this.isSubmissionExists(userId, actualSettingId);
@@ -81,6 +77,8 @@ export class DormSubmissionService {
       settingId: actualSettingId, // Gán settingId đã xác định
     });
 
+    console.log('dormSubmission:', dormSubmission);
+
     try {
       await this.settingService.updateSubmissionCount(userId);
       await this.settingService.submissionCount(actualSettingId);
@@ -91,6 +89,7 @@ export class DormSubmissionService {
       throw new Error(`Failed to create dorm submission: ${error.message}`);
     }
   }
+
 
 
   // get all submission with status
