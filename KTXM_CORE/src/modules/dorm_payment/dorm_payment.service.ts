@@ -1,3 +1,4 @@
+import { DormSubmission, DormSubmissionStatus } from './../dorm_submission/entities/dorm_submission.entity';
 import { Body, Get, Injectable, Post, Query, Render, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { CreateDormPaymentDto } from './dto/create-dorm_payment.dto';
@@ -11,10 +12,11 @@ const YOUR_DOMAIN = 'http://localhost:3000';
 @Injectable()
 export class DormPaymentService {
   private payos: any;
-
   constructor(
     @InjectModel(DormPayment.name)
     private readonly dormPaymentRepository: Model<DormPayment>,
+    @InjectModel(DormSubmission.name)
+    private readonly dormSubmissionRepository: Model<DormSubmission>,
   ) {
     this.payos = new PayOS(
       process.env.CLIENT_ID_PAYOS,
@@ -23,7 +25,7 @@ export class DormPaymentService {
     );
   }
   async create(createDormPaymentDto: CreateDormPaymentDto) {
-    const { userId, amount, roomNumber, paymentDate, submissionId  } = createDormPaymentDto;
+    const { userId, amount, roomNumber, paymentDate, submissionId } = createDormPaymentDto;
     if (!amount || !roomNumber || !paymentDate || !submissionId) {
       throw new Error('Missing required fields: amount, roomNumber, or paymentDate, or submissionId');
     }
@@ -46,7 +48,7 @@ export class DormPaymentService {
       const dormPayment = new this.dormPaymentRepository({
         userId,
         amount,
-        submissionId,
+        submissionId: body.submissionId,
         roomNumber,
         paymentDate,
         status: PaymentStatus.Unpaid,
@@ -67,6 +69,7 @@ export class DormPaymentService {
           accountNumber: paymentLinkRes.accountNumber,
           accountName: paymentLinkRes.accountName,
           amount: paymentLinkRes.amount,
+          submissionId: paymentLinkRes.submissionId,
           description: paymentLinkRes.description,
           orderCode: paymentLinkRes.orderCode,
           qrCode: paymentLinkRes.qrCode,
@@ -82,90 +85,48 @@ export class DormPaymentService {
     }
   }
 
-  async handlePaymentCallback(orderCode: string) {
+  async handlePaymentCallback(orderCode: string, submissionId: string) {
     const dormBill = await this.dormPaymentRepository.findOne({ orderCode });
+    const submission = await this.dormSubmissionRepository.findOne({ _id: submissionId });
+    console.log('Handling payment callback for orderCode:', orderCode);
+    console.log('Dorm bill:', submission);
+    console.log('Dorm bill:', dormBill);
+    console.log('Submission:', submission);
+
     if (!dormBill) {
       throw new Error('Dorm bill not found');
     }
-    dormBill.status = PaymentStatus.Paid;
-    return dormBill.save();
-  }
-
-  async confirmWebhook(body: { webhookUrl: string }) {
-    console.log('Confirming webhook with URL:', body.webhookUrl); // Log URL để kiểm tra
-    try {
-      await this.payos.confirmWebhook(body.webhookUrl);
-      return {
-        error: 0,
-        message: 'ok',
-        data: null,
-      };
-    } catch (error) {
-      console.error('Error in confirming webhook:', error); // Log lỗi chi tiết
-      return {
-        error: -1,
-        message: 'failed',
-        data: null,
-      };
+    if (!submission) {
+      throw new Error('Dorm submission not found');
     }
-  }
 
+    dormBill.status = PaymentStatus.Paid;
+    submission.status = DormSubmissionStatus.PAID;
+    submission.statusHistory.push(DormSubmissionStatus.PAID);
+    await dormBill.save();
+    await submission.save();
+  }
   async handleWebhook(body: any) {
     console.log('Handling webhook:', body);
     if (body && body.data && body.data.orderCode) {
       const orderCode = body.data.orderCode;
-      console.log('Handling webhook for orderCode:', orderCode);
-      try {
-        await this.handlePaymentCallback(orderCode);
-      } catch (error) {
-        console.error('Error in handling webhook:', error.message);
+      const dormBill = await this.dormPaymentRepository.findOne({ orderCode });
+      if (dormBill) {
+        const submissionId = dormBill.submissionId;
+        try {
+          await this.handlePaymentCallback(orderCode, submissionId);
+        } catch (error) {
+          console.error('Error in handling webhook:', error.message);
+        }
+      } else {
+        console.error('Dorm bill not found for orderCode:', orderCode);
       }
-    }
-    else {
+    } else {
       console.error('Invalid webhook data:', body);
     }
   }
-  // async confirmWebhook(body: any) {
-  //   console.log('Handling and confirming webhook:', body);
 
-  //   if (body && body.data && body.data.orderCode) {
-  //     const orderCode = body.data.orderCode;
-  //     console.log('Handling webhook for orderCode:', orderCode);
 
-  //     try {
-  //       // Xử lý thông tin thanh toán từ callback
-  //       await this.handlePaymentCallback(orderCode);
-
-  //       // Sau khi xử lý thanh toán, xác nhận webhook
-  //       if (body.webhookUrl) {
-  //         console.log('Confirming webhook with URL:', body.webhookUrl);
-  //         await this.payos.confirmWebhook(body.webhookUrl);
-  //       } else {
-  //         console.error('Webhook URL is missing');
-  //       }
-
-  //       return {
-  //         error: 0,
-  //         message: 'Webhook handled and confirmed successfully',
-  //         data: null,
-  //       };
-  //     } catch (error) {
-  //       console.error('Error in handling and confirming webhook:', error);
-  //       return {
-  //         error: -1,
-  //         message: 'Failed to handle and confirm webhook',
-  //         data: null,
-  //       };
-  //     }
-  //   } else {
-  //     console.error('Invalid webhook data:', body);
-  //     return {
-  //       error: -1,
-  //       message: 'Invalid webhook data',
-  //       data: null,
-  //     };
-  //   }
-  // }
   async getAllPayments(): Promise<{ paid: DormPayment[], unpaid: DormPayment[] }> {
     try {
       const payments = await this.dormPaymentRepository.find().exec();

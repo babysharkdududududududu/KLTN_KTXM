@@ -168,7 +168,7 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    // Bước 2: Cập nhật user trong phòng mà user đó đang ở
+    // Bước 2: Cập nhật user trong phòng mà user đó đang ở (nếu có)
     const room = await this.roomModel.findOne(
       { "users._id": updatedUser._id }
     );
@@ -184,11 +184,13 @@ export class UsersService {
         await room.save(); // Lưu lại thay đổi
       }
     } else {
-      throw new Error('User is not found in any room');
+      // Không cần ném lỗi nếu không tìm thấy phòng
+      console.log('User is not found in any room, but updated successfully');
     }
 
     return updatedUser;
   }
+
 
 
 

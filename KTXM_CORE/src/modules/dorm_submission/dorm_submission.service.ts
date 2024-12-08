@@ -197,6 +197,7 @@ export class DormSubmissionService {
       amount,
       paymentDate,
       roomNumber,
+      submissionId: id,
     });
     this.userService.sendMailApproveRoom(email);
 
