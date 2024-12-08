@@ -55,16 +55,16 @@ const StyledMenu = styled((props) => (
     },
 }));
 
-export default function CustomizedMenus({ 
-    roleId, 
-    setingID, 
-    registrationStatus, 
-    statusID, 
-    handleOpenPauseDialog, 
-    handleOpenOpenDialog, 
-    handleOpenAutoAssignDialog, 
-    handleOpenPaymentDialog, 
-    handleExportData, 
+export default function CustomizedMenus({
+    roleId,
+    setingID,
+    registrationStatus,
+    statusID,
+    handleOpenPauseDialog,
+    handleOpenOpenDialog,
+    handleOpenAutoAssignDialog,
+    handleOpenPaymentDialog,
+    handleExportData,
     handleOpen // Thêm hàm callback cho Cài đặt
 }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -118,15 +118,13 @@ export default function CustomizedMenus({
         );
         // Thêm Divider
         menuItems.push(<Divider key="divider" sx={{ my: 0.5 }} />);
-        // Thêm mục Cài đặt
-        menuItems.push(
-            <MenuItem key="settings" onClick={handleOpen} disableRipple>
-                <SettingsIcon /> Cài đặt
-            </MenuItem>
-        );
-
-
     }
+    // Thêm mục Cài đặt
+    menuItems.push(
+        <MenuItem key="settings" onClick={handleOpen} disableRipple>
+            <SettingsIcon /> Cài đặt
+        </MenuItem>
+    );
 
     return (
         <div>

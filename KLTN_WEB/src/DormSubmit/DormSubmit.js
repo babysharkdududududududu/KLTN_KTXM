@@ -89,8 +89,6 @@ export default function DormSubmit() {
             },
             body: JSON.stringify({
                 userId,
-                note,
-                settingId,
                 email,
             }),
         });

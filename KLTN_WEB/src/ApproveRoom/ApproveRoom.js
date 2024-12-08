@@ -273,6 +273,17 @@ const ApproveRoom = () => {
         });
         if (response.data && response.data.data) {
             handleOpenSucessfull();
+            const updatedStudentData = studentData.map(student => {
+                if (student.status === 'ACCEPTED') {
+                    return {
+                        ...student,
+                        status: 'ASSIGNED',
+                        roomNumber: response.data.data[student.id],
+                    };
+                }
+                return student;
+            });
+            setStudentData(updatedStudentData);
         } else {
             console.error("Lỗi xếp phòng:", response.data.message);
         }
