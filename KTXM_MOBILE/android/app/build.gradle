@@ -109,7 +109,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.ktxmmobile"
+    namespace 'com.chithanh1202.KTXMMOBILE'
     defaultConfig {
         applicationId 'com.chithanh1202.KTXMMOBILE'
         minSdkVersion rootProject.ext.minSdkVersion

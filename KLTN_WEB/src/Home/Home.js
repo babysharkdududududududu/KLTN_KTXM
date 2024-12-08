@@ -27,7 +27,7 @@ import style from './Home.module.css';
 import Payment from './Pay/Payment';
 import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
-
+import { getSettingIdRoute } from '../API/APIRouter';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -37,6 +37,7 @@ const Home = () => {
     const [isShaking, setIsShaking] = useState(false);
     const { updateNotificationCount } = useWebSocket();
     const { userId, roleId } = useUser();
+    const [submitIsOpen, setSubmitIsOpen] = useState(false);
 
     useEffect(() => {
         if (numberNoti > prevNoti) {
@@ -50,6 +51,19 @@ const Home = () => {
         navigate('/notification');
         updateNotificationCount(0);
     };
+
+    useEffect(() => {
+        const fetchSetting = async () => {
+            try {
+                const response = await fetch(getSettingIdRoute);
+                const data = await response.json();
+                setSubmitIsOpen(data.data);
+            } catch (error) {
+                console.error('Failed to fetch setting: ', error);
+            }
+        };
+        fetchSetting();
+    }, []);
 
     const boxStyle = { padding: 2, backgroundColor: '#fff', borderRadius: '12px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', cursor: 'pointer', };
 
@@ -107,13 +121,24 @@ const Home = () => {
 
             <Grid container spacing={2} justifyContent="center" alignItems="center" sx={{ marginTop: '0px' }} >
                 <Grid item xs={6} sm={4} md={2}>
-                    <Box sx={{ ...boxStyle, height: 100, }} onClick={() => navigate('/approve-room')}>
-                        <IconButton sx={{ color: '#4da1e8' }}>
+                    <Box
+                        sx={{
+                            ...boxStyle,
+                            height: 100,
+                            cursor: (submitIsOpen || roleId === 'MANAGER') ? 'pointer' : 'not-allowed', // Thay đổi con trỏ chuột
+                            opacity: (submitIsOpen || roleId === 'MANAGER') ? 1 : 0.5, // Làm mờ nếu không khả dụng
+                        }}
+                        onClick={(submitIsOpen || roleId === 'MANAGER') ? () => navigate('/approve-room') : undefined} // Không có hành động nếu không khả dụng
+                    >
+                        <IconButton sx={{ color: (submitIsOpen || roleId === 'MANAGER') ? '#4da1e8' : '#ccc' }} disabled={!submitIsOpen && roleId !== 'MANAGER'}>
                             <AddBusinessIcon fontSize="medium" />
                         </IconButton>
-                        <Typography variant="caption">Đăng ký phòng</Typography>
+                        <Typography variant="caption">
+                            {submitIsOpen ? 'Đăng ký phòng' : (roleId === 'MANAGER' ? 'Đăng ký phòng' : 'Chưa mở đăng ký')}
+                        </Typography>
                     </Box>
                 </Grid>
+
                 {
                     roleId === 'MANAGER' ? (
                         <Grid item xs={6} sm={4} md={2}>

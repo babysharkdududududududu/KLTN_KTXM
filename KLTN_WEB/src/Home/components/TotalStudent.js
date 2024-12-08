@@ -31,7 +31,6 @@ export default function TotalStudent() {
 
             if (responseData.statusCode === 200) {
                 const resultData = responseData.data;
-                console.log("Dorm submission statistical:", resultData.total);
                 const filteredStatus = {
                     PENDING: resultData.totalByStatus.PENDING || 0,
                     PAID: resultData.totalByStatus.PAID || 0,
@@ -40,7 +39,6 @@ export default function TotalStudent() {
                 const calculatedTotal = Object.values(filteredStatus).reduce((acc, value) => acc + value, 0);
                 setTotal(calculatedTotal);
                 setSupTotal(resultData.total || 0); // Ensure supTotal is set properly
-                console.log("supTotal", resultData.total); // Log the value you're assigning
                 setStatus(filteredStatus);
             } else {
                 console.warn("Unexpected response format:", responseData);

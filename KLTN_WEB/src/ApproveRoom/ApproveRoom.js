@@ -7,9 +7,14 @@ import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import RoomAssignment from './RoomAssignment'; // Import component mới
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute } from '../API/APIRouter';
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission } from '../API/APIRouter';
 import TimeLineStudent from "./TimeLineStudent";
 import { useUser } from "../Context/Context";
+import PauseSubmission from "./PauseSubmitsion";
+import OpenRegistration from "./OpenRegistration"; // Import component mới
+import OpenPayment from "./OpenPayment"; // Import component mới
+import AutoAssignRoom from "./AutoAssignRoom"; // Import component mớ
+import CustomizedMenus from "./CustomizedMenus";
 
 const statuses = [
     { id: '', name: 'Tất cả' },
@@ -35,6 +40,25 @@ const ApproveRoom = () => {
     const [statusID, setStatusID] = useState('');
     const { userId, roleId } = useUser();
     const [settingValue, setSettingValue] = useState('');
+    const [openPauseDialog, setOpenPauseDialog] = useState(false);
+
+    const handleOpenPauseDialog = () => setOpenPauseDialog(true);
+    const handleClosePauseDialog = () => setOpenPauseDialog(false);
+
+    const [openOpenDialog, setOpenOpenDialog] = useState(false);
+
+    const handleOpenOpenDialog = () => setOpenOpenDialog(true);
+    const handleCloseOpenDialog = () => setOpenOpenDialog(false);
+
+    const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
+
+    const handleOpenPaymentDialog = () => setOpenPaymentDialog(true);
+    const handleClosePaymentDialog = () => setOpenPaymentDialog(false);
+
+    const [openAutoAssignDialog, setOpenAutoAssignDialog] = useState(false);
+
+    const handleOpenAutoAssignDialog = () => setOpenAutoAssignDialog(true);
+    const handleCloseAutoAssignDialog = () => setOpenAutoAssignDialog(false);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -57,32 +81,75 @@ const ApproveRoom = () => {
         }
     };
 
-    const handlePauseRegistration = async () => {
+    const handleExportData = async () => {
+        try {
+            // Tạo URL với cả settingID và statusID
+            const url = `${exportDormSubmission}?settingId=${setingID}&status=${statusID}`;
+            const response = await axios.get(url, {
+                responseType: 'blob', // Đặt kiểu phản hồi là blob để xử lý file
+            });
+    
+            // Lấy tên file từ header (nếu backend đã thiết lập)
+            const contentDisposition = response.headers['content-disposition'];
+            let fileName = 'dorm_submissions.xlsx'; // Tên mặc định nếu không tìm thấy
+    
+            if (contentDisposition && contentDisposition.includes('attachment')) {
+                const matches = contentDisposition.match(/filename="?(.+)"?/);
+                if (matches[1]) {
+                    fileName = matches[1]; // Lấy tên file từ header
+                }
+            }
+    
+            // Tạo URL cho file tải về
+            const fileURL = window.URL.createObjectURL(new Blob([response.data]));
+            
+            // Tạo thẻ a để tải file
+            const link = document.createElement('a');
+            link.href = fileURL;
+            link.setAttribute('download', fileName); // Sử dụng tên file từ backend
+    
+            // Thêm thẻ a vào body và click để tải file
+            document.body.appendChild(link);
+            link.click();
+    
+            // Xóa thẻ a sau khi tải
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi xuất dữ liệu:", error);
+        }
+    };
+    
+
+    // Cập nhật hàm tạm dừng đăng ký
+    const handlePause = async () => {
         try {
             const response = await axios.patch(`${pauseSettingRoute}${setingID}`);
             if (response.data && response.data.data) {
                 setRegistrationStatus('paused');
+                handleOpenSucessfull(); // Hiển thị thông báo thành công
             } else {
                 console.error("Lỗi tạm dừng đăng ký:", response.data.message);
             }
         } catch (error) {
             console.error("Có lỗi xảy ra khi tạm dừng đăng ký:", error);
         }
-    };
+    }
 
+    // Cập nhật hàm mở đăng ký
     const handleOpenRegistration = async () => {
         try {
             const response = await axios.patch(`${openSettingRoute}${setingID}`);
             if (response.data && response.data.data) {
                 setRegistrationStatus('open');
+                handleOpenSucessfull(); // Hiển thị thông báo thành công
             } else {
                 console.error("Lỗi mở đăng ký:", response.data.message);
             }
         } catch (error) {
             console.error("Có lỗi xảy ra khi mở đăng ký:", error);
         }
-
     };
+
 
     const handleChangeStatus = (event) => {
         setStatusID(event.target.value);
@@ -94,7 +161,6 @@ const ApproveRoom = () => {
                 const response = await axios.get(getSettingIdRoute);
                 if (response.data && response.data) {
                     setSettingValue(response.data.data);
-                    console.log("Setting ID:", settingValue);
                 } else {
                     console.error("Lỗi lấy setting ID:", response.data.message);
                 }
@@ -104,8 +170,6 @@ const ApproveRoom = () => {
         };
         handleGetSettingID();
     }, [settingValue]);
-
-
 
 
     // Fetch API data
@@ -208,7 +272,7 @@ const ApproveRoom = () => {
             settingId: setingID,
         });
         if (response.data && response.data.data) {
-            console.log("Xếp phòng thành công:", response.data.data);
+            handleOpenSucessfull();
         } else {
             console.error("Lỗi xếp phòng:", response.data.message);
         }
@@ -237,6 +301,7 @@ const ApproveRoom = () => {
 
                 // Cập nhật state với dữ liệu đã thay đổi
                 setStudentData(updatedStudentData);
+                handleOpenSucessfull();
             } else {
                 console.error("Lỗi chuyển tất cả sang chờ thanh toán:", response.data.message);
             }
@@ -288,30 +353,23 @@ const ApproveRoom = () => {
                     }
                     {roleId === 'MANAGER' && (
                         <>
-                            {setingID !== '' && registrationStatus === 'open' && (
-                                <Button variant="contained" color="primary" style={{ marginRight: '10px' }} onClick={handlePauseRegistration}>
-                                    Tạm dừng đăng ký
-                                </Button>
-                            )}
-                            {setingID !== '' && registrationStatus === 'paused' && (
-                                <Button variant="contained" color="primary" style={{ marginRight: '10px' }} onClick={handleOpenRegistration}>
-                                    Mở đăng ký
-                                </Button>
-                            )}
-                            {setingID !== '' && statusID === 'PAID' && (
-                                <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={handleAutoAsignRoom}>
-                                    Tự động xếp phòng
-                                </Button>
-                            )}
-                            {setingID !== '' && statusID === 'ACCEPTED' && (
-                                <Button variant="contained" color="primary" style={{ marginRight: '20px' }} disabled={!setingID} onClick={setAllAcceptedToWaitingPayment}>
-                                    Mở thanh toán
-                                </Button>
-                            )}
+                            <CustomizedMenus
+                                roleId={roleId}
+                                setingID={setingID}
+                                registrationStatus={registrationStatus}
+                                statusID={statusID}
+                                submitDorm={submitDorm}
+                                handleOpenPauseDialog={handleOpenPauseDialog}
+                                handleOpenOpenDialog={handleOpenOpenDialog}
+                                handleOpenAutoAssignDialog={handleOpenAutoAssignDialog}
+                                handleOpenPaymentDialog={handleOpenPaymentDialog}
+                                handleOpen={handleOpen}
+                                handleExportData={handleExportData}
+                            />
                         </>
                     )
                     }
-                    {roleId === 'MANAGER' && (<> <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button></>)}
+                    {/* {roleId === 'MANAGER' && (<> <Button variant="contained" color="primary" onClick={handleOpen}>Cài đặt</Button></>)} */}
                 </div>
             </div>
             {roleId === 'MANAGER' && (
@@ -386,6 +444,26 @@ const ApproveRoom = () => {
                     )}
                 </div>
             )}
+            <PauseSubmission
+                open={openPauseDialog}
+                handleClose={handleClosePauseDialog}
+                handlePause={handlePause}
+            />
+            <OpenRegistration
+                open={openOpenDialog}
+                handleClose={handleCloseOpenDialog}
+                handleOpen={handleOpenRegistration}
+            />
+            <OpenPayment
+                open={openPaymentDialog}
+                handleClose={handleClosePaymentDialog}
+                handleOpen={setAllAcceptedToWaitingPayment}
+            />
+            <AutoAssignRoom
+                open={openAutoAssignDialog}
+                handleClose={handleCloseAutoAssignDialog}
+                handleAutoAssign={handleAutoAsignRoom}
+            />
         </div>
     );
 };

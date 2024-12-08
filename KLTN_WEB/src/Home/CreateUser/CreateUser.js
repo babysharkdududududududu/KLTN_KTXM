@@ -36,8 +36,6 @@ const CreateUser = () => {
             const count = fetchedUsers.length;
             setCount(count);
             setUsers(usersByRole); // Lưu trữ usersByRole
-            console.log('Count:', count);
-            console.log('Users by role:', usersByRole); // In ra người dùng đã phân loại và đếm
         } catch (error) {
             console.error('Error fetching users:', error);
         }

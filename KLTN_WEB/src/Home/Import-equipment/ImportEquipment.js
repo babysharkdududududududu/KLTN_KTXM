@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { importEquipmentRoute, getEquipmentRoute, getRoomRoute } from '../../API/APIRouter';
-import {
-    Button,
-    Card,
-    CardContent,
-    Typography,
-    Snackbar,
-    Alert,
-    Box,
-    LinearProgress,
-    TextField,
-} from '@mui/material';
+import { Button, Card, CardContent, Typography, Snackbar, Alert, Box, LinearProgress, TextField, Grid, } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/Download';
+import UploadIcon from '@mui/icons-material/Upload';
 
 const EquipmentUpload = () => {
     const [file, setFile] = useState(null);
@@ -28,11 +22,29 @@ const EquipmentUpload = () => {
         setFile(e.target.files[0]);
     };
 
+    const handleDownloadTemplate = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Template Mẫu');
+        // Định nghĩa các tên cột
+        worksheet.columns = [
+            { header: 'equipNumber', key: 'equipNumber', width: 20 }, { header: 'name', key: 'name', width: 25 }, { header: 'status', key: 'status', width: 15 }, { header: 'startDate', key: 'startDate', width: 15 }, { header: 'endDate', key: 'endDate', width: 15 },
+            { header: 'fixedDate', key: 'fixedDate', width: 15 }, { header: 'location', key: 'location', width: 20 }, { header: 'roomNumber', key: 'roomNumber', width: 10 }
+        ];
+        // Làm đậm tên cột
+        worksheet.getRow(1).font = { bold: true };
+        // Tạo file Excel và tải xuống
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, 'Template_Thiet_Bi.xlsx');
+    };
+
+
+
+
     const fetchEquipment = async () => {
         try {
             const response = await axios.get(getEquipmentRoute);
             setEquipmentData(response.data);
-            console.log('Dữ liệu thiết bị:', response.data.data);
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu thiết bị:', error);
         }
@@ -46,7 +58,6 @@ const EquipmentUpload = () => {
         try {
             const { data } = await axios.get(getRoomRoute, { params: { all: true } });
             setListRooms(data.data.results);
-            console.log("Danh sách phòng:", data.data.results);
         } catch (err) {
             console.error("Lỗi khi lấy danh sách phòng:", err);
         }
@@ -104,7 +115,6 @@ const EquipmentUpload = () => {
             const data = new Uint8Array(event.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            console.log('Dữ liệu từ file:', jsonData);
 
             const isValid = jsonData.every(equip => equip.equipNumber && equip.name && equip.status && equip.startDate);
             if (!isValid) {
@@ -125,9 +135,7 @@ const EquipmentUpload = () => {
 
             try {
                 const existingEquipNumbers = await checkForExistingEquipNumbers(normalizedEquipmentData);
-                console.log('Mã số thiết bị đã tồn tại:', existingEquipNumbers);
                 const duplicateEquipNumbersInFile = findDuplicateEquipNumber(normalizedEquipmentData);
-                console.log('Mã số thiết bị trùng trong file:', duplicateEquipNumbersInFile);
 
                 const invalidRoomNumbers = normalizedEquipmentData
                     .map(equip => equip.roomNumber)
@@ -143,7 +151,6 @@ const EquipmentUpload = () => {
                     !duplicateEquipNumbersInFile.includes(equip.equipNumber)
                 );
 
-                console.log('Thiết bị hợp lệ:', validEquipment);
 
                 if (validEquipment.length === 0) {
                     showSnackbar('Không có thiết bị hợp lệ để nhập!', 'warning');
@@ -158,7 +165,6 @@ const EquipmentUpload = () => {
                             setUploadProgress(percentCompleted);
                         }
                     });
-                    console.log('Phản hồi từ server:', response.data);
                     showSnackbar('Import thiết bị thành công!', 'success');
                     fetchEquipment(); // Cập nhật danh sách thiết bị
                 } catch (error) {
@@ -189,23 +195,22 @@ const EquipmentUpload = () => {
     return (
         <Box display="flex" justifyContent="center" alignItems="center" >
             <CardContent>
-                <TextField
-                    type="file"
-                    inputProps={{ accept: '.xlsx, .xls, .csv' }}
-                    onChange={handleFileChange}
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                />
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleUpload}
-                    disabled={isUploading}
-                    fullWidth
-                >
-                    {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
-                </Button>
+                <TextField type="file" inputProps={{ accept: '.xlsx, .xls, .csv' }} onChange={handleFileChange} fullWidth margin="normal" variant="outlined" />
+                <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                        <Button variant="contained" color="primary" onClick={handleUpload} disabled={isUploading} fullWidth>
+                            {isUploading ? `Đang tải lên... ${uploadProgress}%` : 'Tải lên'}
+                            <UploadIcon />
+                        </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Button variant="contained" color="success" fullWidth onClick={handleDownloadTemplate}>
+                            Tải mẫu
+                            <DownloadIcon />
+                        </Button>
+                    </Grid>
+                </Grid>
+
                 <Typography variant="body2" color="textSecondary" align="center" sx={{ marginTop: 2 }}>
                     Vui lòng chọn đúng định dạng file là .xlsx, .csv và đúng file dữ liệu thiết bị.
                 </Typography>

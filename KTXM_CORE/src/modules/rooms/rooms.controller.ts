@@ -1,9 +1,11 @@
 import { Public } from '@/decorator/customize';
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, Res, UseInterceptors } from '@nestjs/common';
 import { EquipmentService } from '../equipment/equipment.service';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { RoomsService } from './rooms.service';
 import { CacheInterceptor } from '@nestjs/cache-manager';
+import { Block } from './entities/room.entity';
+import { Response } from 'express';
 @Controller('rooms')
 export class RoomsController {
   constructor(private readonly roomsService: RoomsService, private readonly equipmentService: EquipmentService) { }
@@ -13,7 +15,23 @@ export class RoomsController {
   // create(@Body() createRoomDto: CreateRoomDto) {
   //   return this.roomsService.create(createRoomDto);
   // }
+  @Get('export')
+  @Public()
+  async exportRooms(
+    @Query('block') block: Block,
+    @Res() res: Response,
+  ): Promise<void> {
+    const buffer = await this.roomsService.exportSubmissions(block);
 
+    const fileName = `rooms_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+    });
+
+    res.send(buffer);
+  }
 
 
   @Get()

@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, BadRequestException, Query, Res } from '@nestjs/common';
 import { EquipmentService } from './equipment.service';
 import { CreateEquipmentDto } from './dto/create-equipment.dto';
 import { UpdateEquipmentDto } from './dto/update-equipment.dto';
 import { Public } from '@/decorator/customize';
-
+import { Response } from 'express';
 @Controller('equipment')
 export class EquipmentController {
   constructor(private readonly equipmentService: EquipmentService) { }
@@ -51,4 +51,24 @@ export class EquipmentController {
     }
     return this.equipmentService.importEquipment(equipData);
   }
+// Server-side
+@Get('export')
+@Public()
+async exportEquipmentData(@Res() res: Response): Promise<void> {
+  try {
+    const buffer = await this.equipmentService.exportEquipmentData();
+
+    // Thiết lập tiêu đề và loại content cho file Excel
+    res.set({
+      'Content-Disposition': 'attachment; filename="equipment_data.xlsx"',
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+
+    // Gửi buffer về cho client
+    res.send(buffer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Lỗi khi xuất dữ liệu thiết bị');
+  }
+}
 }

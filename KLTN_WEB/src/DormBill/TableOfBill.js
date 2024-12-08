@@ -207,12 +207,18 @@ const TableOfBill = () => {
                 .map((bill) => (
                   <StyledTableRow key={bill._id} tabIndex={-1}>
                     <TableCell>{bill.code}</TableCell>
-                    <TableCell>{bill.amount}</TableCell>
+                    <TableCell>
+                      {new Intl.NumberFormat('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                      }).format(bill.amount)}
+                    </TableCell>
+
                     <TableCell>{new Date(bill.createdAt).toLocaleDateString()}</TableCell>
                     <TableCell>{bill.roomNumber}</TableCell>
                     <TableCell>
                       <Chip
-                        label={bill.status} 
+                        label={bill.status}
                         color={bill.status === "Paid" ? "success" : "warning"}
                         size="small"
                       />

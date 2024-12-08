@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Equipment } from './entities/equipment.entity';
 import { Model } from 'mongoose';
 import { Room } from '../rooms/entities/room.entity';
-
+import * as ExcelJS from 'exceljs';
 @Injectable()
 export class EquipmentService {
   constructor(
@@ -93,5 +93,44 @@ export class EquipmentService {
 
   remove(id: number) {
     return `This action removes a #${id} equipment`;
+  }
+
+  // Service
+  async exportEquipmentData(): Promise<Buffer> {
+    const equipments = await this.equipmentModel.find({}).exec();
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Equipment Data');
+
+    // Đặt tên cột
+    worksheet.columns = [
+      { header: 'Equipment Number', key: 'equipNumber', width: 30 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Status', key: 'status', width: 10 },
+      { header: 'Start Date', key: 'startDate', width: 20 },
+      { header: 'End Date', key: 'endDate', width: 20 },
+      { header: 'Fixed Date', key: 'fixedDate', width: 20 },
+      { header: 'Location', key: 'location', width: 50 },
+      { header: 'Room Number', key: 'roomNumber', width: 30 },
+      { header: 'Repair Number', key: 'repairNumber', width: 10 },
+    ];
+
+    // Thêm dữ liệu vào worksheet
+    equipments.forEach((equipment) => {
+      worksheet.addRow({
+        equipNumber: equipment.equipNumber,
+        name: equipment.name,
+        status: equipment.status,
+        startDate: equipment.startDate,
+        endDate: equipment.endDate,
+        fixedDate: equipment.fixedDate,
+        location: equipment.location ? equipment.location.join(', ') : '',
+        roomNumber: equipment.roomNumber,
+        repairNumber: equipment.repairNumber,
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer as Buffer;
   }
 }

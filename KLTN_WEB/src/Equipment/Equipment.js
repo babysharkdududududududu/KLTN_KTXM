@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { getAllEquipmentRoute, updateLocationEquipmentRoute } from "../API/APIRouter";
 import EquipmentDialog from './EquipmentDialog/EquipmentDialog';
-import { Box, Tabs, Tab, TextField, Pagination, Button } from '@mui/material';
+import { Box, Tabs, Tab, TextField, Pagination, Button, exportEquipmentRoute } from '@mui/material';
 import PrintButton from "./PrintEquipment/PrintEquipment";
 import { DataGrid } from '@mui/x-data-grid';
 

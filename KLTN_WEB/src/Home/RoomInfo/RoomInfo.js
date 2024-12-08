@@ -31,7 +31,6 @@ const RoomInfo = () => {
         try {
             const { data } = await axios.get(`${getRoomByIdRoute}${roomNumber}`);
             setRoomInfo(data.data.room);
-            console.log("Room info:", roomInfo);
 
             setLoading(false);
         } catch (err) {
