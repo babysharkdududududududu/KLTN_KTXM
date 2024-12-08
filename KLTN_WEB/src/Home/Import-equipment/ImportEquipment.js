@@ -32,7 +32,6 @@ const EquipmentUpload = () => {
         try {
             const response = await axios.get(getEquipmentRoute);
             setEquipmentData(response.data);
-            console.log('Dữ liệu thiết bị:', response.data.data);
         } catch (error) {
             console.error('Lỗi khi lấy dữ liệu thiết bị:', error);
         }
@@ -46,7 +45,6 @@ const EquipmentUpload = () => {
         try {
             const { data } = await axios.get(getRoomRoute, { params: { all: true } });
             setListRooms(data.data.results);
-            console.log("Danh sách phòng:", data.data.results);
         } catch (err) {
             console.error("Lỗi khi lấy danh sách phòng:", err);
         }
@@ -104,7 +102,6 @@ const EquipmentUpload = () => {
             const data = new Uint8Array(event.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
-            console.log('Dữ liệu từ file:', jsonData);
 
             const isValid = jsonData.every(equip => equip.equipNumber && equip.name && equip.status && equip.startDate);
             if (!isValid) {
@@ -125,9 +122,7 @@ const EquipmentUpload = () => {
 
             try {
                 const existingEquipNumbers = await checkForExistingEquipNumbers(normalizedEquipmentData);
-                console.log('Mã số thiết bị đã tồn tại:', existingEquipNumbers);
                 const duplicateEquipNumbersInFile = findDuplicateEquipNumber(normalizedEquipmentData);
-                console.log('Mã số thiết bị trùng trong file:', duplicateEquipNumbersInFile);
 
                 const invalidRoomNumbers = normalizedEquipmentData
                     .map(equip => equip.roomNumber)
@@ -143,7 +138,6 @@ const EquipmentUpload = () => {
                     !duplicateEquipNumbersInFile.includes(equip.equipNumber)
                 );
 
-                console.log('Thiết bị hợp lệ:', validEquipment);
 
                 if (validEquipment.length === 0) {
                     showSnackbar('Không có thiết bị hợp lệ để nhập!', 'warning');
@@ -158,7 +152,6 @@ const EquipmentUpload = () => {
                             setUploadProgress(percentCompleted);
                         }
                     });
-                    console.log('Phản hồi từ server:', response.data);
                     showSnackbar('Import thiết bị thành công!', 'success');
                     fetchEquipment(); // Cập nhật danh sách thiết bị
                 } catch (error) {

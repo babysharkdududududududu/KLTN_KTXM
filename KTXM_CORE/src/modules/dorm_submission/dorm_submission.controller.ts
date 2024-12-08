@@ -1,12 +1,34 @@
-import { Controller, Get, Post, Body, Param, Query, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Patch, Res } from '@nestjs/common';
 import { DormSubmissionService } from './dorm_submission.service';
 import { CreateDormSubmissionDto } from './dto/create-dorm_submission.dto';
 import { Public } from '@/decorator/customize';
-import { DormSubmission } from './entities/dorm_submission.entity';
+import { DormSubmission, DormSubmissionStatus } from './entities/dorm_submission.entity';
+import { Response } from 'express';
 
 @Controller('dorm-submission')
 export class DormSubmissionController {
   constructor(private readonly dormSubmissionService: DormSubmissionService) { }
+
+  
+  @Get('export')
+  @Public()
+  async exportSubmissions(
+      @Query('status') status: DormSubmissionStatus,
+      @Query('settingId') settingId: string,
+      @Res() res: Response, // Đảm bảo kiểu Response được nhập đúng
+  ): Promise<void> {
+      const buffer = await this.dormSubmissionService.exportSubmissions(status, settingId);
+
+      // Đặt tên file và kiểu nội dung
+      const fileName = `dorm_submissions_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+      res.set({
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': `attachment; filename="${fileName}"`,
+      });
+
+      res.send(buffer); // Gửi buffer về client
+  }
 
   @Post()
   @Public()

@@ -30,7 +30,7 @@ export default function DormBill() {
     }, []); // Chỉ chạy một lần khi component mount
 
     return (
-        <div style={{ paddingLeft: 40, justifyContent: 'center', display: 'flex', backgroundColor: "#fff" }}>
+        <div style={{ paddingLeft: 40, justifyContent: 'center', display: 'flex', backgroundColor: "#e7ecf0", paddingTop: 10 }}>
             <div style={{
                 width: '90%',
                 height: '100vh',
@@ -38,7 +38,7 @@ export default function DormBill() {
                 alignItems: 'center',
                 flexDirection: 'column',
                 overflowY: 'auto', // để có thanh cuộn khi có nhiều hóa đơn
-                
+
             }}>
                 <div style={{
                     width: '100%',
@@ -125,7 +125,11 @@ export function BillCard({ bill }) {
                                             <Typography color='#b2b8bf'>Số tiền:</Typography>
                                         </Grid>
                                         <Grid item>
-                                            <Typography color='black' fontWeight={'bold'}>{bill.amount} VNĐ</Typography>
+                                            <Typography color='black' fontWeight={'bold'}>                      
+                                                {new Intl.NumberFormat('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND',
+                                            }).format(bill.amount)}</Typography>
                                         </Grid>
                                     </Grid>
                                     <Grid container spacing={1} alignItems="center">

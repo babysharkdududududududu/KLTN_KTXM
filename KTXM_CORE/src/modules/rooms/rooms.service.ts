@@ -3,10 +3,11 @@ import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { Room } from './entities/room.entity';
+import { Block, Room } from './entities/room.entity';
 import { Equipment } from '../equipment/entities/equipment.entity';
 import { log } from 'console';
 
+import ExcelJS from 'exceljs';
 import axios from 'axios';
 import crypto from 'crypto';
 
@@ -260,7 +261,6 @@ export class RoomsService {
 
   private async fetchAndUpdateElectricityNumber() {
     const rooms = await this.roomModel.find(); // Lấy tất cả các phòng
-
     try {
       const access_token = await this.getAccessToken();
       for (const room of rooms) {
@@ -302,10 +302,64 @@ export class RoomsService {
     const totalOccupiedSpots = totalCapacity - totalAvailableSpots;
 
     return {
-        totalRooms,
-        totalAvailableSpots,
-        totalCapacity,
-        totalOccupiedSpots,
+      totalRooms,
+      totalAvailableSpots,
+      totalCapacity,
+      totalOccupiedSpots,
     };
-}
+  }
+
+  async exportSubmissions(block?: string): Promise<Buffer> {
+    let query: any = {};
+  
+    // Nếu block không có giá trị (rỗng hoặc undefined), xuất tất cả
+    if (block) {
+      query = { block };
+    }
+  
+    const rooms = await this.roomModel.find(query).exec();
+  
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Danh sách phòng');
+  
+    // Đặt tên cột
+    worksheet.columns = [
+      { header: 'Mã phòng', key: 'roomNumber', width: 15 },
+      { header: 'Mô tả', key: 'description', width: 30 },
+      { header: 'Tầng', key: 'floor', width: 10 },
+      { header: 'Loại phòng', key: 'type', width: 15 },
+      { header: 'Block', key: 'block', width: 15 },
+      { header: 'Sức chứa', key: 'capacity', width: 15 },
+      { header: 'Số chỗ trống', key: 'availableSpot', width: 15 },
+      { header: 'Đã thuê', key: 'occupied', width: 15 },
+      { header: 'Giá', key: 'price', width: 15 },
+      { header: 'Số nước', key: 'waterNumber', width: 15 },
+      { header: 'Số điện', key: 'electricityNumber', width: 15 },
+      { header: 'Trạng thái', key: 'status', width: 15 },
+    ];
+  
+    // Thêm dữ liệu vào worksheet
+    rooms.forEach((room) => {
+      worksheet.addRow({
+        roomNumber: room.roomNumber,
+        description: room.description,
+        floor: room.floor,
+        type: room.type,
+        block: room.block,
+        capacity: room.capacity,
+        availableSpot: room.availableSpot,
+        occupied: room.occupied,
+        price: room.price,
+        waterNumber: room.waterNumber,
+        electricityNumber: room.electricityNumber,
+        status: room.status,
+      });
+    });
+  
+    // Tạo buffer cho file Excel và ép kiểu
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer as Buffer; // Đảm bảo trả về kiểu Buffer
+  }
+  
+  
 }

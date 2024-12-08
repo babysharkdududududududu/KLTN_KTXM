@@ -36,8 +36,6 @@ const CreateUser = () => {
             const count = fetchedUsers.length;
             setCount(count);
             setUsers(usersByRole); // Lưu trữ usersByRole
-            console.log('Count:', count);
-            console.log('Users by role:', usersByRole); // In ra người dùng đã phân loại và đếm
         } catch (error) {
             console.error('Error fetching users:', error);
         }
@@ -58,7 +56,7 @@ const CreateUser = () => {
     };
 
     return (
-        <Container maxWidth="sm" sx={{ padding: 2, marginTop: 2, background: '#f5f5f5', borderRadius: '12px', minHeight: { xs: '200px', md: 220 } }} onClick={() => navigate('/create-user')}>
+        <Container maxWidth="sm" sx={{ padding: 2, marginTop: 2, background: '#fff', borderRadius: '12px', minHeight: { xs: '200px', md: 220 } }} onClick={() => navigate('/create-user')}>
             <Typography sx={{ textAlign: 'center', fontSize: '15px', color: '#53556a' }}>Quản lý người dùng</Typography>
             <Divider sx={{ marginBottom: 2 }} />
 

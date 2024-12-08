@@ -14,7 +14,7 @@ const Management = () => {
 
     return (
         <Container>
-            <Box sx={{ borderRadius: 2, maxWidth: 800, minHeight: 150, background: '#f5f5f5', }}>
+            <Box sx={{ borderRadius: 2, maxWidth: 800, minHeight: 150, background: '#fff    ', }}>
                 <Typography gutterBottom sx={{ fontFamily: 'Tahoma', marginTop: '-20px' }} variant="h6">
                     Quản lý nhập dữ liệu
                 </Typography>

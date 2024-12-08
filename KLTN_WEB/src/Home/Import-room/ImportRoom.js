@@ -17,7 +17,6 @@ const UploadRoom = () => {
         try {
             const { data } = await axios.get(getRoomRoute, { params: { all: true } });
             setListRooms(data.data.results);
-            console.log("Danh sách phòng:", data.data.results);
         } catch (err) {
             console.error("Error fetching rooms:", err);
         }
@@ -81,15 +80,12 @@ const UploadRoom = () => {
                 }]
             }));
             const existingRoomNumbers = checkForExistingRoomNumbers(normalizedUserData);
-            console.log('Mã số phòng đã tồn tại:', existingRoomNumbers);
             const duplicateRoomNumbersInFile = findDuplicateRoomNumber(normalizedUserData);
-            console.log('Mã số phòng trùng trong file:', duplicateRoomNumbersInFile);
             const validRooms = normalizedUserData.filter(room =>
                 !existingRoomNumbers.includes(room.roomNumber) &&
                 !duplicateRoomNumbersInFile.includes(room.roomNumber)
             );
 
-            console.log('Phòng hợp lệ:', validRooms);
 
             if (validRooms.length === 0) {
                 showSnackbar('Không có phòng hợp lệ để nhập!', 'warning');
@@ -104,7 +100,6 @@ const UploadRoom = () => {
                         setUploadProgress(percentCompleted);
                     }
                 });
-                console.log('Phản hồi từ server:', response.data);
                 showSnackbar('Import thành công!', 'success');
                 fetchRooms();
             } catch (error) {

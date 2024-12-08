@@ -51,7 +51,7 @@ export const importEquipmentRoute = `${host}/equipment/import`;
 export const getEquipmentRoute = `${host}/equipment`;
 export const getAllEquipmentRoute = `${host}/equipment/`;
 export const updateLocationEquipmentRoute = `${host}/equipment`;
-
+export const exportEquipmentRoute = `${host}/equipment/export`;
 
 //seting
 export const getSettingRoute = `${host}/setting`;
@@ -63,6 +63,7 @@ export const getSettingIdRoute = `${host}/setting/is-open/`;
 
 //Room
 export const getAllRoomRoute = `${host}/rooms/?all=true`;
+export const exportRoomRoute = `${host}/rooms/export`;
 
 
 //submit form dorm
@@ -104,6 +105,7 @@ export const getDormPaymentWithUserId = `${host}/dorm-payment`;
 //router change room
 export const changeRoomRoute = `${host}/dorm-submission/change-room`;
 export const returnSuccessPayment = `${host}/dorm-payment/payment/callback`;
+export const exportDormSubmission = `${host}/dorm-submission/export`;
 
 
 //bill

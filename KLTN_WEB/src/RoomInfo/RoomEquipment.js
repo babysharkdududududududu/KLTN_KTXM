@@ -58,13 +58,13 @@ const RoomEquipment = ({ equipment, getRoomById, roomNumber }) => {
                             {/* <Typography variant="h6" sx={{ marginBottom: 1 }}>{type.charAt(0).toUpperCase() + type.slice(1)}</Typography> */}
 
                             {/* Render Lottie animation for each type */}
-                            {type === 'quạt' && <Lottie animationData={fan} loop={true} style={{ width: '150px', height: '100px', margin: '10px auto' }} />}
+                            {/* {type === 'quạt' && <Lottie animationData={fan} loop={true} style={{ width: '150px', height: '100px', margin: '10px auto' }} />}
                             {type === 'đèn' && <Lottie animationData={lamp} loop={true} style={{ width: '100px', height: '100px', margin: '10px auto' }} />}
                             {type === 'giường' && (
                                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100px', height: '100px', margin: '10px auto' }}>
                                     <Lottie animationData={bed} loop={true} style={{ width: '50px', height: '50px' }} />
                                 </div>
-                            )}
+                            )} */}
 
 
                             <Grid container spacing={1}>

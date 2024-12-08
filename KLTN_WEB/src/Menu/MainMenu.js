@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-
+import BedroomChildOutlinedIcon from '@mui/icons-material/BedroomChildOutlined';
 import BuildOutlinedIcon from '@mui/icons-material/BuildOutlined';
 import DialogTitle from "@mui/material/DialogTitle";
 import Divider from "@mui/material/Divider";
@@ -102,7 +102,7 @@ const MainMenu = ({ onLogout }) => {
         </div> */}
         {menuOpen && (
           <div className="menu-content">
-            <img src={logo} alt="User Avatar" className="logo-iuh" />
+            {/* <img src={logo} alt="User Avatar" className="logo-iuh" /> */}
             <div className='action-management'>
               <Tooltip title="Trang chủ">
                 <IconButton onClick={() => navigate('/')}>
@@ -130,17 +130,24 @@ const MainMenu = ({ onLogout }) => {
                   <NotificationBadge position={{ top: '0', right: '0' }} />
                 </div>
               </Tooltip>
-              <Tooltip title="Phòng">
-                <IconButton onClick={() => navigate('/room')}>
-                  <BusinessOutlinedIcon className="menu-icon" />
-                </IconButton>
-              </Tooltip>
-              <div className='border-line' />
-              <Tooltip title="Trang thiết bị">
-                <IconButton onClick={() => navigate('/equipment')}>
-                  <SettingsOutlinedIcon className="menu-icon" />
-                </IconButton>
-              </Tooltip>
+              {
+                roleId === 'MANAGER' && (
+                  <>
+                    <div className='border-line' />
+                    <Tooltip title="Phòng">
+                      <IconButton onClick={() => navigate('/room')}>
+                        <BusinessOutlinedIcon className="menu-icon" />
+                      </IconButton>
+                    </Tooltip>
+
+                    <div className='border-line' />
+                    <Tooltip title="Trang thiết bị">
+                      <IconButton onClick={() => navigate('/equipment')}>
+                        <BedroomChildOutlinedIcon className="menu-icon" />
+                      </IconButton>
+                    </Tooltip>
+                  </>
+                )}
               {
                 roleId === 'MANAGER' && (
                   <>

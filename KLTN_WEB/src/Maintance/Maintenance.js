@@ -26,7 +26,6 @@ const Maintenance = () => {
             if (Array.isArray(response.data.data)) {
                 const sortedData = response.data.data.sort((a, b) => new Date(b.reportedAt) - new Date(a.reportedAt));
                 setMaintenanceData(sortedData);
-                console.log("Maintenance data:", sortedData);
             } else {
                 console.error("Dữ liệu trả về không phải là một mảng:", response.data);
             }

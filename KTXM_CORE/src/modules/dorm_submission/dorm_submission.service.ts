@@ -13,6 +13,8 @@ import { log } from 'console';
 import { DormPayment } from '../dorm_payment/entities/dorm_payment.entity';
 import { DormPaymentService } from '../dorm_payment/dorm_payment.service';
 import { Setting } from '../setting/entities/setting.entity';
+import * as ExcelJS from 'exceljs';
+import { Buffer } from 'buffer';
 
 @Injectable()
 export class DormSubmissionService {
@@ -181,9 +183,6 @@ export class DormSubmissionService {
   // chấp nhận đơn đăng ky
   async acceptSubmission(id: string): Promise<DormSubmission> {
     const submission = await this.dormSubmissionModel.findById(id);
-    console.log('submission:', id);
-    console.log('submission:', submission);
-    //const price = 560000;
     const price = 200;
     const numberOfMonths = 10;
     const amount = price * numberOfMonths;
@@ -202,7 +201,6 @@ export class DormSubmissionService {
       roomNumber,
       submissionId: id,
     });
-
     this.userService.sendMailApproveRoom(email);
 
     submission.status = DormSubmissionStatus.ACCEPTED;
@@ -529,6 +527,64 @@ export class DormSubmissionService {
 
       console.log(`Đã xếp sinh viên ${submission.userId} vào phòng ${room.roomNumber} và tạo hợp đồng ${contractNumber}`);
     }
+  }
+  async exportSubmissions(status: DormSubmissionStatus | null, settingId: string): Promise<Buffer> {
+    // Khai báo kiểu cho query
+    const query: { settingId: string; status?: DormSubmissionStatus } = { settingId };
+
+    // Nếu có status, thêm vào query
+    if (status) {
+      query.status = status;
+    }
+
+    const submissions = await this.dormSubmissionModel.find(query).exec();
+
+    // Lấy thông tin người dùng tương ứng với các submission
+    const userIds = submissions.map(submission => submission.userId);
+    const users = await this.userModel.find({ userId: { $in: userIds } }).exec();
+    const userMap = new Map(users.map(user => [user.userId, user]));
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Dorm Submissions');
+
+    // Đặt tên cột
+    worksheet.columns = [
+      { header: 'User ID', key: 'userId', width: 30 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Email', key: 'email', width: 30 },
+      { header: 'Phone', key: 'phone', width: 20 },
+      { header: 'Address', key: 'address', width: 50 },
+      { header: 'Date of Birth', key: 'dateOfBirth', width: 20 },
+      { header: 'Gender', key: 'gender', width: 10 },
+      { header: 'Class', key: 'class', width: 20 },
+      { header: 'Status', key: 'status', width: 20 },
+      { header: 'Note', key: 'note', width: 50 },
+      { header: 'Setting ID', key: 'settingId', width: 30 },
+      { header: 'Room Number', key: 'roomNumber', width: 20 },
+    ];
+
+    // Thêm dữ liệu vào worksheet
+    submissions.forEach(submission => {
+      const user = userMap.get(submission.userId); // Lấy thông tin người dùng
+      worksheet.addRow({
+        userId: submission.userId,
+        name: user ? user.name : '',
+        email: user ? user.email : '',
+        phone: user ? user.phone : '',
+        address: user ? user.address : '',
+        dateOfBirth: user ? user.dateOfBirth : '',
+        gender: user ? user.gender : '',
+        class: user ? user.class : '',
+        status: submission.status,
+        note: submission.note,
+        settingId: submission.settingId,
+        roomNumber: submission.roomNumber,
+      });
+    });
+
+    // Tạo buffer cho file Excel và ép kiểu
+    const buffer = await workbook.xlsx.writeBuffer();
+    return buffer as Buffer; // Đảm bảo trả về kiểu Buffer
   }
 
 }

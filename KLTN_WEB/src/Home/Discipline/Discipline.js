@@ -11,7 +11,6 @@ const Discipline = () => {
     const handleGetDiscipline = async () => {
         try {
             const rs = await axios.get(`${getDisciplineRoute}/${userId}`);
-            console.log(rs.data.data);
             setDiscipline(rs.data.data);
         } catch (err) {
             console.log(err);

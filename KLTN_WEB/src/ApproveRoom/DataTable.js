@@ -4,7 +4,7 @@ import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 
 import { updateStatusPending, updateStatusRejected, updateStatusPaid } from '../API/APIRouter';
-
+import Typography from '@mui/material/Typography';
 const columns = (handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable) => [
   { field: 'id', headerName: 'MSSV', flex: 0.5 },
   { field: 'fullName', headerName: 'Họ và tên', flex: 1 },
@@ -126,14 +126,20 @@ export default function DataTable({ studentData, handleRowClick, updateStudentDa
 
   return (
     <Paper sx={{ height: '100%', width: '98%' }}>
-      <DataGrid
-        rows={studentData}
-        columns={columns(handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable)}
-        pageSizeOptions={[5, 10, 20, 50, 100]}
-        checkboxSelection
-        sx={{ border: 0 }}
-        onRowClick={(params) => handleRowClick(params.row)}
-      />
+      {studentData.length === 0 ? (
+        <Typography variant="h6" align="center" sx={{ padding: 2 }}>
+          Không có dữ liệu để hiển thị.
+        </Typography>
+      ) : (
+        <DataGrid
+          rows={studentData}
+          columns={columns(handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable)}
+          pageSizeOptions={[5, 10, 20, 50, 100]}
+          checkboxSelection
+          sx={{ border: 0 }}
+          onRowClick={(params) => handleRowClick(params.row)}
+        />
+      )}
     </Paper>
   );
 }
