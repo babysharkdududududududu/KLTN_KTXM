@@ -140,11 +140,20 @@ export class DormSubmissionService {
   }
 
 
-
   // find by settingId
   async findBySettingId(settingId: string) {
     try {
       const dormSubmissions = await this.dormSubmissionModel.find({ settingId }).exec();
+      return dormSubmissions;
+    } catch (error) {
+      console.error('Error fetching dorm submissions:', error);
+      throw new Error('Failed to fetch dorm submissions');
+    }
+  }
+  //find by setting and userId
+  async findBySettingIdAndUserId(userId: string) {
+    try {
+      const dormSubmissions = await this.dormSubmissionModel.findOne({ userId }).exec();
       return dormSubmissions;
     } catch (error) {
       console.error('Error fetching dorm submissions:', error);
