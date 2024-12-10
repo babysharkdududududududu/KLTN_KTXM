@@ -7,10 +7,6 @@ import FormControl from '@mui/material/FormControl';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import Alert from '@mui/material/Alert';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormLabel from '@mui/material/FormLabel';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -112,15 +108,20 @@ export default function BasicModal({ handleClose, open, handleOpenSucessfull, se
         const upperYear = Math.floor(upperYearValue);
         const priority = Math.floor(priorityValue);
         const totalUsed = firstYear + upperYear + priority;
+    
+        // Cập nhật số chỗ còn lại
         setAllAvailable(totalAvailable - totalUsed);
-        if (totalUsed > totalAvailable) {
-            setMessageError('Tổng số chỗ trống không đủ');
+    
+        // Kiểm tra nếu có số âm
+        if (firstYear < 0 || upperYear < 0 || priority < 0) {
+            setMessageError('Số lượng không được âm');
             setIsError(true);
         } else {
             setMessageError('');
             setIsError(false);
         }
     }, [firstYearValue, upperYearValue, priorityValue, totalAvailable]);
+    
 
 
     const handleStartDateChange = (newDate) => {

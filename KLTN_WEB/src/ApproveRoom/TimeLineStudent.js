@@ -45,14 +45,14 @@ const statusTranslations = {
     REJECTED: "Từ chối",
     PAID: "Đã thanh toán",
     ASSIGNED: "Đã xếp phòng",
-    AWAITING_PAYMENT: "Chờ thanh toán",
+    AWAITING_PAYMENT: "Vui lòng hanh toán",
     ROOM_REQUESTED: "Yêu cầu phòng",
 };
 
 const statusMessages = {
     PENDING: "Cần thời gian để duyệt đơn",
-    ACCEPTED: "Mời bạn thanh toán",
-    AWAITING_PAYMENT: "Chờ thanh toán",
+    ACCEPTED: "Chờ mở thanh toán",
+    AWAITING_PAYMENT: "Bạn hãy tiến hành thanh toán",
     PAID: "Đang xếp phòng",
     REJECTED: "Đơn của bạn không hợp lệ",
     ASSIGNED: "Xếp phòng thành công",

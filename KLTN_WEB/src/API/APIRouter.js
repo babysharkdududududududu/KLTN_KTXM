@@ -60,6 +60,10 @@ export const createSettingRoute = `${host}/setting`;
 export const pauseSettingRoute = `${host}/setting/pauseRegistration/`;
 export const openSettingRoute = `${host}/setting/openRegistration/`;
 export const getSettingIdRoute = `${host}/setting/is-open/`;
+// pause payment 
+export const pausePaymentRoute = `${host}/setting/pausePayment/`;
+//get payment status
+export const getPaymentStatusRoute = `${host}/setting/payment-status/`;
 
 //Room
 export const getAllRoomRoute = `${host}/rooms/?all=true`;

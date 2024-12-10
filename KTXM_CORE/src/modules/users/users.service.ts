@@ -118,7 +118,6 @@ export class UsersService {
       }
     ]);
 
-    console.log(rs, "-----------------");
     return rs;
   }
 

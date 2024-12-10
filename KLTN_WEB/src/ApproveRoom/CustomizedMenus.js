@@ -55,17 +55,19 @@ const StyledMenu = styled((props) => (
     },
 }));
 
-export default function CustomizedMenus({ 
-    roleId, 
-    setingID, 
-    registrationStatus, 
-    statusID, 
-    handleOpenPauseDialog, 
-    handleOpenOpenDialog, 
-    handleOpenAutoAssignDialog, 
-    handleOpenPaymentDialog, 
-    handleExportData, 
-    handleOpen // Thêm hàm callback cho Cài đặt
+export default function CustomizedMenus({
+    roleId,
+    setingID,
+    registrationStatus,
+    statusID,
+    handleOpenPauseDialog,
+    handleOpenOpenDialog,
+    handleOpenAutoAssignDialog,
+    handleOpenPaymentDialog,
+    handleExportData,
+    handleOpen, // Thêm hàm callback cho Cài đặt
+    handleOpenClosePaymentDialog, 
+    statusPayment
 }) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
@@ -77,6 +79,8 @@ export default function CustomizedMenus({
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    console.log('statusPayment', statusPayment);
 
     // Tạo mảng các mục menu
     const menuItems = [];
@@ -103,10 +107,17 @@ export default function CustomizedMenus({
                 </MenuItem>
             );
         }
-        if (statusID === 'ACCEPTED') {
+        if (statusID === 'ACCEPTED' && statusPayment === false) {
             menuItems.push(
                 <MenuItem key="payment" onClick={handleOpenPaymentDialog} disableRipple>
                     <PaymentIcon /> Mở thanh toán
+                </MenuItem>
+            );
+        }
+        if (statusID === 'ACCEPTED' && statusPayment === true) {
+            menuItems.push(
+                <MenuItem key="pause-payment" onClick={handleOpenClosePaymentDialog} disableRipple>
+                    <PauseIcon /> Tạm dừng thanh toán
                 </MenuItem>
             );
         }
@@ -118,15 +129,13 @@ export default function CustomizedMenus({
         );
         // Thêm Divider
         menuItems.push(<Divider key="divider" sx={{ my: 0.5 }} />);
-        // Thêm mục Cài đặt
-        menuItems.push(
-            <MenuItem key="settings" onClick={handleOpen} disableRipple>
-                <SettingsIcon /> Cài đặt
-            </MenuItem>
-        );
-
-
     }
+    // Thêm mục Cài đặt
+    menuItems.push(
+        <MenuItem key="settings" onClick={handleOpen} disableRipple>
+            <SettingsIcon /> Cài đặt
+        </MenuItem>
+    );
 
     return (
         <div>

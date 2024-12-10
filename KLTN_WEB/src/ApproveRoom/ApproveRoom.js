@@ -7,7 +7,7 @@ import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import RoomAssignment from './RoomAssignment'; // Import component mới
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission } from '../API/APIRouter';
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission, pausePaymentRoute, getPaymentStatusRoute } from '../API/APIRouter';
 import TimeLineStudent from "./TimeLineStudent";
 import { useUser } from "../Context/Context";
 import PauseSubmission from "./PauseSubmitsion";
@@ -15,6 +15,8 @@ import OpenRegistration from "./OpenRegistration"; // Import component mới
 import OpenPayment from "./OpenPayment"; // Import component mới
 import AutoAssignRoom from "./AutoAssignRoom"; // Import component mớ
 import CustomizedMenus from "./CustomizedMenus";
+import ClosePayment from "./ClosePayment";
+import { set } from "date-fns";
 
 const statuses = [
     { id: '', name: 'Tất cả' },
@@ -62,6 +64,15 @@ const ApproveRoom = () => {
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+
+    //close payment
+    const [statusPayment, setStatusPayment] = useState(false);
+    const [openClosePaymentDialog, setOpenClosePaymentDialog] = useState(false);
+
+    const handleOpenClosePaymentDialog = () => setOpenClosePaymentDialog(true);
+    const handleCloseClosePaymentDialog = () => setOpenClosePaymentDialog(false);
+
+
     const handleOpenSucessfull = () => {
         setOpenSucessfull(true);
         setTimeout(() => {
@@ -70,8 +81,22 @@ const ApproveRoom = () => {
     };
     const handleCloseSucessfull = () => setOpenSucessfull(false);
 
+    const getPaymentStatus = async (setingID) => {
+        try {
+            const response = await axios.get(`${getPaymentStatusRoute}${setingID}`);
+            if (response.data) {
+                setStatusPayment(response.data.data);
+            } else {
+                console.error("Lỗi lấy trạng thái thanh toán:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi lấy trạng thái thanh toán:", error);
+        }
+    };
+
     const handleChange = (event) => {
         setSetingID(event.target.value);
+        getPaymentStatus(event.target.value);
         setSelectedStudent(null);
         setStatusID('');
         // set registrationStatus 
@@ -80,6 +105,21 @@ const ApproveRoom = () => {
             setRegistrationStatus(selectedSetting.registrationStatus);
         }
     };
+
+    const handlePausePayment = async () => {
+        try {
+            const response = await axios.patch(`${pausePaymentRoute}${setingID}`);
+            if (response.data && response.data.data) {
+                //
+                setStatusPayment(false);
+                handleOpenSucessfull(); // Hiển thị thông báo thành công
+            } else {
+                console.error("Lỗi tạm dừng thanh toán:", response.data.message);
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi tạm dừng thanh toán:", error);
+        }
+    }
 
     const handleExportData = async () => {
         try {
@@ -161,6 +201,7 @@ const ApproveRoom = () => {
                 const response = await axios.get(getSettingIdRoute);
                 if (response.data && response.data) {
                     setSettingValue(response.data.data);
+
                 } else {
                     console.error("Lỗi lấy setting ID:", response.data.message);
                 }
@@ -273,6 +314,17 @@ const ApproveRoom = () => {
         });
         if (response.data && response.data.data) {
             handleOpenSucessfull();
+            const updatedStudentData = studentData.map(student => {
+                if (student.status === 'ACCEPTED') {
+                    return {
+                        ...student,
+                        status: 'ASSIGNED',
+                        roomNumber: response.data.data[student.id],
+                    };
+                }
+                return student;
+            });
+            setStudentData(updatedStudentData);
         } else {
             console.error("Lỗi xếp phòng:", response.data.message);
         }
@@ -302,6 +354,7 @@ const ApproveRoom = () => {
                 // Cập nhật state với dữ liệu đã thay đổi
                 setStudentData(updatedStudentData);
                 handleOpenSucessfull();
+                setStatusPayment(true);
             } else {
                 console.error("Lỗi chuyển tất cả sang chờ thanh toán:", response.data.message);
             }
@@ -365,6 +418,8 @@ const ApproveRoom = () => {
                                 handleOpenPaymentDialog={handleOpenPaymentDialog}
                                 handleOpen={handleOpen}
                                 handleExportData={handleExportData}
+                                handleOpenClosePaymentDialog={handleOpenClosePaymentDialog}
+                                statusPayment={statusPayment}
                             />
                         </>
                     )
@@ -463,6 +518,11 @@ const ApproveRoom = () => {
                 open={openAutoAssignDialog}
                 handleClose={handleCloseAutoAssignDialog}
                 handleAutoAssign={handleAutoAsignRoom}
+            />
+            <ClosePayment
+                open={openClosePaymentDialog}
+                handleClose={handleCloseClosePaymentDialog}
+                handleOpen={handlePausePayment}
             />
         </div>
     );
