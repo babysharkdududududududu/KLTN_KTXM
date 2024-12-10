@@ -13,12 +13,18 @@ export class SettingController {
   async create(@Body() createSettingDto: CreateSettingDto): Promise<Setting> {
     return this.settingService.create(createSettingDto);
   }
-
   
   @Get('is-open')
   @Public()
   async checkIfSettingIsOpen(): Promise<boolean> {
       return this.settingService.isAnySettingOpen();
+  }
+
+  //get payment status by id
+  @Get('payment-status/:id')
+  @Public()
+  async getPaymentStatus(@Param('id') id: string): Promise<boolean> {
+    return this.settingService.getPaymentStatus(id);
   }
 
   @Get()
@@ -31,6 +37,13 @@ export class SettingController {
   @Public()
   async findOne(@Param('id') id: string): Promise<Setting> {
     return this.settingService.findOne(id);
+  }
+
+  //pausePayment
+  @Patch('pausePayment/:id')
+  @Public()
+  async pausePayment(@Param('id') id: string): Promise<Setting> {
+    return this.settingService.pausePayment(id);
   }
 
   @Patch(':id')

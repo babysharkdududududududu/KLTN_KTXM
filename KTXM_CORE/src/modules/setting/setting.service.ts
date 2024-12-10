@@ -220,5 +220,51 @@ export class SettingService {
     return !!setting; // Trả về true nếu có setting nào đó đang mở, ngược lại trả về false
   }
 
-  
+  // get payment status return true or false
+  async getPaymentStatus(id: string) {
+    const setting = await this.settingModel.findById(id).exec();
+    if (!setting) {
+      throw new Error('Cài đặt không tồn tại.');
+    }
+    return setting.openPayment;
+  }
+
+  // pause payment
+  async pausePayment(id: string) {
+    try {
+      const setting = await this.settingModel.findById(id).exec();
+      if (!setting) {
+        throw new Error('Cài đặt không tồn tại.');
+      }
+
+      setting.openPayment = false; // Đặt trạng thái thành false
+      await setting.save(); // Lưu thay đổi
+      console.log(`Thanh toán cho ${setting.name} đã bị tạm dừng.`);
+      return setting;
+    } catch (error) {
+      console.error('Lỗi khi tạm dừng thanh toán:', error);
+      throw error; // Ném lỗi ra ngoài để xử lý tiếp
+    }
+  }
+
+  // check time every minute for payment
+  @Cron(CronExpression.EVERY_MINUTE)
+  async handlePayment() {
+    try {
+      const settings: SettingDocument[] = await this.settingModel.find().exec();
+      const now = new Date();
+      const nowVietnam = new Date(now.getTime() + 7 * 60 * 60 * 1000); // Thời gian hiện tại ở Việt Nam
+
+      for (const setting of settings) {
+        const paymentDeadlineVietnam = new Date(setting.paymentDeadline);
+        // Kiểm tra điều kiện đóng thanh toán
+        if (setting.openPayment && nowVietnam > paymentDeadlineVietnam) {
+          setting.openPayment = false; // Đặt lại thành false
+          await setting.save(); // Lưu thay đổi
+        }
+      }
+    } catch (error) {
+      console.error('Lỗi khi kiểm tra thanh toán:', error);
+    }
+  }
 }

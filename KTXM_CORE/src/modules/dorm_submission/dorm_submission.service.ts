@@ -77,7 +77,8 @@ export class DormSubmissionService {
       settingId: actualSettingId, // Gán settingId đã xác định
     });
 
-    console.log('dormSubmission:', dormSubmission);
+    //push status vào statusHistory
+    dormSubmission.statusHistory.push(dormSubmission.status);
 
     try {
       await this.settingService.updateSubmissionCount(userId);
@@ -192,7 +193,6 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    submission.statusHistory.push(submission.status);
     const dormPayment = this.dormPaymentService.create({
       userId,
       amount,
@@ -201,8 +201,8 @@ export class DormSubmissionService {
       submissionId: id,
     });
     this.userService.sendMailApproveRoom(email);
-
     submission.status = DormSubmissionStatus.ACCEPTED;
+    submission.statusHistory.push(submission.status);
     return submission.save();
   }
   // Từ chối đơn đăng ký
@@ -223,8 +223,8 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
+    submission.statusHistory.push(submission.status);
     this.userService.sendMailAwaittingPayment(submission.email);
     return submission.save();
   }
@@ -235,8 +235,8 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    submission.statusHistory.push(submission.status);
     submission.status = DormSubmissionStatus.PAID;
+    submission.statusHistory.push(submission.status);
     this.userService.sendMailPaymentSuccess(submission.email, submission.roomNumber);
     return submission.save();
   }
@@ -268,13 +268,21 @@ export class DormSubmissionService {
       const submissions = await this.dormSubmissionModel.find(
         { status: DormSubmissionStatus.AWAITING_PAYMENT, settingId: settingId }
       ).exec();
+      // set paymentDeadline in setting
+      const setting = await this.settingModel.findById(settingId);
+      setting.paymentDeadline = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+      setting.openPayment = true;
+      await setting.save();
+      // set open payment
+        
       // Gửi email cho từng sinh viên (sử dụng Promise.all để xử lý đồng thời)
       const emailPromises = submissions.map(async (submission) => {
         try {
           const user = await this.userModel.findOne({ userId: submission.userId });
           if (user) {
             await this.userService.sendMailAwaittingPayment(submission.email);
-            console.log(`Sent email to user ${submission.userId}`);
+            // push status vào statusHistory
+            submission.statusHistory.push(submission.status);
           }
         } catch (error) {
           console.error(`Error sending email to user ${submission.userId}:`, error);
@@ -282,16 +290,13 @@ export class DormSubmissionService {
       });
       // Đợi tất cả các Promise gửi email hoàn thành
       await Promise.all(emailPromises);
+
       return submissions;
     } catch (error) {
       console.error('Error updating dorm submissions or sending emails:', error);
       throw new Error('Failed to update dorm submissions and send emails');
     }
   }
-
-
-
-
   // render số hợp đồng gần
   async renderContractNumber(submission: DormSubmission): Promise<string> {
     const year = new Date().getFullYear(); // Lấy năm hiện tại
@@ -306,12 +311,10 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    //G2g201-20013581-2024930
-    submission.statusHistory.push(submission.status);
-    console.log('submission.email:', submission.email);
-    console.log('roomNumber:', roomNumber);
     this.userService.sendMailAssigned(submission.email, submission.roomNumber);
     submission.status = DormSubmissionStatus.ASSIGNED; // Cập nhật trạng thái
+    //G2g201-20013581-2024930
+    submission.statusHistory.push(submission.status);
     submission.roomNumber = roomNumber; // Cập nhật roomNumber
 
     const contractNumber = await this.renderContractNumber(submission); // Tạo số hợp đồng
