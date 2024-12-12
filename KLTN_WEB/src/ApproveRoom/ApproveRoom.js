@@ -266,6 +266,7 @@ const ApproveRoom = () => {
                         gender: studentData.data ? studentData.data.gender : 'Không xác định',
                         email: studentData.data ? studentData.data.email : 'Không xác định',
                         status: submission.status ? submission.status : 'Chưa xác định',
+                        documents: submission.documents ? submission.documents : 'Chưa xác định',
                         submitId: submission._id,
                     };
                 });

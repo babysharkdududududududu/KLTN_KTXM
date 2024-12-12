@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { Room } from '../rooms/entities/room.entity';
 import { Cron } from '@nestjs/schedule';
 import PayOS from '@payos/node';
-const YOUR_DOMAIN = 'http://localhost:3000';
+const YOUR_DOMAIN = 'http://103.209.34.203:8080';
 
 
 @Injectable()

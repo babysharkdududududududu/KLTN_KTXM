@@ -19,7 +19,7 @@ const Management = () => {
                     Quản lý nhập dữ liệu
                 </Typography>
                 <Divider />
-                <Typography container spacing={2} alignItems="center" sx={{ marginTop: 1, color: 'red' }}>
+                <Typography container spacing={2} alignItems="center" sx={{ marginTop: 1}}>
                     Bạn chỉ nên thực hiện chức năng này khi có việc thay đổi dữ liệu lớn.
                 </Typography>
                 <Button sx={{ marginTop: 2 }} variant="contained" color="primary">

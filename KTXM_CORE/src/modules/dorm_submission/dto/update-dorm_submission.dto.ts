@@ -11,7 +11,9 @@ export class UpdateDormSubmissionDto {
     @IsOptional()
     status: string;
 
-
     @IsOptional()
     note: string;
+
+    @IsOptional()
+    documents: string[];
 }

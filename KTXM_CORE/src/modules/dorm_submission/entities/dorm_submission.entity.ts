@@ -36,6 +36,10 @@ export class DormSubmission {
 
     @Prop()
     email: string;
+
+    //array of string document (png, jpg, pdf)
+    @Prop()
+    documents: string[];
 }
 
 export const DormSubmissionSchema = SchemaFactory.createForClass(DormSubmission);

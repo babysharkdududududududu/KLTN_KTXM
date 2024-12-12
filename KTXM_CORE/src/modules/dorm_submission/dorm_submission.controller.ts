@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Param, Query, Patch, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Patch, Res, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { DormSubmissionService } from './dorm_submission.service';
 import { CreateDormSubmissionDto } from './dto/create-dorm_submission.dto';
 import { Public } from '@/decorator/customize';
-import { DormSubmission, DormSubmissionStatus } from './entities/dorm_submission.entity';
+import { DormSubmissionStatus, DormSubmission } from './entities/dorm_submission.entity';
 import { Response } from 'express';
-
+import { multerConfig } from '../../config/multer.config'
 @Controller('dorm-submission')
 export class DormSubmissionController {
   constructor(private readonly dormSubmissionService: DormSubmissionService) { }
@@ -29,11 +30,21 @@ export class DormSubmissionController {
 
       res.send(buffer); // Gửi buffer về client
   }
-
   @Post()
   @Public()
-  async create(@Body() createDormSubmissionDto: CreateDormSubmissionDto) {
-    return await this.dormSubmissionService.create(createDormSubmissionDto);
+  @UseInterceptors(FilesInterceptor('files', 10, multerConfig)) // Sử dụng multerConfig
+  async create(
+      @Body() createDormSubmissionDto: CreateDormSubmissionDto,
+      @UploadedFiles() files: Express.Multer.File[], // Nhận mảng file đã tải lên
+  ) {
+      // Lấy tên file từ mảng files
+      const fileNames = files.map(file => file.filename);
+
+      // Gọi service để lưu vào cơ sở dữ liệu
+      return await this.dormSubmissionService.create({
+          ...createDormSubmissionDto,
+          documents: fileNames, // Thêm mảng tên file vào DTO
+      });
   }
 
   @Get()
