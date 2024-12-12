@@ -33,7 +33,7 @@ export default function StudentDetail({ open, handleClose, student }) {
                         alt={doc}
                         onError={(e) => {
                             e.target.onerror = null;
-                            e.target.src = '/path/to/default/image.png'; // Hình ảnh mặc định
+                            e.target.src = '/default.jpg';
                         }}
                         onClick={() => window.open(imagePath, '_blank')} // Mở hình trong tab mới khi nhấn
                         style={{ cursor: 'pointer' }} // Thêm con trỏ chuột khi di chuột lên hình
