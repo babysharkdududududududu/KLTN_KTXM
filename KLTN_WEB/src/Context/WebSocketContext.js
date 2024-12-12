@@ -4,6 +4,7 @@ import { useUser } from '../Context/Context'
 
 const WebSocketContext = createContext();
 
+
 export const WebSocketProvider = ({ children }) => {
     const { userId, roleId } = useUser();
     const [socket, setSocket] = useState(null);
@@ -14,7 +15,7 @@ export const WebSocketProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        const newSocket = io('http://localhost:8081');
+        const newSocket = io(`${process.env.SOCKET}`);
         setSocket(newSocket);
 
         newSocket.on('message', (message) => {
