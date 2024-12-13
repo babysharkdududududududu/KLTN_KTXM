@@ -4,7 +4,6 @@ import { useUser } from '../Context/Context'
 
 const WebSocketContext = createContext();
 
-
 export const WebSocketProvider = ({ children }) => {
     const { userId, roleId } = useUser();
     const [socket, setSocket] = useState(null);
