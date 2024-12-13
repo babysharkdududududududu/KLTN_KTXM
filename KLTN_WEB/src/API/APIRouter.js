@@ -60,6 +60,10 @@ export const createSettingRoute = `${host}/setting`;
 export const pauseSettingRoute = `${host}/setting/pauseRegistration/`;
 export const openSettingRoute = `${host}/setting/openRegistration/`;
 export const getSettingIdRoute = `${host}/setting/is-open/`;
+// pause payment 
+export const pausePaymentRoute = `${host}/setting/pausePayment/`;
+//get payment status
+export const getPaymentStatusRoute = `${host}/setting/payment-status/`;
 
 //Room
 export const getAllRoomRoute = `${host}/rooms/?all=true`;
@@ -114,6 +118,7 @@ export const getBillRoute = `${host}/dorm-bill/room`;
 export const getStatisticalDormRoute = `${host}/statistic/dorm-submission`;
 export const getStatisticalRoomRoute = `${host}/statistic/available-room`;
 export const getStatisticalEquipmentRoute = `${host}/statistic/maintenance`;
+export const getStatisticalEquipment = `${host}/equipment`;
 // get name and id of submission
 export const getSubmissionNameAndId = `${host}/dorm-submission`;
 export const getSubmissionWithSettingIdAndUserId = `${host}/dorm-submission/search/`;

@@ -30,5 +30,10 @@ export class StatisticController {
   getPayment() {
     return this.statisticService.getPayment();
   }
+  @Get('equipmentttt')
+  @Public()
+  getEquipment() {
+    return this.statisticService.getEquipment();
+  }
 
 }

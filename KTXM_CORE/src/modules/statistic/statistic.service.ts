@@ -179,6 +179,25 @@ export class StatisticService {
     return payment;
   }
 
+  async getEquipment() {
+    const equipment = await this.Maintenance.findAll();
+    const equipmentByYear = {};
+    equipment.forEach(equipmentRecord => {
+      const year = equipmentRecord.reportedAt.toISOString().substring(0, 4);
+      if (!equipmentByYear[year]) {
+        equipmentByYear[year] = [];
+      }
+      equipmentByYear[year].push(equipmentRecord);
+    });
+    const equipmentCountsByYear = {};
+    for (const year in equipmentByYear) {
+      equipmentCountsByYear[year] = equipmentByYear[year].length;
+    }
+    return {
+      equipmentCountsByYear
+    }
+  }
+
 
 
 

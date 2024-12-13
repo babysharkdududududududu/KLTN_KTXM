@@ -68,9 +68,26 @@ export class EquipmentService {
     return rs;
   }
 
-  findAllEquipments() {
-    return this.equipmentModel.find();
+  async findAllEquipments() {
+    const equipments = await this.equipmentModel.aggregate([
+      {
+        $group: {
+          _id: '$name',
+          items: { $push: '$$ROOT' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id',
+          count: { $size: '$items' },
+        },
+      },
+    ]);
+
+    return equipments;
   }
+
 
   async findOne(roomNumber: string) {
     return this.equipmentModel.findOne({ roomNumber }).exec();

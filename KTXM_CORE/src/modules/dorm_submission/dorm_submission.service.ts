@@ -77,7 +77,8 @@ export class DormSubmissionService {
       settingId: actualSettingId, // Gán settingId đã xác định
     });
 
-    console.log('dormSubmission:', dormSubmission);
+    //push status vào statusHistory
+    dormSubmission.statusHistory.push(dormSubmission.status);
 
     try {
       await this.settingService.updateSubmissionCount(userId);
@@ -201,12 +202,9 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-
     this.userService.sendMailApproveRoom(email);
-
     submission.status = DormSubmissionStatus.ACCEPTED;
     submission.statusHistory.push(submission.status);
-
     return submission.save();
   }
   // Từ chối đơn đăng ký
@@ -228,6 +226,7 @@ export class DormSubmissionService {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
+    submission.statusHistory.push(submission.status);
     this.userService.sendMailAwaittingPayment(submission.email);
     submission.statusHistory.push(submission.status);
     return submission.save();
@@ -240,6 +239,7 @@ export class DormSubmissionService {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
     submission.status = DormSubmissionStatus.PAID;
+    submission.statusHistory.push(submission.status);
     this.userService.sendMailPaymentSuccess(submission.email, submission.roomNumber);
     submission.statusHistory.push(submission.status);
     return submission.save();
@@ -312,7 +312,10 @@ export class DormSubmissionService {
           const user = await this.userModel.findOne({ userId: submission.userId });
           if (user) {
             await this.userService.sendMailAwaittingPayment(submission.email);
-            console.log(`Sent email to user ${submission.userId}`);
+            submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
+
+            // push status vào statusHistory
+            submission.statusHistory.push(submission.status);
           }
         } catch (error) {
           console.error(`Error sending email to user ${submission.userId}:`, error);

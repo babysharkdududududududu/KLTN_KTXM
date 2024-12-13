@@ -51,24 +51,24 @@ export class EquipmentController {
     }
     return this.equipmentService.importEquipment(equipData);
   }
-// Server-side
-@Get('export')
-@Public()
-async exportEquipmentData(@Res() res: Response): Promise<void> {
-  try {
-    const buffer = await this.equipmentService.exportEquipmentData();
+  // Server-side
+  @Get('export')
+  @Public()
+  async exportEquipmentData(@Res() res: Response): Promise<void> {
+    try {
+      const buffer = await this.equipmentService.exportEquipmentData();
 
-    // Thiết lập tiêu đề và loại content cho file Excel
-    res.set({
-      'Content-Disposition': 'attachment; filename="equipment_data.xlsx"',
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
+      // Thiết lập tiêu đề và loại content cho file Excel
+      res.set({
+        'Content-Disposition': 'attachment; filename="equipment_data.xlsx"',
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
 
-    // Gửi buffer về cho client
-    res.send(buffer);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Lỗi khi xuất dữ liệu thiết bị');
+      // Gửi buffer về cho client
+      res.send(buffer);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Lỗi khi xuất dữ liệu thiết bị');
+    }
   }
-}
 }
