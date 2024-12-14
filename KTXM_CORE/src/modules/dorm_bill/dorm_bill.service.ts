@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { Room } from '../rooms/entities/room.entity';
 import { Cron } from '@nestjs/schedule';
 import PayOS from '@payos/node';
-const YOUR_DOMAIN = 'http://103.209.34.203:8080';
+const YOUR_DOMAIN = 'http://www.globalconnect.info.vn/';
 
 
 @Injectable()
@@ -24,121 +24,146 @@ export class DormBillService {
     );
   }
 
-  // // @Cron('59 23 28-31 * *', {
-  // //   name: 'createMonthlyBills',
-  // // })
-  // async handleCreateMonthlyBills() {
-  //   const rooms = await this.roomModel.find().populate('users'); // Lấy tất cả các phòng và thông tin người dùng
-  //   const currentDate = new Date();
-  //   const monthAndYear = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-
-  //   for (const room of rooms) {
-  //     // Tìm hóa đơn tháng trước
-  //     const previousBill = await this.dormBillModel.findOne({
-  //       roomNumber: room.roomNumber,
-  //       monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`, // Tìm tháng trước
-  //       billType: BillType.ELECTRIC, // Chỉ tìm hóa đơn điện
-  //     });
-
-  //     const previousReading = previousBill ? previousBill.currentReading : 0; // Nếu không có hóa đơn thì mặc định là 0
-  //     const currentReading = room.electricityNumber;
-
-  //     // Đếm số lượng người dùng trong phòng
-  //     const userCount = room.users.length; // Số lượng người dùng
-
-  //     // Tính số KWh miễn phí dựa trên số lượng người dùng
-  //     const freeElectricityPerUser = 2; // 2 KWh miễn phí cho mỗi người dùng
-  //     const totalFreeElectricity = freeElectricityPerUser * userCount;
-
-  //     // Tạo hóa đơn cho nước
-  //     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.WATER, totalFreeElectricity);
-
-  //     // Tạo hóa đơn cho điện
-  //     await this.createBill(room, previousReading, currentReading, monthAndYear, BillType.ELECTRIC, totalFreeElectricity);
-  //   }
-  // }
-
-  @Cron('44 21 4 12 *', {
+  @Cron('22 20 13 12 *', {
     name: 'createMonthlyBills',
-  })  
-  async handleCreateMonthlyBills() {
+  })
+  async handleCreateMonthlyALLBills() {
+    // Lấy tất cả các phòng
+    const rooms = await this.roomModel.find().populate('users'); // Lấy thông tin tất cả các phòng và người dùng
+
+    if (rooms.length === 0) {
+      console.warn('No rooms found');
+      return; // Nếu không tìm thấy phòng, không làm gì cả
+    }
+
+    const currentDate = new Date();
+    const monthAndYear = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+
+    for (const room of rooms) {
+      const previousElectricBill = await this.dormBillModel.findOne({
+        roomNumber: room.roomNumber,
+        monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`,
+        billType: BillType.ELECTRIC,
+      });
+
+      const previousElectricReading = previousElectricBill ? previousElectricBill.currentReading : 0;
+      const currentElectricReading = room.electricityNumber;
+
+      const previousWaterBill = await this.dormBillModel.findOne({
+        roomNumber: room.roomNumber,
+        monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`,
+        billType: BillType.WATER,
+      });
+
+      const previousWaterReading = previousWaterBill ? previousWaterBill.currentReading : 0;
+      const currentWaterReading = room.waterNumber;
+
+      const userCount = room.users.length;
+
+      const freeElectricityPerUser = 2;
+      const totalFreeElectricity = freeElectricityPerUser * userCount;
+
+      const freeWaterPerUser = 3;
+      const totalFreeWater = freeWaterPerUser * userCount;
+
+      const electricityUsed = currentElectricReading - previousElectricReading;
+      const electricityRate = 3000; // Giả định giá tiền điện 3000 VNĐ/KWh
+      const totalElectricity = Math.max(0, electricityUsed - totalFreeElectricity) * electricityRate;
+
+      const waterUsed = currentWaterReading - previousWaterReading; // Lượng nước đã sử dụng
+      const waterRate = 5000; // Giả định giá tiền nước 5000 VNĐ/khối
+      const totalWater = Math.max(0, waterUsed - totalFreeWater) * waterRate;
+
+      // Tạo hóa đơn cho điện
+      await this.createBill(room, previousElectricReading, currentElectricReading, monthAndYear, BillType.ELECTRIC, totalElectricity);
+
+      // Tạo hóa đơn cho nước
+      await this.createBill(room, previousWaterReading, currentWaterReading, monthAndYear, BillType.WATER, totalWater);
+    }
+  }
+
+
+  @Cron('22 20 13 12 *', {
+    name: 'createMonthlyBills',
+  })
+  async handleCreateMonthlyBills(roomNumber: string) {
     // Lấy thông tin phòng G201
-    const room = await this.roomModel.findOne({ roomNumber: 'G201' }).populate('users'); // Lấy thông tin phòng G201 và người dùng
-  
+    const room = await this.roomModel.findOne({ roomNumber }).populate('users'); // Lấy thông tin phòng G201 và người dùng
+
     if (!room) {
       console.warn('Room G201 not found');
       return; // Nếu không tìm thấy phòng, không làm gì cả
     }
-  
+
     const currentDate = new Date();
     const monthAndYear = `${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-  
+
     // Tìm hóa đơn tháng trước cho điện
     const previousElectricBill = await this.dormBillModel.findOne({
       roomNumber: room.roomNumber,
       monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`,
       billType: BillType.ELECTRIC,
     });
-  
+
     const previousElectricReading = previousElectricBill ? previousElectricBill.currentReading : 0;
     const currentElectricReading = room.electricityNumber;
-  
+
     // Tìm hóa đơn tháng trước cho nước
     const previousWaterBill = await this.dormBillModel.findOne({
       roomNumber: room.roomNumber,
       monthAndYear: `${currentDate.getMonth()}/${currentDate.getFullYear() - 1}`,
       billType: BillType.WATER,
     });
-  
+
     const previousWaterReading = previousWaterBill ? previousWaterBill.currentReading : 0;
     const currentWaterReading = room.waterNumber;
-  
+
     // Đếm số lượng người dùng trong phòng
     const userCount = room.users.length;
-  
+
     // Tính số KWh miễn phí dựa trên số lượng người dùng
     const freeElectricityPerUser = 2;
     const totalFreeElectricity = freeElectricityPerUser * userCount;
-  
+
     // Tính số khối nước miễn phí dựa trên số lượng người dùng
     const freeWaterPerUser = 3;
     const totalFreeWater = freeWaterPerUser * userCount;
-  
+
     // Tính toán lượng điện đã sử dụng
     const electricityUsed = currentElectricReading - previousElectricReading;
     const electricityRate = 3000; // Giả định giá tiền điện 3000 VNĐ/KWh
     const totalElectricity = Math.max(0, electricityUsed - totalFreeElectricity) * electricityRate;
-  
+
     // Tính toán lượng nước đã sử dụng
     const waterUsed = currentWaterReading - previousWaterReading; // Lượng nước đã sử dụng
     const waterRate = 5000; // Giả định giá tiền nước 5000 VNĐ/khối
     const totalWater = Math.max(0, waterUsed - totalFreeWater) * waterRate;
-  
+
     // Tạo hóa đơn cho điện
     await this.createBill(room, previousElectricReading, currentElectricReading, monthAndYear, BillType.ELECTRIC, totalElectricity);
-  
+
     // Tạo hóa đơn cho nước
-   // await this.createBill(room, previousWaterReading, currentWaterReading, monthAndYear, BillType.WATER, totalWater);
+    // await this.createBill(room, previousWaterReading, currentWaterReading, monthAndYear, BillType.WATER, totalWater);
   }
-  
-  
+
+
   private async createBill(room: Room, previousReading: number, currentReading: number, monthAndYear: string, billType: BillType, amount: number) {
     const currentDate = new Date();
     const hours = String(currentDate.getHours()).padStart(2, '0'); // Giờ (00-23)
     const minutes = String(currentDate.getMinutes()).padStart(2, '0'); // Phút (00-59)
     const seconds = String(currentDate.getSeconds()).padStart(2, '0'); // Giây (00-59)
-  
+
     // Tạo một số ngẫu nhiên từ 1000 đến 9999
     const randomNumber = Math.floor(1000 + Math.random() * 9000); // Số ngẫu nhiên 4 chữ số
-  
+
     // Tạo orderCode bằng cách kết hợp số ngẫu nhiên với giờ, phút, giây
     const orderCodeString = `${randomNumber}${hours}${minutes}${seconds}`; // Kết hợp tất cả
     const orderCode = Number(orderCodeString.slice(0, 10)); // Chỉ lấy 10 ký tự đầu tiên và chuyển thành số
-  
+
     const code = `${room.roomNumber}${billType === BillType.WATER ? 'W' : 'E'}${monthAndYear.replace('/', '')}`;
-  
+
     const status = PaymentStatus.Unpaid;
-  
+
     // Tạo body cho yêu cầu thanh toán
     const roundedAmount = Math.round(amount); // Làm tròn số tiền
 
@@ -153,7 +178,7 @@ export class DormBillService {
     try {
       // Tạo liên kết thanh toán
       const paymentLinkRes = await this.payos.createPaymentLink(body);
-  
+
       // Tạo hóa đơn chỉ khi tạo liên kết thanh toán thành công
       const createdDormBill = new this.dormBillModel({
         roomNumber: room.roomNumber,
@@ -170,14 +195,14 @@ export class DormBillService {
         returnUrl: body.returnUrl,
         checkoutUrl: paymentLinkRes.checkoutUrl, // Lưu checkoutUrl
       });
-  
+
       return createdDormBill.save(); // Lưu hóa đơn vào DB
     } catch (error) {
       console.error('Error creating payment link:', error);
       throw new Error('Failed to create payment link');
     }
   }
-  
+
 
   // api change status to paid
   async changeStatusToPaid(orderCode: string) {

@@ -7,7 +7,7 @@ import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import RoomAssignment from './RoomAssignment'; // Import component mới
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission, pausePaymentRoute, getPaymentStatusRoute } from '../API/APIRouter';
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission, getSubmissionWithSettingIdAndUserId,getPaymentStatusRoute, pausePaymentRoute } from '../API/APIRouter';
 import TimeLineStudent from "./TimeLineStudent";
 import { useUser } from "../Context/Context";
 import PauseSubmission from "./PauseSubmitsion";
@@ -43,6 +43,9 @@ const ApproveRoom = () => {
     const { userId, roleId } = useUser();
     const [settingValue, setSettingValue] = useState('');
     const [openPauseDialog, setOpenPauseDialog] = useState(false);
+    const [hasSubmit, setHasSubmit] = useState();
+    const [openButton, setOpenButton] = useState(false);
+    const [message, setMessage] = useState('');
 
     const handleOpenPauseDialog = () => setOpenPauseDialog(true);
     const handleClosePauseDialog = () => setOpenPauseDialog(false);
@@ -128,37 +131,71 @@ const ApproveRoom = () => {
             const response = await axios.get(url, {
                 responseType: 'blob', // Đặt kiểu phản hồi là blob để xử lý file
             });
-    
+
             // Lấy tên file từ header (nếu backend đã thiết lập)
             const contentDisposition = response.headers['content-disposition'];
             let fileName = 'dorm_submissions.xlsx'; // Tên mặc định nếu không tìm thấy
-    
+
             if (contentDisposition && contentDisposition.includes('attachment')) {
                 const matches = contentDisposition.match(/filename="?(.+)"?/);
                 if (matches[1]) {
                     fileName = matches[1]; // Lấy tên file từ header
                 }
             }
-    
+
             // Tạo URL cho file tải về
             const fileURL = window.URL.createObjectURL(new Blob([response.data]));
-            
+
             // Tạo thẻ a để tải file
             const link = document.createElement('a');
             link.href = fileURL;
             link.setAttribute('download', fileName); // Sử dụng tên file từ backend
-    
+
             // Thêm thẻ a vào body và click để tải file
             document.body.appendChild(link);
             link.click();
-    
+
             // Xóa thẻ a sau khi tải
             document.body.removeChild(link);
         } catch (error) {
             console.error("Có lỗi xảy ra khi xuất dữ liệu:", error);
         }
     };
-    
+
+    // API get submission with 
+    const HasSubmit = async () => {
+        try {
+            const response = await axios.get(`${getSubmissionWithSettingIdAndUserId}${userId}`);
+            if (response.status === 200 && response.data) {
+                const submission = response.data.data;
+                if (submission && Object.keys(submission).length > 0) {
+                    setHasSubmit(submission);
+                    setOpenButton(false);
+                    setMessage('Bạn đã đăng ký phòng ở và đang chờ ban quản lý xét duyệt.');
+                    console.log("Đã có đơn đăng ký:", submission);
+                } else {
+                    setHasSubmit(null);
+                    setOpenButton(true);
+                    console.log("Chưa có đơn đăng ký.");
+                }
+            } else {
+                console.error("Lỗi lấy setting ID: Trạng thái không hợp lệ hoặc dữ liệu không tồn tại.");
+            }
+        } catch (error) {
+            console.error("Có lỗi xảy ra khi lấy setting ID:", error.message);
+            if (error.response) {
+                console.error("Chi tiết lỗi từ server:", error.response.data);
+            }
+        }
+    };
+
+    useEffect(() => {
+        HasSubmit();
+    }, []);
+
+
+
+
 
     // Cập nhật hàm tạm dừng đăng ký
     const handlePause = async () => {
@@ -402,8 +439,12 @@ const ApproveRoom = () => {
 
                 <div style={{ height: "50px", alignItems: 'center', display: 'flex', marginLeft: "10px" }}>
 
-                    {roleId === 'USERS' &&
+                    {(roleId === 'USERS' && openButton) &&
                         (<Button variant="contained" disabled={!settingValue} color="primary" style={{ marginRight: '20px' }} onClick={submitDorm} >Đăng ký</Button>)
+                    }
+                    {
+                        (roleId === 'USERS' && !openButton) &&
+                        (<Typography style={{ color: 'red', fontSize: '16px', fontWeight: 'bold' }}>{message}</Typography>)
                     }
                     {roleId === 'MANAGER' && (
                         <>
@@ -483,10 +524,11 @@ const ApproveRoom = () => {
                 </>
             )
             }
+            {/* Truyền status history vào timelinestudent */}
             {roleId === 'USERS' && (<TimeLineStudent />)}
 
             {setingID && (
-                <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", marginTop: '10px', backgroundColor: "#fff", borderRadius: 20, paddingTop: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", marginTop: '10px', borderRadius: 20, paddingTop: '10px' }}>
                     {!openDetail && (
                         <DataTable
                             studentData={filteredStudentData}

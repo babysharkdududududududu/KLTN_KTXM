@@ -85,41 +85,17 @@ const TimeLineStudent = () => {
     }
 
     return (
-        <Box
-            sx={{
-                p: 4,
-                borderRadius: 2,
-                maxWidth: 700,
-                margin: '20px auto',
-                backgroundColor: '#FFFFFF',
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-            }}
-        >
-            <Typography
-                variant="h5"
-                align="center"
-                gutterBottom
-                sx={{ fontWeight: 600, color: '#333', marginBottom: 2 }}
-            >
-                Quá trình xử lý đơn
-            </Typography>
+        <Box sx={{ p: 4, borderRadius: 2, maxWidth: 700, margin: '20px auto', backgroundColor: '#FFFFFF', boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', }}>
+            <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 600, color: '#333', marginBottom: 2 }}> Quá trình xử lý đơn</Typography>
             <Timeline position="alternate">
                 {dormSubmission.statusHistory.map((status, index) => (
                     <TimelineItem key={index}>
-                        <TimelineOppositeContent
-                            sx={{ m: 'auto 0', color: '#757575', fontSize: '0.875rem' }}
-                            align="right"
-                        >
+                        <TimelineOppositeContent sx={{ m: 'auto 0', color: '#757575', fontSize: '0.875rem' }} align="right">
                             {new Date(dormSubmission.updatedAt).toLocaleDateString()}
                         </TimelineOppositeContent>
                         <TimelineSeparator>
                             {index !== 0 && <TimelineConnector />}
-                            <TimelineDot
-                                sx={{
-                                    backgroundColor: statusColors[status],
-                                    boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)',
-                                }}
-                            >
+                            <TimelineDot sx={{ backgroundColor: statusColors[status], boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)', }}>
                                 {statusIcons[status]}
                             </TimelineDot>
                             {index !== dormSubmission.statusHistory.length - 1 && (
@@ -127,22 +103,10 @@ const TimeLineStudent = () => {
                             )}
                         </TimelineSeparator>
                         <TimelineContent sx={{ py: '8px', px: 2 }}>
-                            <Typography
-                                variant="subtitle1"
-                                sx={{
-                                    fontWeight: 600,
-                                    color: statusColors[status],
-                                }}
-                            >
+                            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: statusColors[status], }}>
                                 {statusTranslations[status]}
                             </Typography>
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: '#616161',
-                                    marginTop: 0.5,
-                                }}
-                            >
+                            <Typography variant="body2" sx={{ color: '#616161', marginTop: 0.5, }}>
                                 {statusMessages[status]}
                             </Typography>
                         </TimelineContent>

@@ -20,6 +20,7 @@ import {
   styled
 } from "@mui/material";
 import { FaFileInvoiceDollar } from "react-icons/fa";
+import {allBill} from '../API/APIRouter';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -58,7 +59,7 @@ const TableOfBill = () => {
     const fetchBills = async () => {
       setLoading(true);
       const { roomNumber, status, billType, monthAndYear, season } = filters;
-      const url = `http://localhost:8081/api/v1/dorm-bill/search?roomNumber=${roomNumber}&status=${status}&billType=${billType}&monthAndYear=${monthAndYear}&season=${season}`;
+      const url = `${allBill}?roomNumber=${roomNumber}&status=${status}&billType=${billType}&monthAndYear=${monthAndYear}&season=${season}`;
 
       try {
         const response = await fetch(url);

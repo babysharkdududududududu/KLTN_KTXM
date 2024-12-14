@@ -12,6 +12,7 @@ import MaintenanceCountsByYearMonth from './MaintenaceWithYear';
 import BarChartStatis from './BarCharMaintence';
 import LineChartStatis from './LineChartMaintence';
 import ScatterChartStatis from './ScatterMaintence';
+import NumberEquipment from './NumberEquipment';
 const Statistical = () => {
     const [listRooms, setListRooms] = useState([]);
     const [totalRooms, setTotalRooms] = useState(0);
@@ -220,6 +221,10 @@ const Statistical = () => {
                 <Grid item xs={12} md={4}>
                     <ScatterChartStatis />
                 </Grid>
+
+            </Grid>
+            <Grid item xs={12} md={3}>
+                <NumberEquipment />
             </Grid>
         </div>
     );

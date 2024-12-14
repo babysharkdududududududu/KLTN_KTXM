@@ -10,25 +10,25 @@ import { multerConfig } from '../../config/multer.config'
 export class DormSubmissionController {
   constructor(private readonly dormSubmissionService: DormSubmissionService) { }
 
-  
+
   @Get('export')
   @Public()
   async exportSubmissions(
-      @Query('status') status: DormSubmissionStatus,
-      @Query('settingId') settingId: string,
-      @Res() res: Response, // Đảm bảo kiểu Response được nhập đúng
+    @Query('status') status: DormSubmissionStatus,
+    @Query('settingId') settingId: string,
+    @Res() res: Response, // Đảm bảo kiểu Response được nhập đúng
   ): Promise<void> {
-      const buffer = await this.dormSubmissionService.exportSubmissions(status, settingId);
+    const buffer = await this.dormSubmissionService.exportSubmissions(status, settingId);
 
-      // Đặt tên file và kiểu nội dung
-      const fileName = `dorm_submissions_${new Date().toISOString().split('T')[0]}.xlsx`;
+    // Đặt tên file và kiểu nội dung
+    const fileName = `dorm_submissions_${new Date().toISOString().split('T')[0]}.xlsx`;
 
-      res.set({
-          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'Content-Disposition': `attachment; filename="${fileName}"`,
-      });
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+    });
 
-      res.send(buffer); // Gửi buffer về client
+    res.send(buffer); // Gửi buffer về client
   }
   @Post()
   @Public()
@@ -93,6 +93,16 @@ export class DormSubmissionController {
   async rejectSubmission(@Param('id') id: string): Promise<DormSubmission> {
     return this.dormSubmissionService.rejectSubmission(id);
   }
+  // search dorm submission with user id and setting id
+  @Get('search/:userId')
+  @Public()
+  async search(
+    @Param('userId') userId: string,
+  ): Promise<DormSubmission> {
+    return this.dormSubmissionService.findBySettingIdAndUserId(userId);
+  }
+
+
 
   //chờ thanh toán
   @Patch('awaiting-payment/:id')

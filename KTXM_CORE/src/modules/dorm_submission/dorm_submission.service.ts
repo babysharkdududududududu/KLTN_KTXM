@@ -141,11 +141,20 @@ export class DormSubmissionService {
   }
 
 
-
   // find by settingId
   async findBySettingId(settingId: string) {
     try {
       const dormSubmissions = await this.dormSubmissionModel.find({ settingId }).exec();
+      return dormSubmissions;
+    } catch (error) {
+      console.error('Error fetching dorm submissions:', error);
+      throw new Error('Failed to fetch dorm submissions');
+    }
+  }
+  //find by setting and userId
+  async findBySettingIdAndUserId(userId: string) {
+    try {
+      const dormSubmissions = await this.dormSubmissionModel.findOne({ userId }).exec();
       return dormSubmissions;
     } catch (error) {
       console.error('Error fetching dorm submissions:', error);
@@ -193,13 +202,6 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    const dormPayment = this.dormPaymentService.create({
-      userId,
-      amount,
-      paymentDate,
-      roomNumber,
-      submissionId: id,
-    });
     this.userService.sendMailApproveRoom(email);
     submission.status = DormSubmissionStatus.ACCEPTED;
     submission.statusHistory.push(submission.status);
@@ -211,9 +213,9 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
-    submission.statusHistory.push(submission.status);
     this.userService.sendMailRejectRoom(submission.email);
     submission.status = DormSubmissionStatus.REJECTED;
+    submission.statusHistory.push(submission.status);
     return submission.save();
   }
 
@@ -226,6 +228,7 @@ export class DormSubmissionService {
     submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
     submission.statusHistory.push(submission.status);
     this.userService.sendMailAwaittingPayment(submission.email);
+    submission.statusHistory.push(submission.status);
     return submission.save();
   }
 
@@ -238,6 +241,7 @@ export class DormSubmissionService {
     submission.status = DormSubmissionStatus.PAID;
     submission.statusHistory.push(submission.status);
     this.userService.sendMailPaymentSuccess(submission.email, submission.roomNumber);
+    submission.statusHistory.push(submission.status);
     return submission.save();
   }
 
@@ -259,28 +263,57 @@ export class DormSubmissionService {
   // }
   async setAwaitingPaymentAll(settingId: string): Promise<DormSubmission[]> {
     try {
-      // Cập nhật trạng thái
-      await this.dormSubmissionModel.updateMany(
-        { status: DormSubmissionStatus.ACCEPTED, settingId: settingId },
-        { status: DormSubmissionStatus.AWAITING_PAYMENT },
-      ).exec();
-      // Lấy lại các tài liệu đã cập nhật
-      const submissions = await this.dormSubmissionModel.find(
-        { status: DormSubmissionStatus.AWAITING_PAYMENT, settingId: settingId }
-      ).exec();
-      // set paymentDeadline in setting
-      const setting = await this.settingModel.findById(settingId);
-      setting.paymentDeadline = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
-      setting.openPayment = true;
-      await setting.save();
-      // set open payment
-        
-      // Gửi email cho từng sinh viên (sử dụng Promise.all để xử lý đồng thời)
+      // Lấy tất cả các submission có status là ACCEPTED theo settingId
+      const submissions = await this.dormSubmissionModel.find({
+        settingId,
+        status: DormSubmissionStatus.ACCEPTED,
+      }).exec();
+
+      if (submissions.length === 0) {
+        console.log('No submissions with ACCEPTED status found.');
+        return [];
+      }
+
+      // Cập nhật trạng thái, thêm vào statusHistory và tạo hóa đơn
+      const updatePromises = submissions.map(async (submission) => {
+        try {
+          // Cập nhật trạng thái mới
+          submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
+          submission.statusHistory.push(submission.status);
+
+
+          // Tạo hóa đơn
+          const price = 200; // Giá tiền mỗi tháng
+          const numberOfMonths = 10; // Số tháng
+          const amount = price * numberOfMonths;
+          const paymentDate = new Date();
+
+          await this.dormPaymentService.create({
+            userId: submission.userId,
+            amount,
+            paymentDate,
+            roomNumber: submission.roomNumber,
+            submissionId: submission._id.toString(),
+          });
+
+          // Lưu lại submission đã cập nhật
+          return await submission.save();
+        } catch (error) {
+          console.error(`Error updating submission ${submission._id}:`, error);
+        }
+      });
+
+      // Đợi tất cả các cập nhật hoàn thành
+      await Promise.all(updatePromises);
+
+      // Gửi email cho từng sinh viên
       const emailPromises = submissions.map(async (submission) => {
         try {
           const user = await this.userModel.findOne({ userId: submission.userId });
           if (user) {
             await this.userService.sendMailAwaittingPayment(submission.email);
+            submission.status = DormSubmissionStatus.AWAITING_PAYMENT;
+
             // push status vào statusHistory
             submission.statusHistory.push(submission.status);
           }
@@ -288,15 +321,23 @@ export class DormSubmissionService {
           console.error(`Error sending email to user ${submission.userId}:`, error);
         }
       });
+
       // Đợi tất cả các Promise gửi email hoàn thành
       await Promise.all(emailPromises);
 
       return submissions;
     } catch (error) {
-      console.error('Error updating dorm submissions or sending emails:', error);
-      throw new Error('Failed to update dorm submissions and send emails');
+      console.error('Error updating dorm submissions, creating payments, or sending emails:', error);
+      throw new Error('Failed to update dorm submissions, create payments, and send emails');
     }
   }
+
+
+
+
+
+
+
   // render số hợp đồng gần
   async renderContractNumber(submission: DormSubmission): Promise<string> {
     const year = new Date().getFullYear(); // Lấy năm hiện tại
@@ -311,9 +352,11 @@ export class DormSubmissionService {
     if (!submission) {
       throw new NotFoundException(`Submission with ID ${id} not found`);
     }
+    //G2g201-20013581-2024930
+    console.log('submission.email:', submission.email);
+    console.log('roomNumber:', roomNumber);
     this.userService.sendMailAssigned(submission.email, submission.roomNumber);
     submission.status = DormSubmissionStatus.ASSIGNED; // Cập nhật trạng thái
-    //G2g201-20013581-2024930
     submission.statusHistory.push(submission.status);
     submission.roomNumber = roomNumber; // Cập nhật roomNumber
 
