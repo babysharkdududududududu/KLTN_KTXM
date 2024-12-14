@@ -123,7 +123,7 @@ const Login = ({ onLoginSuccess }) => {
         <>
 
             <Box component="form" onSubmit={handleLogin} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2, padding: 2, width: '280px' }}>
-                {/* <Snowfall /> */}
+                <Snowfall />
                 <Typography variant="h6" gutterBottom color="primary">Đăng Nhập</Typography>
                 <TextField label="Mã số sinh viên" focused type="" fullWidth margin="normal" name="email" InputProps={{ startAdornment: <EmailIcon sx={{ marginRight: 1 }} /> }} placeholder="Nhập email của bạn" required />
                 <TextField label="Mật khẩu" type={showPassword ? 'text' : 'password'} variant="outlined" fullWidth margin="normal" name="password"

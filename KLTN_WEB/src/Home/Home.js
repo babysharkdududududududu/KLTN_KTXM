@@ -28,6 +28,7 @@ import Payment from './Pay/Payment';
 import RoomInfo from './RoomInfo/RoomInfo';
 import UserInfo from './UserInfo/UserInfo';
 import { getSettingIdRoute } from '../API/APIRouter';
+import Snowfall from 'react-snowfall';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -69,6 +70,8 @@ const Home = () => {
 
     return (
         <Container className={style['home-container']}>
+            <Snowfall />
+
             <Grid container spacing={1} justifyContent="center" alignItems="center" style={{ marginBottom: '10px' }}>
                 <Grid item xs={12}>
                     <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', background: "#fff", borderRadius: '8px', maxHeight: { xs: '30px', sm: '30px' }, padding: { xs: 1, sm: 3 }, }}>
