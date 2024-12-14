@@ -117,6 +117,7 @@ const TableData = ({ filterBlock }) => {
 
 
       const response = await axios.patch(updateRoomRoute, updateData);
+      console.log(response.data, '-----------ok');
       fetchRooms();
       handleCloseDialog();
     } catch (err) {
@@ -150,12 +151,14 @@ const TableData = ({ filterBlock }) => {
   };
 
   const handleAddEquipment = () => {
-    if (newEquipment.name && newEquipment.quantity > 0) {
+    if (newEquipment.name) {
       const updatedEquipment = [...selectedRoom.equipment, newEquipment];
+      print(updatedEquipment);
       setSelectedRoom({ ...selectedRoom, equipment: updatedEquipment });
       setNewEquipment({ name: '', quantity: 0 });
     }
   };
+
 
   const rows = listRooms.map((room) => ({
     id: room._id,
@@ -179,42 +182,23 @@ const TableData = ({ filterBlock }) => {
         </div>
       ) : (
         <>
-          <DataGrid
-            rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
-            columns={columns}
-            pageSize={pageSize}
-            pagination
-            paginationMode="server"
-            onPageChange={handlePageChange}
-            rowCount={listRooms.length}
-            page={currentPage - 1}
-            hideFooter
-            onCellClick={handleCellClick}
-            rowHeight={45}
+          <DataGrid rows={rows.slice((currentPage - 1) * pageSize, currentPage * pageSize)} columns={columns}
+            pageSize={pageSize} pagination paginationMode="server" onPageChange={handlePageChange}
+            rowCount={listRooms.length} page={currentPage - 1} hideFooter onCellClick={handleCellClick} rowHeight={45}
           />
 
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
+            <Pagination count={totalPages} page={currentPage}
               onChange={(event, value) => setCurrentPage(value)}
-              color="primary"
-              variant="outlined"
-              shape="rounded"
-              siblingCount={1}
-              boundaryCount={1}
+              color="primary" variant="outlined" shape="rounded"
+              siblingCount={1} boundaryCount={1}
             />
           </div>
 
           <RoomDialog
-            open={openDialog}
-            onClose={handleCloseDialog}
-            selectedRoom={selectedRoom}
-            onChange={handleChange}
-            onSave={handleSave}
-            newEquipment={newEquipment}
-            onNewEquipmentChange={handleNewEquipmentChange}
-            onAddEquipment={handleAddEquipment}
+            open={openDialog} onClose={handleCloseDialog} selectedRoom={selectedRoom}
+            onChange={handleChange} onSave={handleSave} newEquipment={newEquipment}
+            onNewEquipmentChange={handleNewEquipmentChange} onAddEquipment={handleAddEquipment}
           />
         </>
       )}

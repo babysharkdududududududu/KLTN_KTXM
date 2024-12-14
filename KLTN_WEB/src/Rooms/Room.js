@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import {exportRoomRoute } from '../API/APIRouter';
+import { exportRoomRoute } from '../API/APIRouter';
 import axios from 'axios';
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -76,37 +76,37 @@ const Room = () => {
             const response = await axios.get(url, {
                 responseType: 'blob', // Đặt kiểu phản hồi là blob để xử lý file
             });
-    
+
             // Lấy tên file từ header (nếu backend đã thiết lập)
             const contentDisposition = response.headers['content-disposition'];
             let fileName = 'data.xlsx';
-    
+
             if (contentDisposition && contentDisposition.includes('attachment')) {
                 const matches = contentDisposition.match(/filename="?(.+)"?/);
                 if (matches[1]) {
                     fileName = matches[1]; // Lấy tên file từ header
                 }
             }
-    
+
             // Tạo URL cho file tải về
             const fileURL = window.URL.createObjectURL(new Blob([response.data]));
-            
+
             // Tạo thẻ a để tải file
             const link = document.createElement('a');
             link.href = fileURL;
             link.setAttribute('download', fileName); // Sử dụng tên file từ backend
-    
+
             // Thêm thẻ a vào body và click để tải file
             document.body.appendChild(link);
             link.click();
-    
+
             // Xóa thẻ a sau khi tải
             document.body.removeChild(link);
         } catch (error) {
             console.error("Có lỗi xảy ra khi xuất dữ liệu:", error);
         }
     };
-    
+
 
     return (
         <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignContent: 'center', background: '#e7ecf0', width: '100%', }}>
@@ -115,7 +115,7 @@ const Room = () => {
                     roleId === 'USERS' ?
                         <RoomStudent filterBlock={filterBlock} />
                         : <div style={{ width: '98%', height: '100%', paddingTop: '10px', marginTop: 8, backgroundColor: "#fff", borderRadius: 10, marginBottom: '20px' }}>
-                            <StatusRoom handleExportData={handleExportData}/>
+                            <StatusRoom handleExportData={handleExportData} />
                             <Box sx={{ borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center' }}>
                                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                                     <Tab label="Tất cả phòng" {...a11yProps(0)} />

@@ -2,35 +2,39 @@ import axios from "axios";
 import { getStatisticalEquipment } from "../API/APIRouter";
 import { useEffect, useState } from "react";
 import { FaBed, FaLightbulb, FaFan, FaTabletAlt, FaTools } from "react-icons/fa";
+import { Grid, Paper } from "@mui/material";
 
 const EquipmentItem = ({ name, count, color, icon: Icon }) => {
     return (
-        <div
+        <Paper
+            elevation={3}
             style={{
-                width: "200px",
-                height: "120px",
+                width: "100%",
+                height: "140px",
                 backgroundColor: color,
                 padding: "20px",
-                margin: "10px",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
-                borderRadius: "10px",
-                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.15)",
+                borderRadius: "15px",
                 color: "#fff",
-                transition: "transform 0.3s",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
                 cursor: "pointer",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+            onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+            }}
         >
             <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-                <Icon size={32} color="#fff" style={{ marginRight: "8px" }} />
-                <h3 style={{ margin: 0, fontSize: "18px" }}>{name}</h3>
+                <Icon size={36} color="#fff" style={{ marginRight: "10px" }} />
+                <h3 style={{ margin: 0, fontSize: "20px", fontWeight: "bold" }}>{name}</h3>
             </div>
-            <p style={{ margin: 0, fontSize: "16px", fontWeight: "bold" }}>Số lượng: {count}</p>
-        </div>
+            <p style={{ margin: 0, fontSize: "18px", fontWeight: "bold" }}>Số lượng: {count}</p>
+        </Paper>
     );
 };
 
@@ -53,24 +57,18 @@ const NumberEquipment = () => {
     }, []);
 
     return (
-        <div
-            style={{
-                display: "flex",
-                flexWrap: "wrap",
-                justifyContent: "center",
-                marginTop: "20px",
-            }}
-        >
+        <Grid container spacing={3} style={{ marginTop: "30px", padding: "20px" }} justifyContent="space-evenly">
             {numberEquipment.map((item, index) => (
-                <EquipmentItem
-                    key={index}
-                    name={item.name}
-                    count={item.count}
-                    color={colors[index % colors.length]} // Áp dụng màu sắc theo thứ tự tuần hoàn
-                    icon={icons[index % icons.length]} // Áp dụng biểu tượng theo thứ tự tuần hoàn
-                />
+                <Grid item xs={12} sm={6} md={3} key={index}>
+                    <EquipmentItem
+                        name={item.name}
+                        count={item.count}
+                        color={colors[index % colors.length]}
+                        icon={icons[index % icons.length]}
+                    />
+                </Grid>
             ))}
-        </div>
+        </Grid>
     );
 };
 

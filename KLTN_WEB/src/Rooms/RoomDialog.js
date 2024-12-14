@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, FormControl, Select, MenuItem, TextField, InputLabel, Grid } from '@mui/material';
-import { CheckCircle, Build } from '@mui/icons-material'; // Import icons
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, Divider, Paper } from '@mui/material';
+import { CheckCircle, Build } from '@mui/icons-material';
 
-const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipment, onNewEquipmentChange, onAddEquipment }) => {
+const RoomDialog = ({ open, onClose, selectedRoom, onSave }) => {
     const [block, setBlock] = useState('');
     const [roomNumber, setRoomNumber] = useState('');
     const [floor, setFloor] = useState('');
@@ -18,111 +18,79 @@ const RoomDialog = ({ open, onClose, selectedRoom, onChange, onSave, newEquipmen
     }, [selectedRoom]);
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth={false} fullWidth style={{ height: '100vh', margin: 0 }}>
+        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
             <DialogTitle style={{
-                fontSize: 28,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                backgroundColor: '#f5f5f5',
-                padding: '16px',
-                position: 'sticky',
-                top: 0
+                fontSize: 24, fontWeight: 'bold', textAlign: 'center',
+                backgroundColor: '#1976d2', color: '#fff', padding: '16px'
             }}>
                 Thông tin phòng
             </DialogTitle>
-            <DialogContent style={{ overflowY: 'auto', padding: '16px' }}>
+            <DialogContent style={{ overflowY: 'auto', padding: '24px' }}>
                 {selectedRoom && selectedRoom.room && (
-                    <Grid container spacing={2}>
+                    <Grid container spacing={3}>
+                        {/* Room Info */}
                         <Grid item xs={12}>
-                            <Typography variant="h5" style={{ textAlign: 'center', marginBottom: '16px', color: '#1976d2' }}>
-                                {roomNumber}
+                            <Typography variant="h5" style={{
+                                textAlign: 'center', marginBottom: '24px', color: '#1976d2', fontWeight: 'bold'
+                            }}>
+                                Phòng: {roomNumber}
                             </Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Typography><strong>Tầng:</strong> {floor}</Typography>
+                        <Grid item xs={4}>
+                            <Typography variant="body1"><strong>Tầng:</strong> {floor}</Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                            <Typography><strong>Khối:</strong> {block}</Typography>
+                        <Grid item xs={4}>
+                            <Typography variant="body1"><strong>Khối:</strong> {block}</Typography>
                         </Grid>
-
-                        <Grid item xs={6}>
-                            <FormControl fullWidth margin="normal">
-                                <InputLabel id="status-label">Trạng thái</InputLabel>
-                                <Select labelId="status-label" name="status" value={status} onChange={(e) => { setStatus(e.target.value); onChange(e); }}>
-                                    <MenuItem value={0}>Hoạt động</MenuItem>
-                                    <MenuItem value={1}>Bảo trì</MenuItem>
-                                </Select>
-                            </FormControl>
+                        <Grid item xs={4}>
+                            <Typography variant="body1"><strong>Trạng thái:</strong> {status === 0 ? 'Hoạt động' : 'Bảo trì'}</Typography>
                         </Grid>
-
-                        <Grid item xs={6}>
-                            <TextField inputProps={{ readOnly: true }} label="Sức chứa" name="capacity" type="number" value={selectedRoom.room.capacity} fullWidth margin="normal" />
+                        <Grid item xs={3}>
+                            <Typography variant="body1"><strong>Sức chứa:</strong> {selectedRoom.room.capacity}</Typography>
                         </Grid>
-                        <Grid item xs={6}>
-                            <TextField inputProps={{ readOnly: true }} label="Số chỗ trống" name="availableSpot" type="number" value={selectedRoom.room.availableSpot} fullWidth margin="normal" />
+                        <Grid item xs={3}>
+                            <Typography variant="body1"><strong>Số chỗ trống:</strong> {selectedRoom.room.availableSpot}</Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Typography variant="body1"><strong>Số điện:</strong> {selectedRoom.room.electricityNumber}</Typography>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <Typography variant="body1"><strong>Số nước:</strong> {selectedRoom.room.waterNumber}</Typography>
                         </Grid>
 
+                        {/* Equipment List */}
                         <Grid item xs={12}>
-                            <TextField label="Mô tả" name="description" value={selectedRoom.room.description} onChange={onChange} fullWidth margin="normal" multiline rows={2} />
-                        </Grid>
-
-                        <Grid item xs={6}>
-                            <TextField label="Số điện" name="electricityNumber" type="number" value={selectedRoom.room.electricityNumber} onChange={onChange} fullWidth margin="normal" />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <TextField label="Số nước" name="waterNumber" type="number" value={selectedRoom.room.waterNumber} onChange={onChange} fullWidth margin="normal" />
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <Typography variant="h6" style={{ marginBottom: '8px' }}><strong>Trang thiết bị:</strong></Typography>
-                            {selectedRoom.equipment.map((item, index) => (
-                                <Grid container spacing={1} key={index} alignItems="center">
-                                    <Grid item xs={6}>
-                                        <FormControl fullWidth margin="dense">
-                                            <Grid name={`type-${index}`} value={item.name} onChange={onChange}>
-                                                <Typography value={item.name}>{item.name}</Typography>
+                            <Divider style={{ margin: '24px 0' }} />
+                            <Typography variant="h6" style={{
+                                marginBottom: '16px', color: '#1976d2', fontWeight: 'bold'
+                            }}><strong>Trang thiết bị:</strong></Typography>
+                            <Paper style={{
+                                padding: '16px', backgroundColor: '#f1f1f1', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+                            }}>
+                                <Grid container spacing={2}>
+                                    {selectedRoom.equipment.map((item, index) => (
+                                        <React.Fragment key={index}>
+                                            <Grid item xs={6}>
+                                                <Typography variant="body2"><strong>Loại:</strong> {item.name}</Typography>
                                             </Grid>
-                                        </FormControl>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Typography>
-                                            <strong>Trạng thái:</strong>
-                                            {item.status === 0 ? (
-                                                <CheckCircle style={{ color: 'green', marginLeft: '8px' }} />
-                                            ) : (
-                                                <Build style={{ color: 'orange', marginLeft: '8px' }} />
-                                            )}
-                                        </Typography>
-                                    </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography variant="body2">
+                                                    <strong>Trạng thái:</strong>
+                                                    {item.status === 1 ? (
+                                                        <CheckCircle style={{ color: 'green', marginLeft: '8px' }} />
+                                                    ) : (
+                                                        <Build style={{ color: 'orange', marginLeft: '8px' }} />
+                                                    )}
+                                                </Typography>
+                                            </Grid>
+                                        </React.Fragment>
+                                    ))}
                                 </Grid>
-                            ))}
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <Grid container spacing={1} alignItems="center">
-                                <Grid item xs={10}>
-                                    <FormControl fullWidth margin="dense">
-                                        <InputLabel>Loại mới</InputLabel>
-                                        <Select name="name" value={newEquipment.name} onChange={onNewEquipmentChange}>
-                                            <MenuItem value="Quạt">Quạt</MenuItem>
-                                            <MenuItem value="Đèn">Đèn</MenuItem>
-                                            <MenuItem value="Bàn">Bàn</MenuItem>
-                                            <MenuItem value="Giường">Giường</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Grid>
-                                <Grid item xs={2}>
-                                    <Button onClick={onAddEquipment} color="primary" fullWidth variant="contained">Thêm</Button>
-                                </Grid>
-                            </Grid>
+                            </Paper>
                         </Grid>
                     </Grid>
                 )}
             </DialogContent>
-            <DialogActions style={{ position: 'sticky', bottom: 0, padding: '16px' }}>
-                <Button onClick={onClose} color="secondary" style={{ flex: 1 }}>Hủy</Button>
-                <Button onClick={onSave} color="primary" style={{ flex: 1 }}>Lưu</Button>
-            </DialogActions>
         </Dialog>
     );
 };
