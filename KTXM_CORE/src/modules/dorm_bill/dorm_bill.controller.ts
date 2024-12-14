@@ -39,12 +39,14 @@ export class DormBillController {
   }
 
   @Post('monthly/all')
+  @Public()
   async createMonthlyAllBills() {
     await this.dormBillService.handleCreateMonthlyALLBills();
     return { message: 'Monthly bills created for all rooms' };
   }
 
   @Post('monthly/:roomNumber')
+  @Public()
   async createMonthlyBill(@Param('roomNumber') roomNumber: string) {
     await this.dormBillService.handleCreateMonthlyBills(roomNumber);
     return { message: `Monthly bill created for room ${roomNumber}` };

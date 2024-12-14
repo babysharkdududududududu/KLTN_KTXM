@@ -5,7 +5,7 @@ import { Model } from 'mongoose';
 import { Room } from '../rooms/entities/room.entity';
 import { Cron } from '@nestjs/schedule';
 import PayOS from '@payos/node';
-const YOUR_DOMAIN = 'http://www.globalconnect.info.vn/';
+const YOUR_DOMAIN = 'http://globalconnect.info.vn/';
 
 
 @Injectable()
