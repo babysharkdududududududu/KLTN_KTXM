@@ -201,6 +201,9 @@ const Statistical = () => {
                     )}
                 </div>
             </div> */}
+            <Grid item xs={12} md={3}>
+                <NumberEquipment />
+            </Grid>
 
             <Grid container spacing={0}>
                 <Grid item xs={12} md={6} >
@@ -223,9 +226,7 @@ const Statistical = () => {
                 </Grid>
 
             </Grid>
-            <Grid item xs={12} md={3}>
-                <NumberEquipment />
-            </Grid>
+
         </div>
     );
 };
