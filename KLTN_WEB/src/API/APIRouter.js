@@ -118,7 +118,7 @@ export const getBillRoute = `${host}/dorm-bill/room`;
 export const getStatisticalDormRoute = `${host}/statistic/dorm-submission`;
 export const getStatisticalRoomRoute = `${host}/statistic/available-room`;
 export const getStatisticalEquipmentRoute = `${host}/statistic/maintenance`;
-export const getStatisticalEquipment = `${host}/equipment`;
+export const getStatisticalEquipment = `${host}/statistic/statistic`;
 // get name and id of submission
 export const getSubmissionNameAndId = `${host}/dorm-submission`;
 export const getSubmissionWithSettingIdAndUserId = `${host}/dorm-submission/search/`;

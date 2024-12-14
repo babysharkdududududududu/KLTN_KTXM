@@ -1,3 +1,4 @@
+import { EquipmentService } from './../equipment/equipment.service';
 import { RoomsService } from './../rooms/rooms.service';
 import { Maintenance } from './../maintenance/entities/maintenance.entity';
 import { Injectable } from '@nestjs/common';
@@ -6,17 +7,21 @@ import { UpdateStatisticDto } from './dto/update-statistic.dto';
 import { DormSubmissionService } from '../dorm_submission/dorm_submission.service';
 import { MaintenanceService } from '../maintenance/maintenance.service';
 import { InjectModel } from '@nestjs/mongoose';
-import { Room } from '../rooms/entities/room.entity';
+import { Equipment, Room } from '../rooms/entities/room.entity';
 import { DormSubmission } from '../dorm_submission/entities/dorm_submission.entity';
 import { DormPaymentService } from '../dorm_payment/dorm_payment.service';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class StatisticService {
   constructor(
+    @InjectModel(Equipment.name)
+    private readonly equipmentModel: Model<Equipment>,
     private readonly roomService: RoomsService,
     private readonly dormsubmission: DormSubmissionService,
     private readonly Maintenance: MaintenanceService,
     private readonly payment: DormPaymentService,
+    private readonly equipment: EquipmentService,
   ) { }
 
   async getAvailableRoom() {
@@ -198,7 +203,26 @@ export class StatisticService {
     }
   }
 
+  async findAllEquipmentsStatistic() {
+    const equipments = await this.equipmentModel.aggregate([
+      {
+        $group: {
+          _id: '$name',
+          items: { $push: '$$ROOT' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          name: '$_id',
+          count: { $size: '$items' },
+        },
+      },
+    ]);
+    console.log(equipments);
 
+    return equipments;
+  }
 
 
 

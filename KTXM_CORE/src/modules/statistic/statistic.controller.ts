@@ -36,4 +36,10 @@ export class StatisticController {
     return this.statisticService.getEquipment();
   }
 
+  @Get("statistic")
+  @Public()
+  findAllEquipmentsStatistict() {
+    return this.statisticService.findAllEquipmentsStatistic();
+  }
+
 }
