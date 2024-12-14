@@ -68,7 +68,7 @@ export class EquipmentService {
     return rs;
   }
 
-  async findAllEquipments() {
+  async findAllEquipmentsStatistic() {
     const equipments = await this.equipmentModel.aggregate([
       {
         $group: {
@@ -84,8 +84,12 @@ export class EquipmentService {
         },
       },
     ]);
+    console.log(equipments);
 
     return equipments;
+  }
+  async findAllEquipments() {
+    return this.equipmentModel.find();
   }
 
 

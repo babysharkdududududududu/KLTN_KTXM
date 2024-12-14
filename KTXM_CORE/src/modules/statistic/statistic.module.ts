@@ -9,6 +9,7 @@ import { MaintenanceModule } from '../maintenance/maintenance.module';
 import { MaintenanceSchema } from '../maintenance/entities/maintenance.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DormPaymentModule } from '../dorm_payment/dorm_payment.module';
+import { EquipmentModule } from '../equipment/equipment.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DormPaymentModule } from '../dorm_payment/dorm_payment.module';
     DormSubmissionModule,
     MaintenanceModule,
     DormPaymentModule,
+    EquipmentModule
   ],
   controllers: [StatisticController],
   providers: [StatisticService],

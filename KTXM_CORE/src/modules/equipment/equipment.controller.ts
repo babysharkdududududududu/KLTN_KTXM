@@ -36,11 +36,17 @@ export class EquipmentController {
   remove(@Param('id') id: string) {
     return this.equipmentService.remove(+id);
   }
+  // @Post("statistic")
+  // @Public()
+  // findAllEquipmentsStatistict() {
+  //   return this.equipmentService.findAllEquipmentsStatistic();
+  // }
   @Get()
   @Public()
   findAllEquipments() {
     return this.equipmentService.findAllEquipments();
   }
+
 
   @Post('import')
   @Public()

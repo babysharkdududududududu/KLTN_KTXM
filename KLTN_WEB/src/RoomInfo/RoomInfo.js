@@ -27,7 +27,6 @@ const RoomInfo = () => {
 
     // Tính số điện đã sử dụng và chi phí
     const calculateElectricityCost = (currentReading, previousReading, numUsers) => {
-        console.log(currentReading, previousReading, numUsers);
         const usedElectricity = currentReading - previousReading;
         const freeElectricity = freeElectric * numUsers; // Tổng số điện miễn phí cho tất cả người trong phòng
         const exceededElectricity = usedElectricity - freeElectricity;
@@ -63,6 +62,7 @@ const RoomInfo = () => {
             setUserInfo(data.data.room.users);
             setEquipment(data.data.equipment || []);
             setCurrentReading(data.data.room.electricityNumber); // Số điện tháng này
+            console.log("ddddddddd", data.data.room.electricityNumber);
         } catch (err) {
             console.error("Error fetching room by ID:", err);
         }
