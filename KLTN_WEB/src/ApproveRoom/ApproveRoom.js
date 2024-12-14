@@ -7,7 +7,7 @@ import DataTable from "./DataTable";
 import BasicModal from './BasicModal';
 import SucessfullModal from './SucessfullModal';
 import RoomAssignment from './RoomAssignment'; // Import component mới
-import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission, getSubmissionWithSettingIdAndUserId } from '../API/APIRouter';
+import { getSettingRoute, getBySettingId, getUserByIdRoute, autoAsignRoom, setAcceptedToWaitingPayment, pauseSettingRoute, openSettingRoute, getSettingIdRoute, exportDormSubmission, getSubmissionWithSettingIdAndUserId,getPaymentStatusRoute, pausePaymentRoute } from '../API/APIRouter';
 import TimeLineStudent from "./TimeLineStudent";
 import { useUser } from "../Context/Context";
 import PauseSubmission from "./PauseSubmitsion";
@@ -303,6 +303,7 @@ const ApproveRoom = () => {
                         gender: studentData.data ? studentData.data.gender : 'Không xác định',
                         email: studentData.data ? studentData.data.email : 'Không xác định',
                         status: submission.status ? submission.status : 'Chưa xác định',
+                        documents: submission.documents ? submission.documents : 'Chưa xác định',
                         submitId: submission._id,
                     };
                 });
@@ -527,7 +528,7 @@ const ApproveRoom = () => {
             {roleId === 'USERS' && (<TimeLineStudent />)}
 
             {setingID && (
-                <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", marginTop: '10px', backgroundColor: "#fff", borderRadius: 20, paddingTop: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: "row", justifyContent: "center", marginTop: '10px', borderRadius: 20, paddingTop: '10px' }}>
                     {!openDetail && (
                         <DataTable
                             studentData={filteredStudentData}

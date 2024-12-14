@@ -14,4 +14,10 @@ export class CreateDormSubmissionDto {
     @IsString()
     @IsOptional()
     roomNumber?: string;
+
+    //documents
+    @IsString()
+    @IsOptional()
+    documents?: string[];
+
 }

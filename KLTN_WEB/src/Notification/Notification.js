@@ -177,13 +177,13 @@ const Notification = () => {
             />
 
             {/* Add Notification Button */}
-            {
+            {/* {
                 roleId === 'USERS' ? null : (
                     <IconButton onClick={handleOpenModal} color="primary" sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', borderRadius: '50%', backgroundColor: '#1976d2' }}>
                         <AddIcon sx={{ color: "white", fontSize: 30, fontWeight: 'bold' }} />
                     </IconButton>
                 )
-            }
+            } */}
 
             {/* Add Notification Modal */}
             <NotificationModal

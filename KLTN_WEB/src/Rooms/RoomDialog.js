@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Grid, Divider, Paper } from '@mui/material';
 import { CheckCircle, Build } from '@mui/icons-material';
+import axios from 'axios';
+
+// get API
+import { createBillRoute } from '../API/APIRouter';
+import { el } from 'date-fns/locale';
 
 const RoomDialog = ({ open, onClose, selectedRoom, onSave }) => {
     const [block, setBlock] = useState('');
@@ -16,6 +21,24 @@ const RoomDialog = ({ open, onClose, selectedRoom, onSave }) => {
             setStatus(selectedRoom.room.status);
         }
     }, [selectedRoom]);
+
+
+    const handleCreateBill = async () => {
+        try {
+            if (roomNumber === '') {
+                console.log("Room number is empty");
+                return;
+            }
+            const res = await axios.post(`${createBillRoute}/${roomNumber}`, {
+                roomId: selectedRoom.room.id
+            });
+            if (res.status === 200) {
+                console.log("Bill created successfully");
+            }
+        } catch (error) {
+            console.error("Error creating bill:", error);
+        }
+    };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
@@ -90,6 +113,7 @@ const RoomDialog = ({ open, onClose, selectedRoom, onSave }) => {
                         </Grid>
                     </Grid>
                 )}
+                <Button onClick={handleCreateBill} variant="contained" color="primary" style={{ marginTop: '24px' }}>Tạo hóa đơn</Button>
             </DialogContent>
         </Dialog>
     );
