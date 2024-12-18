@@ -58,13 +58,11 @@ export class RoomsController {
   async findOne(@Param('roomNumber') roomNumber: string) {
     const room = await this.roomsService.findOne(roomNumber);
     const equipment = await this.equipmentService.findAll(roomNumber);
-    console.log('equipment:', equipment);
     return {
       equipment: equipment || null,
       room: room || null,
     };
   }
-
 
   @Patch()
   @Public()

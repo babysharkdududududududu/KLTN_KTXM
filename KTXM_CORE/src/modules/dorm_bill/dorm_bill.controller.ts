@@ -20,11 +20,6 @@ export class DormBillController {
     return this.dormBillService.findAll({ roomNumber, monthAndYear, status, billType, season });
   }
 
-  @Post()
-  async create() {
-    // Gọi phương thức tạo hóa đơn tự động từ service
-    return this.dormBillService.handleCreateMonthlyBills();
-  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.dormBillService.findOne(+id);
@@ -41,6 +36,20 @@ export class DormBillController {
   async webhook(@Body() body: any) { // Thêm @Body() để lấy dữ liệu từ yêu cầu
     // Gọi phương thức xử lý webhook từ service và truyền body vào
     return this.dormBillService.handleWebhook(body);
+  }
+
+  @Post('monthly/all')
+  @Public()
+  async createMonthlyAllBills() {
+    await this.dormBillService.handleCreateMonthlyALLBills();
+    return { message: 'Monthly bills created for all rooms' };
+  }
+
+  @Post('monthly/:roomNumber')
+  @Public()
+  async createMonthlyBill(@Param('roomNumber') roomNumber: string) {
+    await this.dormBillService.handleCreateMonthlyBills(roomNumber);
+    return { message: `Monthly bill created for room ${roomNumber}` };
   }
 
   @Get("/room/:roomNumber")

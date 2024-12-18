@@ -1,13 +1,14 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 
 import { updateStatusPending, updateStatusRejected, updateStatusPaid } from '../API/APIRouter';
 import Typography from '@mui/material/Typography';
+import StudentDetail from './StudentDetail';
 const columns = (handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable) => [
   { field: 'id', headerName: 'MSSV', flex: 0.5 },
-  { field: 'fullName', headerName: 'Họ và tên', flex: 1 },
+  { field: 'fullName', headerName: 'Họ và tên', flex: 0.7 },
   { field: 'phoneNumber', headerName: 'Số điện thoại', flex: 0.7 },
   { field: 'address', headerName: 'Địa chỉ', flex: 2 },
   { field: 'roomNumber', headerName: 'Phòng', flex: 0.5 },
@@ -56,7 +57,20 @@ const columns = (handleApprove, handleReject, handleConfirmPayment, handleAssign
   },
 ];
 
-export default function DataTable({ studentData, handleRowClick, updateStudentData, handleAssignRoom }) {
+export default function DataTable({ studentData, updateStudentData, handleAssignRoom }) {
+  const [open, setOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+
+  const handleRowClick = (params) => {
+    setSelectedStudent(params.row);
+    setOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpen(false);
+    setSelectedStudent(null);
+  };
+
 
   const handleApprove = async (student) => {
     try {
@@ -134,12 +148,12 @@ export default function DataTable({ studentData, handleRowClick, updateStudentDa
         <DataGrid
           rows={studentData}
           columns={columns(handleApprove, handleReject, handleConfirmPayment, handleAssignRoomTable)}
-          pageSizeOptions={[5, 10, 20, 50, 100]}
-          checkboxSelection
-          sx={{ border: 0 }}
-          onRowClick={(params) => handleRowClick(params.row)}
+          onRowClick={handleRowClick} // Thêm sự kiện nhấp chuột
+          pageSize={5}
+          rowsPerPageOptions={[5]}
         />
       )}
+      <StudentDetail open={open} handleClose={handleCloseModal} student={selectedStudent} />
     </Paper>
   );
 }

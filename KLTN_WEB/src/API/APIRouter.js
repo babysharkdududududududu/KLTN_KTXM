@@ -114,6 +114,9 @@ export const exportDormSubmission = `${host}/dorm-submission/export`;
 
 //bill
 export const getBillRoute = `${host}/dorm-bill/room`;
+export const allBill = `${host}/dorm-bill/search`;
+//create bill
+export const createBillRoute = `${host}/dorm-bill/monthly`;
 // statistical
 export const getStatisticalDormRoute = `${host}/statistic/dorm-submission`;
 export const getStatisticalRoomRoute = `${host}/statistic/available-room`;

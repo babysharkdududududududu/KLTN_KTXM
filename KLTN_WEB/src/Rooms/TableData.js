@@ -153,7 +153,6 @@ const TableData = ({ filterBlock }) => {
   const handleAddEquipment = () => {
     if (newEquipment.name) {
       const updatedEquipment = [...selectedRoom.equipment, newEquipment];
-      print(updatedEquipment);
       setSelectedRoom({ ...selectedRoom, equipment: updatedEquipment });
       setNewEquipment({ name: '', quantity: 0 });
     }
