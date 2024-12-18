@@ -1,11 +1,11 @@
-import { View, Text, Image } from 'react-native';
-import React from 'react';
-import ColorList from '../components/ColorList';
+import { View, Text, Image, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Entypo from '@expo/vector-icons/Entypo';
 
 const Profile = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <UserData />
     </View>
   );
@@ -14,20 +14,93 @@ const Profile = () => {
 export default Profile;
 
 export const UserData = () => {
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('http://103.209.34.203:8081/api/v1/users/id/22670272');
+        setUserData(response.data.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  if (loading) {
+    return <Text>Loading...</Text>; // Hiển thị loading khi đang gọi API
+  }
+
+  if (!userData) {
+    return <Text>Không có dữ liệu người dùng.</Text>; // Hiển thị nếu không có dữ liệu
+  }
+
   return (
     <View>
-      <View style={{ height: 250, width: "91%", backgroundColor: "#ffffff", marginHorizontal: 18, marginVertical: 18, justifyContent: "center", alignItems: "center", borderRadius: 15, paddingHorizontal: 10 }}>
-        <Image style={{ height: 80, width: 80, borderRadius: 50 }} source={{ uri: "https://cdn-icons-png.flaticon.com/512/149/149071.png" }} />
-        <Text style={{ fontSize: 20, fontWeight: "600", marginVertical: 5 }}>Nguyễn Thanh Tùng</Text>
-        <View style={{ flexDirection: "row", marginBottom: 5 }}>
-          <Text style={{ fontSize: 17 }}>20017271</Text>
+      <View style={styles.userContainer}>
+        <Image
+          style={styles.userImage}
+          source={{ uri: userData.image || "https://cdn-icons-png.flaticon.com/512/149/149071.png" }} // Sử dụng ảnh mặc định nếu không có
+        />
+        <Text style={styles.userName}>{userData.name}</Text>
+        <View style={styles.userInfo}>
+          <Text style={styles.userId}>{userData.userId}</Text>
           <Entypo name="dot-single" size={24} color="black" />
-          <Text style={{ fontSize: 17 }}>Phòng G202</Text>
+          <Text style={styles.userClass}>{userData.class}</Text>
         </View>
-        <Text style={{ fontSize: 16, color: "#555" }}>Email: taylor.swift@example.com</Text>
-        <Text style={{ fontSize: 16, color: "#555" }}>Số điện thoại: 0123456789</Text>
-        <Text style={{ fontSize: 16, color: "#555" }}>Địa chỉ: 370/6 Lê Hồng Phong, tổ 1 phường Phú Hoà, Tp. Thủ Dầu Một, Bình Dương.</Text>
+        <Text style={styles.userDetail}>Email: {userData.email}</Text>
+        <Text style={styles.userDetail}>Số điện thoại: {userData.phone}</Text>
+        <Text style={styles.userDetail}>Địa chỉ: {userData.address}</Text>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#e0f7fa',
+  },
+  userContainer: {
+    height: 250,
+    width: "91%",
+    backgroundColor: "#ffffff",
+    marginHorizontal: 18,
+    marginVertical: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+  },
+  userImage: {
+    height: 80,
+    width: 80,
+    borderRadius: 50,
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: "600",
+    marginVertical: 5,
+  },
+  userInfo: {
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+  userId: {
+    fontSize: 17,
+  },
+  userClass: {
+    fontSize: 17,
+  },
+  userDetail: {
+    fontSize: 16,
+    color: "#555",
+  },
+});

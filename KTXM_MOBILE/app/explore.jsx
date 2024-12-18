@@ -1,19 +1,34 @@
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Explore = () => {
-  const members = [
-    { name: "John Doe", details: "Tuổi: 20, Ngành: CNTT" },
-    { name: "Emily Davis", details: "Tuổi: 21, Ngành: Kinh tế" },
-    { name: "Võ Văn Kiên", details: "Tuổi: 22, Ngành: Xây dựng" },
-    { name: "Đặng Thị Xuân", details: "Tuổi: 19, Ngành: Thiết kế" },
-  ];
-
+  const [members, setMembers] = useState([]);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await axios.get('http://103.209.34.203:8081/api/v1/rooms/G201'); // Cập nhật URL API của bạn
+        setMembers(response.data.data.room.users); // Giả sử cấu trúc dữ liệu là như vậy
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
 
   const handlePress = (member) => {
     setSelectedMember(selectedMember === member ? null : member);
   };
+
+  if (loading) {
+    return <Text>Loading...</Text>; // Hiển thị loading khi đang gọi API
+  }
 
   return (
     <View style={styles.container}>
