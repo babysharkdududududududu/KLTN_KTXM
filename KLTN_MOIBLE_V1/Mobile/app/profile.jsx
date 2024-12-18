@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Entypo from '@expo/vector-icons/Entypo';
 
-export default function Profile() {
+const Profile = () => {
   return (
     <View style={styles.container}>
       <UserData />
@@ -11,6 +11,7 @@ export default function Profile() {
   );
 };
 
+export default Profile;
 
 export const UserData = () => {
   const [userData, setUserData] = useState(null);

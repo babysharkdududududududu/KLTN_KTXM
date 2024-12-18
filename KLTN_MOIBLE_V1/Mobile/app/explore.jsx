@@ -2,17 +2,16 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function Explore() {
-  const [notifications, setNotifications] = useState([]);
-  const [selectedNotification, setSelectedNotification] = useState(null);
+const Explore = () => {
+  const [members, setMembers] = useState([]);
+  const [selectedMember, setSelectedMember] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetchMembers = async () => {
       try {
-        const response = await axios.get('http://103.209.34.203:8081/api/v1/notification/get-all'); // Cập nhật URL API
-        // Đảo ngược thứ tự thông báo
-        setNotifications(response.data.data.results.reverse()); // Lấy dữ liệu và đảo ngược
+        const response = await axios.get('http://103.209.34.203:8081/api/v1/rooms/G201'); // Cập nhật URL API của bạn
+        setMembers(response.data.data.room.users); // Giả sử cấu trúc dữ liệu là như vậy
       } catch (error) {
         console.error(error);
       } finally {
@@ -20,11 +19,11 @@ export default function Explore() {
       }
     };
 
-    fetchNotifications();
+    fetchMembers();
   }, []);
 
-  const handlePress = (notification) => {
-    setSelectedNotification(selectedNotification === notification ? null : notification);
+  const handlePress = (member) => {
+    setSelectedMember(selectedMember === member ? null : member);
   };
 
   if (loading) {
@@ -34,15 +33,15 @@ export default function Explore() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={notifications}
+        data={members}
         style={{ width: '100%' }}
-        keyExtractor={(item) => item._id} // Sử dụng _id làm key
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePress(item)}>
-            <View style={styles.notificationContainer}>
-              <Text style={styles.title}>{item.title}</Text>
-              {selectedNotification === item && (
-                <Text style={styles.message}>{item.message}</Text>
+            <View style={styles.memberContainer}>
+              <Text style={styles.member}>{item.name}</Text>
+              {selectedMember === item && (
+                <Text style={styles.details}>{item.details}</Text>
               )}
             </View>
           </TouchableOpacity>
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  notificationContainer: {
+  memberContainer: {
     backgroundColor: '#ffffff',
     padding: 15,
     marginVertical: 5,
@@ -76,14 +75,15 @@ const styles = StyleSheet.create({
     elevation: 2,
     width: '100%',
   },
-  title: {
+  member: {
     fontSize: 18,
     color: '#333',
-    fontWeight: 'bold',
   },
-  message: {
+  details: {
     fontSize: 16,
     color: '#555',
     marginTop: 5,
   },
 });
+
+export default Explore;

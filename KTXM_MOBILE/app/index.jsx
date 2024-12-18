@@ -1,11 +1,12 @@
-import { View, Text, Switch, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
+import { StatusBar } from 'expo-status-bar';
 
-const Home = () => {
+export default function Home() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -31,114 +32,33 @@ const Home = () => {
   }
 
   return (
-    <ScrollView>
-      <View>
-        <Header totalMembers={totalMembers} /> {/* Truyền totalMembers vào Header */}
-        <View style={{ width: '100%', justifyContent: 'center', flexDirection: "row", marginTop: 5 }}>
-          <LightRoom equipment={data.equipment} />
-          <FanRoom equipment={data.equipment} />
-        </View>
+    <View>
+      <StatusBar style="dark" backgroundColor="#f3f2f7" />
+      <Header totalMembers={totalMembers} />
+      <ScrollView>
         <ElectricNumber electricityNumber={data.room.electricityNumber} />
         <WaterNumber waterNumber={data.room.waterNumber} />
-      </View>
-    </ScrollView>
-  );
-};
-
-const Header = ({ totalMembers }) => { // Nhận totalMembers như một prop
-  return (
-    <View style={{ width: '97%', height: 80, backgroundColor: '#fff', borderRadius: 15, margin: 5, alignItems: "center", flexDirection: "row", padding: 8, justifyContent: "space-between" }}>
-      <View style={{ flexDirection: "row" }}>
-        <View style={{ width: 50, height: 50, borderRadius: 25, backgroundColor: "#f7f7f9", alignItems: "center", justifyContent: "center" }}>
-          <Entypo name="home" size={24} color="black" />
+        <View style={{ width: '100%', justifyContent: 'center', flexDirection: "row", marginTop: 5 }}>
+          <Explore />
         </View>
-        <View style={{ alignContent: "flex-start", marginLeft: 8 }}>
-          <Text style={{ fontSize: 20, color: '#37385d' }}>Phòng G201</Text>
-          <Text style={{ fontSize: 17, color: '#37385d' }}>{totalMembers} thành viên</Text>
-        </View>
-      </View>
-      <View style={{ flexDirection: "row" }}>
-        <Ionicons name="notifications" size={24} color="#ff9b63" />
-      </View>
+      </ScrollView>
     </View>
   );
 };
 
-const LightRoom = ({ equipment }) => {
-  const [isMainLightEnabled, setIsMainLightEnabled] = useState(false);
-  const [isBathroomLightEnabled, setIsBathroomLightEnabled] = useState(false);
-
-  const toggleMainLightSwitch = () => setIsMainLightEnabled(previousState => !previousState);
-  const toggleBathroomLightSwitch = () => setIsBathroomLightEnabled(previousState => !previousState);
-
-  const mainLight = equipment.find(equip => equip.name === "Đèn" && equip.equipNumber === "d01");
-  const bathroomLight = equipment.find(equip => equip.name === "Đèn" && equip.equipNumber === "d02");
-
+const Header = ({ totalMembers }) => {
   return (
-    <View style={{ width: '46%', height: 270, backgroundColor: '#fff', borderRadius: 25, margin: 5, alignItems: "center" }}>
-      {/* Main Light Switch */}
-      <View style={{ width: '100%', flexDirection: 'row', padding: 8, justifyContent: "space-between", alignItems: 'center' }}>
-        <View style={{ width: 40, height: 40, borderRadius: 25, backgroundColor: "#f7f7f9", alignItems: "center", justifyContent: "center" }}>
-          <Entypo name="light-bulb" size={22} color={isMainLightEnabled ? "#ff9b63" : "#37385d"} />
-        </View>
-        <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={isMainLightEnabled ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleMainLightSwitch}
-          value={isMainLightEnabled}
+    <View style={{ width: '100%', height: 100, backgroundColor: '#f3f2f7', alignItems: "center", flexDirection: "row", padding: 8, justifyContent: "space-between", borderBottomLeftRadius: 25, borderBottomRightRadius: 25, paddingTop: 36 }}>
+      <View style={{ padding: 5 }}>
+        <Image
+          source={{ uri: 'https://i.imgur.com/xWEzgng.png' }}
+          style={{ width: 100, height: 50 }}
+          resizeMode='contain'
         />
       </View>
-      <View style={{ width: '100%', padding: 8 }}>
-        <Text style={{ fontSize: 20, color: '#37385d' }}>Bóng đèn</Text>
-        <Text style={{ fontSize: 17, color: '#37385d' }}>Phòng chính</Text>
-      </View>
-      <View style={{ borderWidth: 0.5, borderColor: "#e5e6f2", width: '80%' }} />
-
-      {/* Bathroom Light Switch */}
-      <View style={{ width: '100%', flexDirection: 'row', padding: 8, justifyContent: "space-between", alignItems: 'center' }}>
-        <View style={{ width: 40, height: 40, borderRadius: 25, backgroundColor: "#f7f7f9", alignItems: "center", justifyContent: "center" }}>
-          <Entypo name="light-bulb" size={22} color={isBathroomLightEnabled ? "#ff9b63" : "#37385d"} />
-        </View>
-        <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={isBathroomLightEnabled ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleBathroomLightSwitch}
-          value={isBathroomLightEnabled}
-        />
-      </View>
-      <View style={{ width: '100%', padding: 8 }}>
-        <Text style={{ fontSize: 20, color: '#37385d' }}>Bóng đèn</Text>
-        <Text style={{ fontSize: 17, color: '#37385d' }}>Nhà vệ sinh</Text>
-      </View>
-    </View>
-  );
-};
-
-const FanRoom = ({ equipment }) => {
-  const [isFanEnabled, setIsFanEnabled] = useState(false);
-  const toggleFanSwitch = () => setIsFanEnabled(previousState => !previousState);
-
-  const fan = equipment.find(equip => equip.name === "Quạt" && equip.equipNumber === "q01");
-
-  return (
-    <View style={{ width: '46%', height: 135, backgroundColor: '#fff', borderRadius: 25, margin: 5, alignItems: "center" }}>
-      <View style={{ width: '100%', flexDirection: 'row', padding: 8, justifyContent: "space-between", alignItems: 'center' }}>
-        <View style={{ width: 40, height: 40, borderRadius: 25, backgroundColor: "#f7f7f9", alignItems: "center", justifyContent: "center" }}>
-          <MaterialCommunityIcons name="fan" size={22} color={isFanEnabled ? "#ff9b63" : "#37385d"} />
-        </View>
-        <Switch
-          trackColor={{ false: '#767577', true: '#81b0ff' }}
-          thumbColor={isFanEnabled ? '#f5dd4b' : '#f4f3f4'}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleFanSwitch}
-          value={isFanEnabled}
-        />
-      </View>
-      <View style={{ width: '100%', padding: 8 }}>
-        <Text style={{ fontSize: 20, color: '#37385d' }}>Quạt</Text>
-        <Text style={{ fontSize: 17, color: '#37385d' }}>Phòng chính</Text>
+      <View style={{ width: "40%", justifyContent: "center", alignItems: "flex-end", backgroundColor: '#fff', borderRadius: 15, padding: 6 }}>
+        <Text style={{ fontSize: 20, color: '#37385d', fontWeight: "bold" }}>Phòng G201</Text>
+        <Text style={{ fontSize: 17, color: '#37385d' }}>{totalMembers} thành viên</Text>
       </View>
     </View>
   );
@@ -164,6 +84,7 @@ const ElectricNumber = ({ electricityNumber }) => {
   );
 };
 
+
 const WaterNumber = ({ waterNumber }) => {
   return (
     <View style={{ width: '97%', height: 100, backgroundColor: '#fff', borderRadius: 25, margin: 5, alignItems: "center", flexDirection: "row", padding: 8, justifyContent: "space-between" }}>
@@ -184,4 +105,47 @@ const WaterNumber = ({ waterNumber }) => {
   );
 };
 
-export default Home;
+const Explore = () => {
+  const [members, setMembers] = useState([]);
+  const [selectedMember, setSelectedMember] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await axios.get('http://103.209.34.203:8081/api/v1/rooms/G201'); // Cập nhật URL API của bạn
+        setMembers(response.data.data.room.users); // Giả sử cấu trúc dữ liệu là như vậy
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
+  const handlePress = (member) => {
+    setSelectedMember(selectedMember === member ? null : member);
+  };
+
+  if (loading) {
+    return <Text>Loading...</Text>; // Hiển thị loading khi đang gọi API
+  }
+
+  return (
+    <View style={{ flex: 1, padding: 20, borderRadius: 10 }}>
+      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 10 }}>THÀNH VIÊN</Text>
+      {members.map((member, index) => (
+        <TouchableOpacity key={index} onPress={() => handlePress(member)}>
+          <View style={{ backgroundColor: '#ffffff', padding: 15, marginVertical: 5, borderRadius: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4, elevation: 2 }}>
+            <Text style={{ fontSize: 18, color: '#333' }}>{member.name}</Text>
+            {selectedMember === member && (
+              <Text style={{ fontSize: 16, color: '#555', marginTop: 5 }}>{member.details}</Text>
+            )}
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+};

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Button, ScrollView } from 'react-native';
 import React from 'react';
 import ColorList from '../components/ColorList';
 
-export default function Create() {
+const Create = () => {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>BẠN ĐÃ ĐĂNG KÝ</Text>
@@ -32,3 +32,4 @@ const styles = StyleSheet.create({
   },
 });
 
+export default Create;

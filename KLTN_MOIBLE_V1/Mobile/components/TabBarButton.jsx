@@ -1,6 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
-import { icons } from '../assets/icons';
+import { icons } from '../assets/icons'
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 
 const TabBarButton = (props) => {
@@ -47,22 +47,24 @@ const TabBarButton = (props) => {
             opacity
         }
     })
-    return (
-        <Pressable {...props} style={styles.container}>
-            <Animated.View style={[animatedIconStyle]}>
-                {typeof icons[routeName] === 'function' ? (
-                    icons[routeName]({ color })
-                ) : (
-                    <Text style={{ color }}>Icon Not Found</Text>
-                )}
-            </Animated.View>
-            
-            <Animated.Text style={[{ color, fontSize: 11 }, animatedTextStyle]}>
-                {label}
-            </Animated.Text>
-        </Pressable>
-    );
-    
+  return (
+    <Pressable {...props} style={styles.container}>
+        <Animated.View style={[animatedIconStyle]}>
+            {
+                icons[routeName]({
+                    color
+                })
+            }
+        </Animated.View>
+        
+        <Animated.Text style={[{ 
+            color,
+            fontSize: 11
+        }, animatedTextStyle]}>
+            {label}
+        </Animated.Text>
+    </Pressable>
+  )
 }
 
 const styles = StyleSheet.create({
