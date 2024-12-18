@@ -35,6 +35,9 @@ export class Equipment extends Document {
 
     @Prop({ type: [Date] })
     repairHistory: Date[];
+
+    @Prop({ type: String })
+    brand: string;
 }
 
 export const EquipmentSchema = SchemaFactory.createForClass(Equipment);

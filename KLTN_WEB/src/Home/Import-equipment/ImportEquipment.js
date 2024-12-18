@@ -131,6 +131,7 @@ const EquipmentUpload = () => {
                 fixedDate: equip.fixedDate ? new Date(equip.fixedDate) : null,
                 location: equip.location || '',
                 roomNumber: String(equip.roomNumber || '').toUpperCase(),
+                brand: equip.brand || '',
             }));
 
             try {
