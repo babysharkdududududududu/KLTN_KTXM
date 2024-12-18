@@ -53,7 +53,8 @@ export class EquipmentService {
       endDate: equipment.endDate || null,
       fixedDate: equipment.fixedDate || null,
       location: equipment.location || '',
-      roomNumber: equipment.roomNumber
+      roomNumber: equipment.roomNumber,
+      brand: equipment.brand || '',
     }));
 
     try {

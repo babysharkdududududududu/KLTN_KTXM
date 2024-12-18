@@ -28,6 +28,7 @@ const RoomInfo = () => {
     // Tính số điện đã sử dụng và chi phí
     const calculateElectricityCost = (currentReading, previousReading, numUsers) => {
         const usedElectricity = currentReading - previousReading;
+        console.log(usedElectricity);
         const freeElectricity = freeElectric * numUsers; // Tổng số điện miễn phí cho tất cả người trong phòng
         const exceededElectricity = usedElectricity - freeElectricity;
         const cost = exceededElectricity > 0 ? exceededElectricity * electricPrice : 0;
@@ -126,7 +127,7 @@ const RoomInfo = () => {
                             <Grid container spacing={2}>
                                 <Grid item xs={6}>
                                     <Typography variant="h6" sx={{ marginBottom: 1 }}>Số Điện Đã Sử Dụng</Typography>
-                                    <Typography>{usedElectricity.toFixed(2)} KWh</Typography>
+                                    <Typography>{usedElectricity} KWh</Typography>
                                 </Grid>
                                 <Grid item xs={6}>
                                     <Typography variant="h6" sx={{ marginBottom: 1 }}>Chi Phí Điện</Typography>

@@ -84,6 +84,7 @@ const Equipment = () => {
     const columns = [
         { field: 'equipNumber', headerName: 'Mã thiết bị', flex: 1 },
         { field: 'name', headerName: 'Tên thiết bị', flex: 1 },
+        { field: 'brand', headerName: 'Hãng', flex: 1 },
         { field: 'roomNumber', headerName: 'Số phòng', flex: 1 },
         {
             field: 'status', headerName: 'Trạng thái', flex: 1, renderCell: (params) => (
