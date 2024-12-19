@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { getAllEquipmentRoute, updateLocationEquipmentRoute } from "../API/APIRouter";
+import { getAllEquipmentRoute, updateLocationEquipmentRoute, getEquipmentByRoomRoute } from "../API/APIRouter";
 import EquipmentDialog from './EquipmentDialog/EquipmentDialog';
-import { Box, Tabs, Tab, TextField, Pagination, Button, exportEquipmentRoute } from '@mui/material';
+import { Box, Tabs, Tab, TextField, Pagination, Button, exportEquipmentRoute, Typography } from '@mui/material';
 import PrintButton from "./PrintEquipment/PrintEquipment";
 import { DataGrid } from '@mui/x-data-grid';
+import { use } from "react";
 
 const Equipment = () => {
     const [equipment, setEquipment] = useState([]);
@@ -18,6 +19,8 @@ const Equipment = () => {
     const pageSize = 10; // Đặt số lượng bản ghi mỗi trang là 10
     const statusText = { 1: 'Hoạt động', 2: 'Kiểm tra', 3: 'Xử lý', 4: 'Sửa chữa', 5: 'Hoạt động', 6: 'Không sửa được' };
     const statusColors = { 1: '#4caf50', 2: '#1976d2', 3: '#ff9800', 4: '#9c27b0', 5: '#4caf50', 6: '#d32f2f' };
+    const [roomEquipment, setRoomEquipment] = useState([]);
+    const [equipmentNotUse, setEquipmentNotUse] = useState([]);
 
     // API get all equipment
     const handleGetAllEquipment = async () => {
@@ -32,6 +35,54 @@ const Equipment = () => {
             console.error(err);
         }
     };
+    const handleGetEquipmentByGroupRoom = async () => {
+        try {
+            const rs = await axios.get(`${getEquipmentByRoomRoute}`);
+            console.log(rs.data, "API Response");
+
+            const equipmentData = rs.data.data;
+            console.log(equipmentData, "equipmentData");
+
+            if (typeof equipmentData !== "object") {
+                console.error("API không trả về đối tượng hợp lệ!");
+                return;
+            }
+
+            // Chuyển đổi dữ liệu thành mảng
+            const groupedData = Object.entries(equipmentData).map(([room, equipmentList]) => ({
+                room,
+                equipmentList,
+            }));
+
+            setRoomEquipment(groupedData);
+            console.log(groupedData, "groupedData");
+
+            // Lọc các thiết bị có `endDate` khác null và in ra
+            const notInUseEquipment = groupedData
+                .flatMap(group => group.equipmentList) // Gộp tất cả equipmentList từ các phòng
+                .filter(equipment => equipment.endDate !== null); // Lọc các thiết bị có endDate
+            const inUseEquipment = groupedData
+                .flatMap(group => group.equipmentList) // Gộp tất cả equipmentList từ các phòng
+                .filter(equipment => equipment.endDate === null); // Lọc các thiết bị không có endDate
+
+            setEquipmentNotUse(notInUseEquipment);
+            // console.log(notInUseEquipment, "Thiết bị có endDate khác null");
+            console.log(inUseEquipment, "Thiết bị có endDate bằng null");
+
+
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+
+
+
+
+
+    useEffect(() => {
+        handleGetEquipmentByGroupRoom();
+    }, []);
 
     // API update location equipment
     const handleUpdateLocationEquipment = async () => {
@@ -39,13 +90,34 @@ const Equipment = () => {
             try {
                 const rs = await axios.patch(`${updateLocationEquipmentRoute}/${selectedEquipment.equipNumber}`, { roomNumber: updatedRoomNumber });
                 console.log(rs);
+
+                // Cập nhật trực tiếp trong state
+                setEquipment((prevEquipment) =>
+                    prevEquipment.map((equip) =>
+                        equip.equipNumber === selectedEquipment.equipNumber
+                            ? { ...equip, roomNumber: updatedRoomNumber }
+                            : equip
+                    )
+                );
+
+                setRoomEquipment((prevRoomEquipment) =>
+                    prevRoomEquipment.map((group) => ({
+                        ...group,
+                        equipmentList: group.equipmentList.map((equip) =>
+                            equip.equipNumber === selectedEquipment.equipNumber
+                                ? { ...equip, roomNumber: updatedRoomNumber }
+                                : equip
+                        ),
+                    }))
+                );
+
                 handleCloseDialog();
-                handleGetAllEquipment();
             } catch (err) {
                 console.error(err);
             }
         }
     };
+
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -76,10 +148,29 @@ const Equipment = () => {
         const matchesSelectedTab = selectedTab === 0 || equip.name === uniqueNameEquipment[selectedTab - 1];
         return matchesSearchTerm && matchesSelectedTab;
     });
+    const filterdEqipmentRoom = roomEquipment.flatMap(({ equipmentList }) =>
+        equipmentList.filter(equip => {
+            const matchesSearchTerm =
+                (equip.name && equip.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (equip.roomNumber && equip.roomNumber.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (equip.equipNumber && equip.equipNumber.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    // Tính toán các bản ghi cho trang hiện tại
+            const matchesSelectedTab = selectedTab === 0 || (equip.name && equip.name === uniqueNameEquipment[selectedTab - 1]);
+
+            return matchesSearchTerm && matchesSelectedTab;
+        })
+    );
+
+
+
+
+    // Tính toán các bản ghi cho trang hiện tại cho tất cả phòngphòng
     const paginatedEquipment = filteredEquipment.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-    const totalPages = Math.ceil(filteredEquipment.length / pageSize); // Tính tổng số trang
+    const totalPages = Math.ceil(filteredEquipment.length / pageSize);
+
+    // Dữ liệu phòng thoe groupgroup
+    const paginatedEquipmentRoom = filterdEqipmentRoom.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
     const columns = [
         { field: 'equipNumber', headerName: 'Mã thiết bị', flex: 1 },
@@ -106,7 +197,19 @@ const Equipment = () => {
             )
         },
     ];
+    const getRowClassName = (params) => {
+        const roomNumber = parseInt(params.row.roomNumber.slice(1), 10);
+        return roomNumber % 2 === 0 ? 'even-room' : 'odd-room';
+    };
 
+    const styles = {
+        evenRoom: {
+            backgroundColor: '#F5EFFF',
+        },
+        oddRoom: {
+            backgroundColor: '#FBF6E9',
+        },
+    };
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '90vh', padding: 4, justifyContent: 'center', alignItems: 'center' }}>
             {/* Bảng và Tabs bên trái */}
@@ -131,9 +234,29 @@ const Equipment = () => {
                         <PrintButton equipment={filteredEquipment} sx={{ marginLeft: '10px' }} />
                     </Box>
                 </Box>
-
-
                 <DataGrid
+                    rows={paginatedEquipmentRoom}
+                    columns={columns}
+                    pageSize={paginatedEquipmentRoom.length}
+                    autoHeight
+                    hideFooter
+                    getRowId={(row) => row.equipNumber}
+                    getRowClassName={getRowClassName}
+                    sx={{
+                        width: '100%',
+                        padding: '1px',
+                        borderRadius: '8px',
+                        backgroundColor: '#fcfcfc',
+                        '& .even-room': {
+                            ...styles.evenRoom,
+                        },
+                        '& .odd-room': {
+                            ...styles.oddRoom,
+                        },
+                    }}
+                />
+                {/* Tất cả phòng */}
+                {/* <DataGrid
                     rows={paginatedEquipment}
                     columns={columns}
                     pageSize={paginatedEquipment.length}
@@ -141,7 +264,7 @@ const Equipment = () => {
                     hideFooter
                     getRowId={(row) => row.equipNumber}
                     sx={{ width: '100%', padding: '1px', borderRadius: '8px', backgroundColor: '#fcfcfc' }}
-                />
+                /> */}
 
                 {/* Phân trang */}
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}>
@@ -166,7 +289,7 @@ const Equipment = () => {
                     onUpdate={handleUpdateLocationEquipment}
                 />
             </Box>
-        </Box>
+        </Box >
     );
 };
 

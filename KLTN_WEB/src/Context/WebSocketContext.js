@@ -14,7 +14,9 @@ export const WebSocketProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        const newSocket = io(`${process.env.SOCKET}`);
+        const newSocket = io(`${process.env.REACT_APP_SOCKET}`);
+        console.log('Connecting to socket:', newSocket);
+        console.log(process.env.REACT_APP_SOCKET)
         setSocket(newSocket);
 
         newSocket.on('message', (message) => {

@@ -127,18 +127,27 @@ export class DormPaymentService {
   }
 
 
-  async getAllPayments(): Promise<{ paid: DormPayment[], unpaid: DormPayment[] }> {
+  async getAllPayments(): Promise<{ paid: DormPayment[], unpaid: DormPayment[], count: { paid: number, unpaid: number } }> {
     try {
       const payments = await this.dormPaymentRepository.find().exec();
-      if (!payments || payments.length === 0) { throw new Error('No payments found'); }
+      if (!payments || payments.length === 0) {
+        throw new Error('No payments found');
+      }
       const paid = payments.filter((payment) => payment.status === 'Đã thanh toán');
       const unpaid = payments.filter((payment) => payment.status === 'Chưa thanh toán');
-      return { paid, unpaid };
+      const count = {
+        paid: paid.length,
+        unpaid: unpaid.length,
+      };
+      console.log('Number of paid:', count.paid);
+      console.log('Number of unpaid:', count.unpaid);
+      return { paid, unpaid, count };
     } catch (error) {
       console.error('Error fetching all payments:', error);
       throw new Error('Unable to retrieve all payments');
     }
   }
+
 
   async getDormPaymentsByUserId(userId: string): Promise<DormPayment[]> {
     console.log('Fetching payments for userId:', userId); // Thêm log để kiểm tra
