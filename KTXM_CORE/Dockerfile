@@ -1,4 +1,4 @@
-# Dockerfile cho NestJS
+# Dockerfile cho ReactJS
 FROM node:20.14 AS build
 
 # Thiết lập thư mục làm việc
@@ -7,8 +7,11 @@ WORKDIR /app
 # Sao chép package.json và package-lock.json
 COPY package*.json ./
 
-# Cài đặt các phụ thuộc
-RUN npm install --production
+# Cài đặt tất cả các phụ thuộc (bao gồm cả dev dependencies)
+RUN npm install
+
+# Cài đặt NestJS CLI toàn cục
+RUN npm install -g @nestjs/cli
 
 # Sao chép toàn bộ mã nguồn vào container
 COPY . .
@@ -29,7 +32,7 @@ COPY package*.json ./
 RUN npm install --production
 
 # Expose port
-EXPOSE 8081
+EXPOSE 8080
 
 # Lệnh chạy ứng dụng
-CMD ["npm", "run", "start:prod"]
+CMD ["npm", "start"]
