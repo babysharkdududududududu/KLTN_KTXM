@@ -92,6 +92,21 @@ export class EquipmentService {
   async findAllEquipments() {
     return this.equipmentModel.find();
   }
+  async findAllEquipmentsWithNumberRoom() {
+    const equipments = await this.equipmentModel.find();
+
+    // Nhóm theo mã phòng
+    const groupedByRoom = equipments.reduce((acc, equipment) => {
+      const roomNumber = equipment.roomNumber;
+      if (!acc[roomNumber]) {
+        acc[roomNumber] = [];
+      }
+      acc[roomNumber].push(equipment);
+      return acc;
+    }, {});
+
+    return groupedByRoom;
+  }
 
 
   async findOne(roomNumber: string) {

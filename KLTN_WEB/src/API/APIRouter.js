@@ -52,6 +52,8 @@ export const getEquipmentRoute = `${host}/equipment`;
 export const getAllEquipmentRoute = `${host}/equipment/`;
 export const updateLocationEquipmentRoute = `${host}/equipment`;
 export const exportEquipmentRoute = `${host}/equipment/export`;
+export const getEquipmentByRoomRoute = `${host}/equipment/room/`;
+
 
 //seting
 export const getSettingRoute = `${host}/setting`;
@@ -122,6 +124,7 @@ export const getStatisticalDormRoute = `${host}/statistic/dorm-submission`;
 export const getStatisticalRoomRoute = `${host}/statistic/available-room`;
 export const getStatisticalEquipmentRoute = `${host}/statistic/maintenance`;
 export const getStatisticalEquipment = `${host}/statistic/statistic`;
+export const getPaymentNumber = `${host}/statistic/payment`;
 // get name and id of submission
 export const getSubmissionNameAndId = `${host}/dorm-submission`;
 export const getSubmissionWithSettingIdAndUserId = `${host}/dorm-submission/search/`;

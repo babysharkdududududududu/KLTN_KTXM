@@ -13,6 +13,11 @@ export class EquipmentController {
   create(@Body() createEquipmentDto: CreateEquipmentDto) {
     return this.equipmentService.create(createEquipmentDto);
   }
+  @Get("room")
+  @Public()
+  findAllEquipmentsStatistict() {
+    return this.equipmentService.findAllEquipmentsWithNumberRoom();
+  }
 
   @Get('/roomNumber/:roomNumber')
   @Public()
@@ -36,11 +41,7 @@ export class EquipmentController {
   remove(@Param('id') id: string) {
     return this.equipmentService.remove(+id);
   }
-  // @Post("statistic")
-  // @Public()
-  // findAllEquipmentsStatistict() {
-  //   return this.equipmentService.findAllEquipmentsStatistic();
-  // }
+
   @Get()
   @Public()
   findAllEquipments() {

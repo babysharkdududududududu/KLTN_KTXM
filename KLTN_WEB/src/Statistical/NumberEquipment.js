@@ -8,7 +8,7 @@ const EquipmentItem = ({ name, count, color, icon: Icon }) => {
     return (
         <Paper
             elevation={3}
-            style={{ width: "100%", height: "140px", backgroundColor: color, padding: "20px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius: "15px", color: "#fff", transition: "transform 0.3s ease, box-shadow 0.3s ease", cursor: "pointer", }}
+            style={{ width: "100%", height: "40px", backgroundColor: color, padding: "30px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", borderRadius: "15px", color: "#fff", transition: "transform 0.3s ease, box-shadow 0.3s ease", cursor: "pointer", }}
             onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }}
         >
@@ -42,13 +42,8 @@ const NumberEquipment = () => {
     return (
         <Grid container spacing={1} style={{ marginTop: "30px", }} justifyContent="space-evenly">
             {numberEquipment.map((item, index) => (
-                <Grid item xs={12} sm={6} md={3} key={index}>
-                    <EquipmentItem
-                        name={item.name}
-                        count={item.count}
-                        color={colors[index % colors.length]}
-                        icon={icons[index % icons.length]}
-                    />
+                <Grid item xs={12} sm={6} md={3.2} key={index}>
+                    <EquipmentItem name={item.name} count={item.count} color={colors[index % colors.length]} icon={icons[index % icons.length]} />
                 </Grid>
             ))}
         </Grid>

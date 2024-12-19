@@ -13,6 +13,7 @@ import BarChartStatis from './BarCharMaintence';
 import LineChartStatis from './LineChartMaintence';
 import ScatterChartStatis from './ScatterMaintence';
 import NumberEquipment from './NumberEquipment';
+import Payment from './Payment';
 const Statistical = () => {
     const [listRooms, setListRooms] = useState([]);
     const [totalRooms, setTotalRooms] = useState(0);
@@ -203,6 +204,9 @@ const Statistical = () => {
             </div> */}
             <Grid item xs={12} md={3}>
                 <NumberEquipment />
+            </Grid>
+            <Grid item xs={12} md={9}>
+                <Payment />
             </Grid>
 
             <Grid container spacing={0}>
