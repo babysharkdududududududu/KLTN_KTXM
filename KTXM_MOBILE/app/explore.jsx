@@ -1,19 +1,40 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 
 export default function Explore() {
   const [notifications, setNotifications] = useState([]);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [socket, setSocket] = useState(null);
+  const [numberNoti, setNumberNoti] = useState(0);
+
+  useEffect(() => {
+    // Kết nối socket
+    const newSocket = io(process.env.REACT_APP_SOCKET || 'http://103.209.34.203:8081');
+    console.log('Connecting to socket:', newSocket);
+
+    setSocket(newSocket);
+
+    newSocket.on('message', (message) => {
+      setNotifications((prevNotifications) => [...prevNotifications, message]);
+      setNumberNoti((prevNumberNoti) => prevNumberNoti + 1);
+    });
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get('http://103.209.34.203:8081/api/v1/notification/get-all'); // Cập nhật URL API
-        // Đảo ngược thứ tự thông báo
-        setNotifications(response.data.data.results.reverse()); // Lấy dữ liệu và đảo ngược
+        const response = await axios.get('http://103.209.34.203:8081/api/v1/notification/get-all');
+        setNotifications(response.data.data.results.reverse());
       } catch (error) {
+        setError('Không thể tải thông báo. Vui lòng thử lại.');
         console.error(error);
       } finally {
         setLoading(false);
@@ -28,7 +49,11 @@ export default function Explore() {
   };
 
   if (loading) {
-    return <Text>Loading...</Text>; // Hiển thị loading khi đang gọi API
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (error) {
+    return <Text style={styles.error}>{error}</Text>;
   }
 
   return (
@@ -36,7 +61,7 @@ export default function Explore() {
       <FlatList
         data={notifications}
         style={{ width: '100%' }}
-        keyExtractor={(item) => item._id} // Sử dụng _id làm key
+        keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <TouchableOpacity onPress={() => handlePress(item)}>
             <View style={styles.notificationContainer}>
@@ -48,6 +73,7 @@ export default function Explore() {
           </TouchableOpacity>
         )}
       />
+      <Text style={styles.notificationCount}>Số thông báo mới: {numberNoti}</Text>
     </View>
   );
 };
@@ -85,5 +111,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     marginTop: 5,
+  },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  notificationCount: {
+    marginTop: 10,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
