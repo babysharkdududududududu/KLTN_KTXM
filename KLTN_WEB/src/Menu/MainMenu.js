@@ -176,11 +176,11 @@ const MainMenu = ({ onLogout }) => {
             </div>
 
             <div className='action-of-user'>
-              <Tooltip title="Cài đặt">
+              {/* <Tooltip title="Cài đặt">
                 <IconButton onClick={() => navigate('/settings')}>
                   <SettingsOutlinedIcon className="menu-icon" />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
 
               {/* <Tooltip title="Đăng xuất" onClick={handleLogout}>
               <IconButton>
